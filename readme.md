@@ -12,4 +12,9 @@ xtreme-webframework version 6 (ai-driven grundstruktur).
 - `x/`
 - `scss/`
 
+## objektstatus
+
+- aktiv: `oblects/x-user/`, `oblects/x-users/`
+- nicht mehr nutzen: `oblects/user/`, `oblects/users/`
+
 siehe `agents.md`, `framework.md` und `docs/readme.md` für regeln und workflow.

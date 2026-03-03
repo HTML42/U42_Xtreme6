@@ -1,51 +1,66 @@
 # framework.md
 
-## zielbild
+## framework-konzept
 
-xtreme6 ist ein ai-driven framework. die struktur trennt klar zwischen:
+xtreme webframework 6 ist md-driven. pro objekt ist die `.class.md` die source-of-truth, daraus entstehen php/js klasse plus tests.
 
-- framework-kern (`x*`-dateien/ordner, updatebar),
-- projektspezifischen erweiterungen (ohne `x`-präfix),
-- objektdefinitionen als source of truth für ki-generierung.
+## verzeichnisrollen
 
-## verzeichnis-mechanik
+- `oblects/` — objektdefinitionen (singular/plural).
+- `api/` — endpoint-dateien für anfragen an `/api/...`.
+- `dist/` — auslieferung mit `.htaccess` und `execute.php` als request-einstieg.
+- `compiler/` — zukünftige build-/compile-logik.
+- `docs/` — menschenlesbare dokumentation.
+- `x/` — framework-bibliothek.
+- `scss/` — stylesheets.
 
-- `oblects/`: domain-objekte nach singular/plural-regel.
-- `api/`: endpoint-dateien für alle requests auf `/api/...`.
-- `dist/`: auslieferung und request-routing über `.htaccess`.
-- `compiler/`: build/compiler-komponenten.
-- `docs/`: menschenlesbare dokumentation.
-- `x/`: framework-bibliothek (nicht direkt anpassen).
-- `scss/`: stylesheets.
+## objektstandard
 
-## objekt-mechanik (ai workflow)
+die objektordner sind:
+- `oblects/x-user/`
+- `oblects/x-users/`
 
-für jedes objekt gilt ein 5-dateien-vertrag:
+`oblects/user/` und `oblects/users/` werden nicht mehr verwendet.
 
-1. `<name>.class.md` — source of truth mit fachlogik, regeln, erwartungen.
-2. `<name>.class.php` — php-implementierung.
-3. `<name>.class.js` — javascript-implementierung.
-4. `<name>.test.php` — php-tests für fachverhalten.
-5. `<name>.test.js` — javascript-tests für fachverhalten.
+## singular-regel (`x-user`)
 
-ablauf:
+- dateiname: `x-user.class.php` und `x-user.class.js`.
+- konstruktor startet mit `$id` als erstem parameter.
+- pflichtmethoden in php **und** js:
+  - `load($identification = null)`
+  - `load_by_id($id)`
+  - `load_by_name($name)`
+- pflicht-cache in php/js:
+  - php: `static $_CACHE = []`
+  - js: `static _CACHE = {}`
+- `load()` routing:
+  - numeric → `load_by_id()`
+  - string → `load_by_name()`
+  - sonst → neue leere instanz
 
-1. zuerst die `.md` definieren.
-2. danach klassen in php/js erzeugen.
-3. anschließend tests in php/js erzeugen.
-4. tests laufen lassen; bei abweichung wird die `.md` nachgeschärft.
+## plural-regel (`x-users`)
 
-## singular/plural-regel
+- dateiname: `x-users.class.php` und `x-users.class.js`.
+- pflicht-cache in php/js:
+  - php: `static $_CACHE = []`
+  - js: `static _CACHE = {}`
+- list/query-cache key: `method + ':' + json_encode(normalized_params)`.
+- params vor cache-key immer normalisieren (sortierte keys).
+- empfohlen: ids im plural-cache speichern, rückgabe über singular-loader auflösen.
 
-- singular (z. b. `user`) beschreibt genau eine instanz.
-- plural (z. b. `users`) beschreibt sammlungen, listen und bulk-operationen.
+## 5-dateien-vertrag pro objekt
 
-## update-regel für framework-dateien
+pro objekt sind diese dateien verpflichtend:
 
-alles mit `x`-präfix gilt als framework-core und kann bei updates überschrieben werden.
-projekteigene anpassungen müssen daher immer in nicht-`x`-pfaden erfolgen.
+1. `<name>.class.md`
+2. `<name>.class.php`
+3. `<name>.class.js`
+4. `<name>.test.php`
+5. `<name>.test.js`
 
-## request-routing in dist
+## javascript-regel für compiler
 
-`dist/.htaccess` leitet alle anfragen, die keine bilddateien sind, an `dist/execute.php` weiter.
-bilddateien werden direkt ausgeliefert.
+- im gesamten projekt kein `import` in js-dateien.
+- in class-dateien keine exports verwenden (`module.exports`/`export` verboten).
+- klassen werden global registriert (z. b. `globalThis.XUser`).
+- testdateien liegen neben den klassen und prüfen gegen die globalen klassen.
