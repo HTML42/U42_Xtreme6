@@ -1,0 +1,14 @@
+/* Basics.scss: Grundlegende SCSS-Basis für Xtreme6 */
+
+:root {
+  --xtreme6-font: 'Inter', system-ui, -apple-system, sans-serif;
+  --xtreme6-text: #1f2937;
+  --xtreme6-bg: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: var(--xtreme6-font);
+  color: var(--xtreme6-text);
+  background: var(--xtreme6-bg);
+}
