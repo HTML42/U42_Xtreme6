@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 /**
- * Framework-Basisklasse (X-Kontext): User.
+ * framework-basisklasse (x-kontext): user.
  *
- * Hinweis: X*-Dateien sind framework-bezogen und werden ggf. bei Updates überschrieben.
+ * hinweis: x*-dateien sind framework-bezogen und werden ggf. bei updates überschrieben.
  */
 class User
 {
