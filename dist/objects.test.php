@@ -1,4 +1,4 @@
-/* SOURCE: objects/x-user/x_user.test.php */
+/* SOURCE: objects/x_user/x_user.test.php */
 <?php
 
 // platzhalter: test-runner wird später integriert.
@@ -6,7 +6,7 @@
 
 echo "x-user.test.php placeholder\n";
 
-/* SOURCE: objects/x-users/x_users.test.php */
+/* SOURCE: objects/x_users/x_users.test.php */
 <?php
 
 // platzhalter: test-runner wird später integriert.

@@ -1,4 +1,4 @@
-/* SOURCE: objects/x-user/x_user.class.js */
+/* SOURCE: objects/x_user/x_user.class.js */
 class XUser {
   static _CACHE = {};
 
@@ -38,7 +38,7 @@ class XUser {
 
 globalThis.XUser = XUser;
 
-/* SOURCE: objects/x-users/x_users.class.js */
+/* SOURCE: objects/x_users/x_users.class.js */
 class XUsers {
   static _CACHE = {};
 
