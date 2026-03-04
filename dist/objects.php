@@ -77,6 +77,7 @@ class XUser
     }
 }
 
+
 /* SOURCE: objects/x_users/x_users.class.php */
 class XUsers
 {
@@ -115,3 +116,4 @@ class XUsers
         self::$_CACHE = [];
     }
 }
+?>
