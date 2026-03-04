@@ -76,11 +76,10 @@ class XUser
         self::$_CACHE = [];
     }
 }
+?>
 
 /* SOURCE: objects/x_users/x_users.class.php */
 <?php
-
-require_once __DIR__ . '/../x_user/x_user.class.php';
 
 class XUsers
 {
@@ -119,3 +118,4 @@ class XUsers
         self::$_CACHE = [];
     }
 }
+?>

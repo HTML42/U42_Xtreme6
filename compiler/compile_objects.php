@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../x/x_compiler.class.php';
+
 $root = dirname(__DIR__);
 $objectsDir = $root . DIRECTORY_SEPARATOR . 'objects';
 $distDir = $root . DIRECTORY_SEPARATOR . 'dist';
@@ -51,10 +53,21 @@ foreach ($targets as $suffix => $outputName) {
 
     foreach ($bucket[$suffix] as $path) {
         $rel = str_replace($root . DIRECTORY_SEPARATOR, '', $path);
-        $compiled[] = "/* SOURCE: {$rel} */\n" . rtrim((string) file_get_contents($path)) . "\n";
+        $content = rtrim((string) file_get_contents($path));
+
+        if (str_ends_with($suffix, '.php')) {
+            XCompiler::validate_php_tags($content, $rel);
+        }
+
+        if ($suffix === '.class.php') {
+            XCompiler::validate_no_includes($content, $rel);
+        }
+
+        $compiled[] = "/* SOURCE: {$rel} */\n" . $content . "\n";
     }
 
     $targetPath = $distDir . DIRECTORY_SEPARATOR . $outputName;
     file_put_contents($targetPath, implode("\n", $compiled));
     echo "Compiled {$outputName} (" . count($bucket[$suffix]) . " Dateien)\n";
 }
+?>

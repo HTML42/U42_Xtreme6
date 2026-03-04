@@ -75,3 +75,4 @@ class XUser
         self::$_CACHE = [];
     }
 }
+?>
