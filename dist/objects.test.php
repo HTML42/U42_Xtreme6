@@ -5,6 +5,7 @@
 // regel: keine imports/require in dieser datei.
 
 echo "x-user.test.php placeholder\n";
+?>
 
 /* SOURCE: objects/x_users/x_users.test.php */
 <?php
@@ -13,3 +14,4 @@ echo "x-user.test.php placeholder\n";
 // regel: keine imports/require in dieser datei.
 
 echo "x-users.test.php placeholder\n";
+?>

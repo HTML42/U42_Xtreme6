@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../x_user/x_user.class.php';
-
 class XUsers
 {
     public static array $_CACHE = [];
@@ -39,3 +37,4 @@ class XUsers
         self::$_CACHE = [];
     }
 }
+?>

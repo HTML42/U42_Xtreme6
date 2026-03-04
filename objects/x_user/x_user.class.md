@@ -6,6 +6,8 @@ singular-frameworkklasse `x-user`.
 ## php-regeln
 - niemals `declare(strict_types=1);`
 - niemals `final class`
+- php-dateien starten immer mit `<?php` und enden immer mit `?>`
+- keine `include`, `include_once`, `require` oder `require_once` in php-klassen
 - konstruktor-signatur immer: `public function __construct(int $id = 0)`
 - pflichtmethoden:
   - `load($identification = null)`
