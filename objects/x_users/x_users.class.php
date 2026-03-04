@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../x-user/x-user.class.php';
+require_once __DIR__ . '/../x_user/x_user.class.php';
 
 class XUsers
 {

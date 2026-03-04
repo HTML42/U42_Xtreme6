@@ -1,4 +1,4 @@
-/* SOURCE: objects/x-user/x_user.class.php */
+/* SOURCE: objects/x_user/x_user.class.php */
 <?php
 
 class XUser
@@ -77,10 +77,10 @@ class XUser
     }
 }
 
-/* SOURCE: objects/x-users/x_users.class.php */
+/* SOURCE: objects/x_users/x_users.class.php */
 <?php
 
-require_once __DIR__ . '/../x-user/x-user.class.php';
+require_once __DIR__ . '/../x_user/x_user.class.php';
 
 class XUsers
 {
