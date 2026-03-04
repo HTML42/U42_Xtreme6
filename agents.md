@@ -2,9 +2,9 @@
 
 ## projektregeln
 
-- dateien, ordner oder klassen mit dem präfix `x` sind framework-bezogen und **dürfen nicht verändert** werden.
-- grund: `x*`-dateien können bei framework-updates überschrieben werden.
-- eigene anpassungen sollen immer ohne `x`-präfix umgesetzt werden.
+- dateien, ordner oder klassen mit dem präfix `x` sind framework-spezifisch.
+- `x*`-dateien gehören zum framework-kern und können bei framework-updates angepasst oder ersetzt werden.
+- projektcode soll die x-regeln aus der dokumentation respektieren.
 
 ## objektmodell (singular/plural)
 
@@ -22,3 +22,4 @@ für jedes neue objekt sind 5 pflichtdateien vorgesehen:
 5. `<name>.test.js`
 
 die `.md`-datei beschreibt verhalten und anforderungen. die weiteren vier dateien werden daraus durch ki erzeugt.
+änderungen am verhalten erfolgen primär in der `.md`-datei.
