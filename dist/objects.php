@@ -1,6 +1,6 @@
-/* SOURCE: objects/x_user/x_user.class.php */
 <?php
 
+/* SOURCE: objects/x_user/x_user.class.php */
 class XUser
 {
     public static array $_CACHE = [];
@@ -76,11 +76,8 @@ class XUser
         self::$_CACHE = [];
     }
 }
-?>
 
 /* SOURCE: objects/x_users/x_users.class.php */
-<?php
-
 class XUsers
 {
     public static array $_CACHE = [];
@@ -118,4 +115,3 @@ class XUsers
         self::$_CACHE = [];
     }
 }
-?>

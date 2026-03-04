@@ -50,24 +50,30 @@ foreach ($iter as $file) {
 foreach ($targets as $suffix => $outputName) {
     sort($bucket[$suffix], SORT_STRING);
     $compiled = [];
+    $isPhpTarget = str_ends_with($suffix, '.php');
+
+    if ($isPhpTarget) {
+        $compiled[] = '<?php';
+    }
 
     foreach ($bucket[$suffix] as $path) {
         $rel = str_replace($root . DIRECTORY_SEPARATOR, '', $path);
         $content = rtrim((string) file_get_contents($path));
 
-        if (str_ends_with($suffix, '.php')) {
+        if ($isPhpTarget) {
             XCompiler::validate_php_tags($content, $rel);
+            $content = XCompiler::strip_php_tags($content);
         }
 
         if ($suffix === '.class.php') {
             XCompiler::validate_no_includes($content, $rel);
         }
 
-        $compiled[] = "/* SOURCE: {$rel} */\n" . $content . "\n";
+        $compiled[] = "/* SOURCE: {$rel} */\n" . $content;
     }
 
     $targetPath = $distDir . DIRECTORY_SEPARATOR . $outputName;
-    file_put_contents($targetPath, implode("\n", $compiled));
+    file_put_contents($targetPath, implode("\n\n", $compiled) . "\n");
     echo "Compiled {$outputName} (" . count($bucket[$suffix]) . " Dateien)\n";
 }
 ?>
