@@ -50,12 +50,13 @@ foreach ($iter as $file) {
 foreach ($targets as $suffix => $outputName) {
     sort($bucket[$suffix], SORT_STRING);
     $compiled = [];
+    $isPhpTarget = str_ends_with($suffix, '.php');
 
     foreach ($bucket[$suffix] as $path) {
         $rel = str_replace($root . DIRECTORY_SEPARATOR, '', $path);
         $content = rtrim((string) file_get_contents($path));
 
-        if (str_ends_with($suffix, '.php')) {
+        if ($isPhpTarget) {
             XCompiler::validate_php_tags($content, $rel);
         }
 
@@ -63,11 +64,28 @@ foreach ($targets as $suffix => $outputName) {
             XCompiler::validate_no_includes($content, $rel);
         }
 
-        $compiled[] = "/* SOURCE: {$rel} */\n" . $content . "\n";
+        if ($isPhpTarget) {
+            $content = preg_replace(
+                '/^\s*<\?php\s*/',
+                "<?php\n\n/* SOURCE: {$rel} */\n",
+                $content,
+                1
+            ) ?? $content;
+            $compiled[] = $content;
+            continue;
+        }
+
+        $compiled[] = "/* SOURCE: {$rel} */\n" . $content;
     }
 
     $targetPath = $distDir . DIRECTORY_SEPARATOR . $outputName;
-    file_put_contents($targetPath, implode("\n", $compiled));
+    $output = implode("\n\n", $compiled) . "\n";
+
+    if ($isPhpTarget) {
+        $output = preg_replace('/\?>\s*<\?php/', '', $output) ?? $output;
+    }
+
+    file_put_contents($targetPath, $output);
     echo "Compiled {$outputName} (" . count($bucket[$suffix]) . " Dateien)\n";
 }
 ?>
