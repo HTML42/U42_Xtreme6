@@ -1,30 +1,16 @@
-# Project.md
+# project.md
 
-## projektübersicht
+## projektziel
 
-U42 Xtreme6 ist ein AI-gestütztes, md-driven Framework mit klaren Build- und Objektregeln.
+u42 xtreme6 ist ein ai-gestütztes, md-driven webprojekt auf basis des xtreme-frameworks.
 
-## verzeichnisstruktur
+## projektfokus
 
-- `objects/` – objektdefinitionen und source-of-truth pro objekt (`.class.md`).
-- `api/` – endpoint-dateien.
-- `dist/` – kompilierte ausgabe.
-- `compiler/` – compiler-skripte.
-- `docs/` – dokumentation und workflow-regeln.
-- `x/` – framework-spezifische kernbibliothek (`x_*`).
-- `styles/` – css-basierte styles.
+- projektcode liegt getrennt vom framework-kern.
+- objektdaten liegen in `objects/`.
+- projektskripte liegen in `scripts/`.
+- auslieferungsartefakte liegen in `dist/`.
 
-## compiler-output (dev/prod)
+## hinweis
 
-`compiler/compile_objects.php` erzeugt pro zieltyp immer zwei dateien in `dist/`:
-
-- `--dev` bundle: lädt die originaldateien per `require_once` (php) oder `import` (js).
-- `--prod` bundle: enthält den komplett vorkompilierten inhalt aller dateien.
-
-aktuelle bundle-paare:
-
-- `objects--dev.php` / `objects--prod.php`
-- `objects--dev.js` / `objects--prod.js`
-- `objects.test--dev.php` / `objects.test--prod.php`
-- `objects.test--dev.js` / `objects.test--prod.js`
-- `execute--dev.php` / `execute--prod.php` (bootstrap inkl. einbindung der objects-bundles)
+framework-regeln, konventionen und compiler-details stehen in `agents.md` und `docs/x-framework.md`.
