@@ -11,5 +11,6 @@ require_once __DIR__ . '/objects--dev.php';
 </head>
 <body>
   <script src="./objects--dev.js" defer></script>
+  <script src="./scripts--dev.js" defer></script>
 </body>
 </html>

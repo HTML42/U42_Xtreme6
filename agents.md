@@ -5,6 +5,7 @@
 - dateien, ordner oder klassen mit dem präfix `x` sind framework-spezifisch.
 - `x*`-dateien gehören zum framework-kern und können bei framework-updates angepasst oder ersetzt werden.
 - projektcode soll die x-regeln aus der dokumentation respektieren.
+- datei- und ordnernamen werden immer in kleinbuchstaben geführt.
 
 ## objektmodell (singular/plural)
 

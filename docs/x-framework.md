@@ -1,24 +1,29 @@
-# X-Framework.md
+# x-framework.md
 
 ## framework-konzept
 
-Xtreme WebFramework 6 ist md-driven. Pro Objekt ist die `.class.md` die Source of Truth.
+xtreme webframework 6 ist md-driven. pro objekt ist die `.class.md` die source of truth.
 
 ## verzeichnisrollen
 
-- `objects/` — Objektdefinitionen (singular/plural).
-- `api/` — Endpoint-Dateien für Anfragen an `/api/...`.
-- `dist/` — Auslieferung und Compiler-Ausgaben.
-- `compiler/` — Build-/Compile-Logik.
-- `docs/` — menschenlesbare Dokumentation.
-- `x/` — framework-spezifische Bibliothek (`x_*` Dateien).
-- `styles/` — CSS-Dateien (kein SCSS).
+- `objects/` — objektdefinitionen (singular/plural).
+- `api/` — endpoint-dateien für anfragen an `/api/...`.
+- `scripts/` — javascript-klassen und projektlogik.
+- `dist/` — auslieferung und compiler-ausgaben.
+- `compiler/` — build-/compile-logik.
+- `docs/` — menschenlesbare dokumentation.
+- `x/` — framework-spezifische bibliothek (`x_*` dateien).
+- `styles/` — css-dateien (kein scss).
 
 ## x-datei-regel
 
-- Dateien mit Präfix `x` sind framework-spezifische Dateien.
-- Diese Dateien bilden den Framework-Kern und folgen den festen X-Regeln.
-- Projektanpassungen sollen die X-Regeln respektieren und den Workflow in den Docs einhalten.
+- dateien mit präfix `x` sind framework-spezifische dateien.
+- diese dateien bilden den framework-kern und folgen den festen x-regeln.
+- projektanpassungen sollen die x-regeln respektieren und den workflow in den docs einhalten.
+
+## datei- und ordnerkonvention
+
+- datei- und ordnernamen werden immer in kleinbuchstaben geführt.
 
 ## php-klassenregeln
 
