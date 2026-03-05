@@ -16,11 +16,10 @@ U42 Xtreme6 ist ein AI-gestütztes, md-driven Framework mit klaren Build- und Ob
 
 ## compiler-output (dev/prod)
 
-`compiler/compile_objects.php` erzeugt pro zieltyp immer drei dateien in `dist/`:
+`compiler/compile_objects.php` erzeugt pro zieltyp immer zwei dateien in `dist/`:
 
 - `--dev` bundle: lädt die originaldateien per `require_once` (php) oder `import` (js).
 - `--prod` bundle: enthält den komplett vorkompilierten inhalt aller dateien.
-- legacy-datei ohne suffix (z. b. `objects.php`): entspricht weiterhin dem `--prod` bundle für kompatibilität.
 
 aktuelle bundle-paare:
 
@@ -28,3 +27,4 @@ aktuelle bundle-paare:
 - `objects--dev.js` / `objects--prod.js`
 - `objects.test--dev.php` / `objects.test--prod.php`
 - `objects.test--dev.js` / `objects.test--prod.js`
+- `execute--dev.php` / `execute--prod.php` (bootstrap inkl. einbindung der objects-bundles)

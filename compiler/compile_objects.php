@@ -83,7 +83,7 @@ foreach ($targets as $suffix => $meta) {
         }
 
         $compiled[] = "/* SOURCE: {$rel} */\n" . $content;
-        $includes[] = "/* SOURCE: {$rel} */\nimport '../{$relUnix}';";
+        $includes[] = "/* SOURCE: {$rel} */\nimport('../{$relUnix}');";
     }
 
     $prodOutput = implode("\n\n", $compiled) . "\n";
@@ -103,10 +103,6 @@ foreach ($targets as $suffix => $meta) {
 
     file_put_contents($distDir . DIRECTORY_SEPARATOR . $prodName, $prodOutput);
     file_put_contents($distDir . DIRECTORY_SEPARATOR . $devName, $devOutput);
-
-    // Legacy-Zielpfad bleibt aus Kompatibilitätsgründen das Prod-Bundle.
-    $legacyName = $base . '.' . $lang;
-    file_put_contents($distDir . DIRECTORY_SEPARATOR . $legacyName, $prodOutput);
 
     echo "Compiled {$devName} + {$prodName} (" . count($bucket[$suffix]) . " Dateien)\n";
 }
