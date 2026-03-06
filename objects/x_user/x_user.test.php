@@ -1,7 +1,7 @@
 <?php
 
-// platzhalter: test-runner wird später integriert.
-// regel: keine imports/require in dieser datei.
+// Placeholder: a test runner will be integrated later.
+// Rule: no imports or require statements in this file.
 
-echo "x-user.test.php placeholder\n";
+echo "x_user.test.php placeholder\n";
 ?>

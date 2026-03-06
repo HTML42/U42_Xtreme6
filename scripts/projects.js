@@ -1,3 +1,3 @@
 setTimeout(() => {
-  console.log('App startet');
+  console.log('App starts');
 }, 10);

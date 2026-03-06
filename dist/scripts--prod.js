@@ -7,7 +7,7 @@ class IndexController {
 
 /* SOURCE: scripts/projects.js */
 setTimeout(() => {
-  console.log('App startet');
+  console.log('App starts');
 }, 10);
 
 /* SOURCE: scripts/x_framework.class.js */

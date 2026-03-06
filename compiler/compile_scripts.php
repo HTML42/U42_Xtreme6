@@ -5,12 +5,12 @@ $scriptsDir = $root . DIRECTORY_SEPARATOR . 'scripts';
 $distDir = $root . DIRECTORY_SEPARATOR . 'dist';
 
 if (!is_dir($scriptsDir)) {
-    fwrite(STDERR, "scripts-ordner nicht gefunden: {$scriptsDir}\n");
+    fwrite(STDERR, "Scripts directory not found: {$scriptsDir}\n");
     exit(1);
 }
 
 if (!is_dir($distDir) && !mkdir($distDir, 0777, true) && !is_dir($distDir)) {
-    fwrite(STDERR, "dist-ordner konnte nicht erstellt werden: {$distDir}\n");
+    fwrite(STDERR, "Dist directory could not be created: {$distDir}\n");
     exit(1);
 }
 
@@ -66,4 +66,4 @@ $devOutput = implode("\n\n", $includes) . "\n";
 file_put_contents($distDir . DIRECTORY_SEPARATOR . 'scripts--prod.js', $prodOutput);
 file_put_contents($distDir . DIRECTORY_SEPARATOR . 'scripts--dev.js', $devOutput);
 
-echo 'compiled scripts--dev.js + scripts--prod.js (' . count($compiled) . " dateien)\n";
+echo 'Compiled scripts--dev.js + scripts--prod.js (' . count($compiled) . " files)\n";

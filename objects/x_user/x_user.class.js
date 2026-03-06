@@ -18,7 +18,7 @@ class XUser {
 
     const user = new XUser(normalizedId);
 
-    // platzhalter: später durch await api-request ersetzen.
+    // Placeholder: replace with an awaited API request later.
     await Promise.resolve();
 
     const now = Math.floor(Date.now() / 1000);

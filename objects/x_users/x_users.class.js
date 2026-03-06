@@ -16,7 +16,7 @@ class XUsers {
       return XUsers._CACHE[cacheKey];
     }
 
-    // platzhalter: später query/list request gegen api.
+    // Placeholder: replace with a query/list API request later.
     await Promise.resolve();
 
     const list = [];

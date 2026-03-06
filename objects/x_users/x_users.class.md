@@ -1,23 +1,23 @@
-# x-users.class.md
+# x_users.class.md
 
-## rolle
-plural-frameworkklasse `x-users` für listen.
+## role
+Plural framework class `x_users` for lists and collections.
 
-## php-regeln
-- niemals `declare(strict_types=1);`
-- niemals `final class`
-- php-dateien starten immer mit `<?php` und enden immer mit `?>`
-- keine `include`, `include_once`, `require` oder `require_once` in php-klassen
-- konstruktor-signatur immer: `public function __construct(int $id = 0)`
-- runtime-cache: `$_CACHE`
-- cache-key direkt via `json_encode(...)`
+## php rules
+- never use `declare(strict_types=1);`
+- never use `final class`
+- PHP files must start with `<?php` and end with `?>`
+- no `include`, `include_once`, `require`, or `require_once` in PHP class files
+- constructor signature must be `public function __construct(int $id = 0)`
+- runtime cache: `$_CACHE`
+- cache keys may be built directly with `json_encode(...)`
 
-## js-regeln
-- kein `import` und keine exports
-- runtime-cache: `_CACHE`
-- `load(id)` läuft async mit `await` für spätere api-listen
+## js rules
+- no `import` and no exports
+- runtime cache: `_CACHE`
+- `load(id)` runs asynchronously with `await` for future API list requests
 
-## standard-datenfelder (pflicht)
-- `insert_date` (unix timestamp sekunden)
-- `update_date` (unix timestamp sekunden)
-- `delete_date` (unix timestamp sekunden)
+## standard data fields
+- `insert_date` (Unix timestamp in seconds)
+- `update_date` (Unix timestamp in seconds)
+- `delete_date` (Unix timestamp in seconds)

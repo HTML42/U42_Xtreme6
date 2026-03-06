@@ -7,12 +7,12 @@ $objectsDir = $root . DIRECTORY_SEPARATOR . 'objects';
 $distDir = $root . DIRECTORY_SEPARATOR . 'dist';
 
 if (!is_dir($objectsDir)) {
-    fwrite(STDERR, "Objects-Ordner nicht gefunden: {$objectsDir}\n");
+    fwrite(STDERR, "Objects directory not found: {$objectsDir}\n");
     exit(1);
 }
 
 if (!is_dir($distDir) && !mkdir($distDir, 0777, true) && !is_dir($distDir)) {
-    fwrite(STDERR, "Dist-Ordner konnte nicht erstellt werden: {$distDir}\n");
+    fwrite(STDERR, "Dist directory could not be created: {$distDir}\n");
     exit(1);
 }
 
@@ -104,6 +104,6 @@ foreach ($targets as $suffix => $meta) {
     file_put_contents($distDir . DIRECTORY_SEPARATOR . $prodName, $prodOutput);
     file_put_contents($distDir . DIRECTORY_SEPARATOR . $devName, $devOutput);
 
-    echo "Compiled {$devName} + {$prodName} (" . count($bucket[$suffix]) . " Dateien)\n";
+    echo "Compiled {$devName} + {$prodName} (" . count($bucket[$suffix]) . " files)\n";
 }
 ?>

@@ -1,34 +1,34 @@
-# x-user.class.md
+# x_user.class.md
 
-## rolle
-singular-frameworkklasse `x-user`.
+## role
+Singular framework class `x_user`.
 
-## php-regeln
-- niemals `declare(strict_types=1);`
-- niemals `final class`
-- php-dateien starten immer mit `<?php` und enden immer mit `?>`
-- keine `include`, `include_once`, `require` oder `require_once` in php-klassen
-- konstruktor-signatur immer: `public function __construct(int $id = 0)`
-- pflichtmethoden:
+## php rules
+- never use `declare(strict_types=1);`
+- never use `final class`
+- PHP files must start with `<?php` and end with `?>`
+- no `include`, `include_once`, `require`, or `require_once` in PHP class files
+- constructor signature must be `public function __construct(int $id = 0)`
+- required methods:
   - `load($identification = null)`
   - `load_by_id($id)`
   - `load_by_name($name)`
-- runtime-cache: `$_CACHE`
-- cache-key kann direkt mit `json_encode(...)` gebaut werden
+- runtime cache: `$_CACHE`
+- cache keys may be built directly with `json_encode(...)`
 
-## js-regeln
-- kein `import` und keine exports
-- runtime-cache: `_CACHE`
-- nur `load(id)` als async funktion mit `await` für spätere api-anfragen
+## js rules
+- no `import` and no exports
+- runtime cache: `_CACHE`
+- use only `load(id)` as the async loading entry point for future API requests
 
-## standard-datenfelder (pflicht)
+## standard data fields
 - `id`
-- `insert_date` (unix timestamp sekunden)
-- `update_date` (unix timestamp sekunden)
-- `delete_date` (unix timestamp sekunden)
+- `insert_date` (Unix timestamp in seconds)
+- `update_date` (Unix timestamp in seconds)
+- `delete_date` (Unix timestamp in seconds)
 
-## ausgeschlossen
-- kein `update()`
-- kein `toarray()`
-- keine `validate()` methode
-- kein statisches seed-array mit beispieldaten
+## excluded methods and patterns
+- no `update()`
+- no `toarray()`
+- no `validate()` method
+- no static seed array with example data

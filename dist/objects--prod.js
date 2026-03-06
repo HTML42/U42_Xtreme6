@@ -19,7 +19,7 @@ class XUser {
 
     const user = new XUser(normalizedId);
 
-    // platzhalter: später durch await api-request ersetzen.
+    // Placeholder: replace with an awaited API request later.
     await Promise.resolve();
 
     const now = Math.floor(Date.now() / 1000);
@@ -57,7 +57,7 @@ class XUsers {
       return XUsers._CACHE[cacheKey];
     }
 
-    // platzhalter: später query/list request gegen api.
+    // Placeholder: replace with a query/list API request later.
     await Promise.resolve();
 
     const list = [];

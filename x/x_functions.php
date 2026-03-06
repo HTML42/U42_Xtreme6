@@ -1,7 +1,7 @@
 <?php
 
 // x_functions.php
-// Framework-spezifische Hilfsfunktionen (X-Kern).
+// Framework-specific helper functions (x core).
 
 if (!function_exists('x_path_join')) {
     function x_path_join(string ...$parts): string

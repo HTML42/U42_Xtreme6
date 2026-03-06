@@ -1,3 +1,3 @@
-// platzhalter: test-runner wird später integriert.
-// regel: keine imports/require/exports in dieser datei.
-console.log('x-users.test.js placeholder');
+// Placeholder: a test runner will be integrated later.
+// Rule: no imports, require statements, or exports in this file.
+console.log('x_users.test.js placeholder');

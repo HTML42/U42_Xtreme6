@@ -89,7 +89,7 @@ class XUsers
 
     public function __construct(int $id = 0)
     {
-        // id wird in plural-objekten aktuell nicht verwendet, bleibt aber als standard-signatur erhalten.
+        // The id is currently not used in plural objects, but it remains part of the standard signature.
     }
 
     public static function load($identification = null): array
