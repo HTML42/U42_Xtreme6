@@ -2,7 +2,7 @@
 
 class XPluralize
 {
-    protected static array $irregular_singular_to_plural = [
+    protected static array $irregular_plural_map = [
         'person' => 'people',
         'man' => 'men',
         'woman' => 'women',
@@ -10,16 +10,6 @@ class XPluralize
         'mouse' => 'mice',
         'goose' => 'geese',
         'user' => 'users',
-    ];
-
-    protected static array $irregular_plural_to_singular = [
-        'people' => 'person',
-        'men' => 'man',
-        'women' => 'woman',
-        'children' => 'child',
-        'mice' => 'mouse',
-        'geese' => 'goose',
-        'users' => 'user',
     ];
 
     public static function pluralize(string $name): string
@@ -64,8 +54,8 @@ class XPluralize
             return '';
         }
 
-        if (isset(self::$irregular_singular_to_plural[$word])) {
-            return self::$irregular_singular_to_plural[$word];
+        if (isset(self::$irregular_plural_map[$word])) {
+            return self::$irregular_plural_map[$word];
         }
 
         if (preg_match('/[^aeiou]y$/', $word) === 1) {
@@ -85,8 +75,9 @@ class XPluralize
             return '';
         }
 
-        if (isset(self::$irregular_plural_to_singular[$word])) {
-            return self::$irregular_plural_to_singular[$word];
+        $singular = array_search($word, self::$irregular_plural_map, true);
+        if (is_string($singular)) {
+            return $singular;
         }
 
         if (preg_match('/[^aeiou]ies$/', $word) === 1) {
