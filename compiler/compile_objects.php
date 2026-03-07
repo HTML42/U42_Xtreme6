@@ -19,8 +19,8 @@ if (!is_dir($distDir) && !mkdir($distDir, 0777, true) && !is_dir($distDir)) {
 $targets = [
     '.class.php' => ['base' => 'objects', 'lang' => 'php', 'dev' => true],
     '.class.js' => ['base' => 'objects', 'lang' => 'js', 'dev' => true],
-    '.test.php' => ['base' => 'objects.test', 'lang' => 'php', 'dev' => false],
-    '.test.js' => ['base' => 'objects.test', 'lang' => 'js', 'dev' => false],
+    '.test.php' => ['base' => 'objects.test', 'lang' => 'php', 'dev' => false, 'standalone' => true],
+    '.test.js' => ['base' => 'objects.test', 'lang' => 'js', 'dev' => false, 'standalone' => true],
 ];
 
 $iter = new RecursiveIteratorIterator(
@@ -99,11 +99,19 @@ foreach ($targets as $suffix => $meta) {
         $devOutput = implode("\n\n", $includes) . "\n";
     }
 
-    $prodName = $base . '--prod.' . $lang;
+    $isStandalone = ($meta['standalone'] ?? false) === true;
+    $prodName = $isStandalone ? ($base . '.' . $lang) : ($base . '--prod.' . $lang);
     $devName = $base . '--dev.' . $lang;
 
     file_put_contents($distDir . DIRECTORY_SEPARATOR . $prodName, $prodOutput);
 
+
+    if ($isStandalone) {
+        $legacyProdPath = $distDir . DIRECTORY_SEPARATOR . $base . '--prod.' . $lang;
+        if (is_file($legacyProdPath)) {
+            unlink($legacyProdPath);
+        }
+    }
     if ($buildDev) {
         file_put_contents($distDir . DIRECTORY_SEPARATOR . $devName, $devOutput);
         echo "Compiled {$devName} + {$prodName} (" . count($bucket[$suffix]) . " files)\n";
