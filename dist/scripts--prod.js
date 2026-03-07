@@ -29,17 +29,13 @@ setTimeout(() => {
 
   window.X6.router = new XRouter({
     defaultController: 'index',
-    defaultView: 'index'
+    defaultView: 'index',
+    autoInit: false
   });
 
   window.X6.framework.attachRouter(window.X6.router);
+  window.X6.router.init();
 }, 1);
-
-setTimeout(() => {
-  if (window.X6.router) {
-    window.X6.router.init();
-  }
-}, 10);
 
 /* SOURCE: scripts/x_framework.class.js */
 class XFramework {
@@ -55,10 +51,6 @@ class XFramework {
 
   attachRouter(router) {
     this.router = router;
-
-    if (router && router.route) {
-      this.renderRoute(router.route);
-    }
   }
 
   destroy() {
@@ -170,16 +162,19 @@ class XRouter {
   init() {
     this.destroy();
     window.addEventListener('hashchange', this.handleLocationChange);
-    window.addEventListener('load', this.handleLocationChange);
     this.handleLocationChange();
   }
 
   destroy() {
     window.removeEventListener('hashchange', this.handleLocationChange);
-    window.removeEventListener('load', this.handleLocationChange);
   }
 
   handleLocationChange() {
+    if (!window.location.hash) {
+      window.location.hash = `!/${this.defaultController}/${this.defaultView}`;
+      return;
+    }
+
     this.route = this.parse(window.location.hash);
     this.emitRoute(this.route);
 

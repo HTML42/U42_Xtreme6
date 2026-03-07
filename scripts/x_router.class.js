@@ -27,16 +27,19 @@ class XRouter {
   init() {
     this.destroy();
     window.addEventListener('hashchange', this.handleLocationChange);
-    window.addEventListener('load', this.handleLocationChange);
     this.handleLocationChange();
   }
 
   destroy() {
     window.removeEventListener('hashchange', this.handleLocationChange);
-    window.removeEventListener('load', this.handleLocationChange);
   }
 
   handleLocationChange() {
+    if (!window.location.hash) {
+      window.location.hash = `!/${this.defaultController}/${this.defaultView}`;
+      return;
+    }
+
     this.route = this.parse(window.location.hash);
     this.emitRoute(this.route);
 
