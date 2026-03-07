@@ -11,10 +11,6 @@ class XFramework {
 
   attachRouter(router) {
     this.router = router;
-
-    if (router && router.route) {
-      this.renderRoute(router.route);
-    }
   }
 
   destroy() {

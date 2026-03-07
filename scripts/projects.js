@@ -8,14 +8,10 @@ setTimeout(() => {
 
   window.X6.router = new XRouter({
     defaultController: 'index',
-    defaultView: 'index'
+    defaultView: 'index',
+    autoInit: false
   });
 
   window.X6.framework.attachRouter(window.X6.router);
+  window.X6.router.init();
 }, 1);
-
-setTimeout(() => {
-  if (window.X6.router) {
-    window.X6.router.init();
-  }
-}, 10);
