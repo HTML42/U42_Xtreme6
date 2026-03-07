@@ -9,3 +9,9 @@ import('../scripts/x_framework.class.js');
 
 /* SOURCE: scripts/x_router.class.js */
 import('../scripts/x_router.class.js');
+
+/* SOURCE: scripts/x_template.class.js */
+import('../scripts/x_template.class.js');
+
+/* SOURCE: scripts/x_translation.class.js */
+import('../scripts/x_translation.class.js');

@@ -25,7 +25,9 @@ Core idea:
 - `objects/` — object source files and generated object runtime/test files
 - `x/` — framework core classes and helpers (`x_*`)
 - `compiler/` — build scripts for object and script aggregation
-- `scripts/` — frontend/project runtime scripts
+- `scripts/` — frontend/project runtime scripts and base runtime classes
+- `templates/` — JavaScript template source files (`*.js`)
+- `translations/` — JavaScript translation source files (`*.js`), grouped by locale
 - `api/` — HTTP endpoints
 - `dist/` — compiled or aggregated outputs
 - `docs/` — framework documentation
@@ -76,15 +78,19 @@ Generated outputs include:
 - `objects.test--dev.js`
 - `objects.test--prod.js`
 
-### script build
+### script/template/translation build
 
 `compiler/compile_scripts.php`:
 
-- scans `scripts/`
-- aggregates JavaScript sources
+- scans `scripts/`, `templates/`, and `translations/`
+- aggregates JavaScript sources into independent bundles
 - produces:
   - `scripts--dev.js`
   - `scripts--prod.js`
+  - `templates--dev.js`
+  - `templates--prod.js`
+  - `translations--dev.js`
+  - `translations--prod.js`
 
 ## include/require boundaries
 
@@ -176,3 +182,63 @@ Controller source files use the controller suffix (without `.class`), for exampl
 
 - `scripts/controllers/Index.Controller.js`
 
+
+## javascript template and translation runtime
+
+Template definitions now live in JavaScript files under `templates/`.
+
+- Template files assign multiline HTML template strings directly to `window.TEMPLATES['template.name']`.
+- Templates are resolved and rendered through `XTemplate.render(name, params)`.
+
+Translations are JavaScript-based and grouped by locale folder under `translations/`.
+
+- `window.TEMPLATES` is the global template store (array-style object keyed by template name).
+- `window.TRANSLATIONS` is the global translation store (array-style object keyed by translation key).
+- `XTemplate` renders templates with `{{placeholder}}` replacement.
+- `XTranslation` resolves translation strings with `{{placeholder}}` replacement.
+- First implementation ships with `translations/de/` as the initial catalog folder.
+- A file like `translations/de/_default.js` is loaded first because file paths are sorted alphabetically during bundling.
+
+
+## template naming convention (views + partials)
+
+Template files inside `templates/` are JavaScript files and can be named freely, but the project convention is:
+
+- Views: `view.<controllername>.<viewname>.js`
+  - Example: `view.index.index.js`
+  - Template key: `window.TEMPLATES['view.index.index']`
+- Layout/partials:
+  - `body.js`
+  - `header.js`
+  - `sidebar.js`
+  - `footer.js`
+  - optional form templates like `form.login.js`
+
+`body` should provide the shell structure with `header`, `main` (`article` + `aside`), and `footer`.
+
+
+## ai filename guardrail
+
+For templates/translations, AI-generated files must always use lowercase filenames.
+
+- valid: `templates/view.index.index.js`, `translations/de/_default.js`
+- invalid: `templates/View.Index.Index.js`, `templates/Header.js`
+
+If AI creates uppercase names by mistake, they must be renamed to lowercase in the same change before commit.
+
+
+## link style in templates
+
+Use native links with hash routing in templates:
+
+- Use `href="#!/controller/view"`
+- Do not use `data-href` for routing links
+
+
+## final distribution compiler
+
+A final compiler is available at `compiler/compile_ex_final.php`.
+
+- It concatenates all `dist/*--prod.js` files into `dist/ex_final--prod.js`.
+- It concatenates all `dist/*--prod.php` files into `dist/ex_final--prod.php`.
+- Run it after other compilers (its filename `compile_ex_final.php` is intended for last-step execution).

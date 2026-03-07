@@ -31,6 +31,11 @@ when building features, always use this sequence:
 - prefix `x` marks framework-specific artifacts (`x*`).
 - `x*` files belong to the framework core and may be replaced during framework updates.
 - project code must respect all x-rules.
+- global runtime window variables must use uppercase names for core stores (`window.TEMPLATES`, `window.TRANSLATIONS`, `window.X6`).
+
+- for templates/translations, ai must enforce lowercase filenames (examples: `templates/view.index.index.js`, `templates/header.js`, `translations/de/_default.js`).
+- if ai accidentally creates uppercase file names, it must rename them to lowercase before commit and align documentation in `docs/x_framework.md`.
+- template routing links must use native href hash routes (`href="#!/controller/view"`), not `data-href`.
 
 ## detailed documentation map
 

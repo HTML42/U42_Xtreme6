@@ -246,3 +246,109 @@ class XRouter {
 }
 
 window.XRouter = XRouter;
+
+/* SOURCE: scripts/x_template.class.js */
+class XTemplate {
+  static ensureStore() {
+    if (!Array.isArray(window.TEMPLATES)) {
+      window.TEMPLATES = [];
+    }
+
+    return window.TEMPLATES;
+  }
+
+  static set(name, templateString) {
+    const key = String(name || '').trim();
+
+    if (!key) {
+      throw new Error('Template name is required.');
+    }
+
+    const template = String(templateString ?? '');
+    XTemplate.ensureStore()[key] = template;
+
+    return template;
+  }
+
+  static get(name) {
+    const key = String(name || '').trim();
+
+    if (!key) {
+      return '';
+    }
+
+    const template = XTemplate.ensureStore()[key];
+    return typeof template === 'string' ? template : '';
+  }
+
+  static render(name, params = {}) {
+    const template = XTemplate.get(name);
+
+    if (!template) {
+      return '';
+    }
+
+    return template.replace(/\{\{\s*([a-z0-9_]+)\s*\}\}/gi, (match, key) => {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        return String(params[key]);
+      }
+
+      return '';
+    });
+  }
+}
+
+window.XTemplate = XTemplate;
+
+/* SOURCE: scripts/x_translation.class.js */
+class XTranslation {
+  static ensureStore() {
+    if (!Array.isArray(window.TRANSLATIONS)) {
+      window.TRANSLATIONS = [];
+    }
+
+    return window.TRANSLATIONS;
+  }
+
+  static set(key, value) {
+    const translationKey = String(key || '').trim();
+
+    if (!translationKey) {
+      throw new Error('Translation key is required.');
+    }
+
+    const text = String(value ?? '');
+    XTranslation.ensureStore()[translationKey] = text;
+
+    return text;
+  }
+
+  static get(key) {
+    const translationKey = String(key || '').trim();
+
+    if (!translationKey) {
+      return '';
+    }
+
+    const text = XTranslation.ensureStore()[translationKey];
+    return typeof text === 'string' ? text : '';
+  }
+
+  static t(key, params = {}) {
+    const text = XTranslation.get(key);
+
+    if (!text) {
+      return String(key || '');
+    }
+
+    return text.replace(/\{\{\s*([a-z0-9_]+)\s*\}\}/gi, (match, variable) => {
+      if (Object.prototype.hasOwnProperty.call(params, variable)) {
+        return String(params[variable]);
+      }
+
+      return '';
+    });
+  }
+}
+
+window.XTranslation = XTranslation;
