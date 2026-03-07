@@ -7,10 +7,10 @@ require_once __DIR__ . '/objects--prod.php';
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Xtreme6 Execute (prod)</title>
-</head>
-<body>
+  <title>Extreme Web Framework Version 6</title>
   <script src="./objects--prod.js" defer></script>
   <script src="./scripts--prod.js" defer></script>
-</body>
+  <script src="./templates--prod.js" defer></script>
+  <script src="./translations--prod.js" defer></script>
+</head>
 </html>
