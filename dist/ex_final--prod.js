@@ -101,7 +101,9 @@ window.IndexController = IndexController;
 /* SOURCE: scripts/projects.js */
 window.X6 = window.X6 || {};
 
-setTimeout(() => {
+(async () => {
+  await XLanguage.init();
+
   window.X6.framework = new XFramework({
     defaultController: 'index',
     defaultView: 'index'
@@ -115,7 +117,7 @@ setTimeout(() => {
 
   window.X6.framework.attachRouter(window.X6.router);
   window.X6.router.init();
-}, 1);
+})();
 
 /* SOURCE: scripts/x_framework.class.js */
 class XFramework {
@@ -127,6 +129,8 @@ class XFramework {
 
     this.handleRoute = this.handleRoute.bind(this);
     window.addEventListener('x6:route', this.handleRoute);
+
+    this.renderBaseLayout();
   }
 
   attachRouter(router) {
@@ -156,8 +160,94 @@ class XFramework {
     };
   }
 
+  renderBaseLayout() {
+    const bodyTemplate = XTemplate.get('body');
+
+    if (bodyTemplate) {
+      const existingRoot = document.getElementById('App');
+
+      if (existingRoot) {
+        existingRoot.outerHTML = bodyTemplate;
+      } else {
+        document.body.insertAdjacentHTML('beforeend', bodyTemplate);
+      }
+    } else {
+      const root = this.ensureAppRoot();
+      root.innerHTML = [
+        '<header id="page_header"></header>',
+        '<main id="page_main">',
+        '<article id="page_article"></article>',
+        '<aside id="page_aside"></aside>',
+        '</main>',
+        '<footer id="page_footer"></footer>'
+      ].join('');
+    }
+
+    this.renderShellPart('page_header', 'header', {
+      app_name: XTranslation.t('app.name'),
+      menu_home: XTranslation.t('menu.home'),
+      menu_profile: XTranslation.t('menu.profile'),
+      menu_wallets: XTranslation.t('menu.wallets'),
+      menu_deposit: XTranslation.t('menu.deposit'),
+      menu_withdraw: XTranslation.t('menu.withdraw'),
+      menu_plans: XTranslation.t('menu.plans'),
+      menu_admin: XTranslation.t('menu.admin'),
+      menu_logout: XTranslation.t('menu.logout'),
+      menu_login: XTranslation.t('menu.login'),
+      menu_registration: XTranslation.t('menu.registration'),
+      menu_imprint: XTranslation.t('menu.imprint'),
+      menu_privacy: XTranslation.t('menu.privacy')
+    });
+
+    this.renderShellPart('page_aside', 'sidebar', {
+      sidebar_title: XTranslation.t('ui.sidebar.title'),
+      menu_home: XTranslation.t('menu.home'),
+      menu_support: XTranslation.t('menu.support'),
+      menu_contact: XTranslation.t('menu.contact')
+    });
+
+    this.renderShellPart('page_footer', 'footer', {
+      footer_text: XTranslation.t('ui.footer.text', {
+        year: new Date().getFullYear(),
+        app: XTranslation.t('app.name'),
+        rights: 'All rights reserved'
+      }),
+      footer_domain: XTranslation.t('ui.footer.domain', {
+        domain: XTranslation.t('app.domain')
+      })
+    });
+  }
+
+  ensureAppRoot() {
+    let root = document.getElementById('App');
+
+    if (!root) {
+      root = document.createElement('div');
+      root.id = 'App';
+      document.body.appendChild(root);
+    }
+
+    return root;
+  }
+
+  renderShellPart(targetId, templateName, params = {}) {
+    const target = document.getElementById(targetId);
+
+    if (!target) {
+      return;
+    }
+
+    const markup = XTemplate.render(templateName, params);
+
+    if (markup) {
+      target.outerHTML = markup;
+    }
+  }
+
   renderRoute(route) {
     this.currentRoute = route;
+
+    this.renderRouteTemplate(route);
 
     const controllerClassName = `${this.capitalize(route.controller)}Controller`;
     const controllerClass = window[controllerClassName];
@@ -178,6 +268,24 @@ class XFramework {
     }
 
     controller[viewMethod](route);
+  }
+
+  renderRouteTemplate(route) {
+    const article = document.getElementById('page_article');
+
+    if (!article) {
+      return;
+    }
+
+    const templateName = `view.${route.controller}.${route.view}`;
+    const markup = XTemplate.render(templateName, {
+      caption: XTranslation.t(`captions.${route.controller}.${route.view}`),
+      intro: XTranslation.t(`ui.view.${route.view}.intro`)
+    });
+
+    if (markup) {
+      article.innerHTML = markup;
+    }
   }
 
   resolveViewMethod(controller, viewName) {
@@ -211,6 +319,77 @@ class XFramework {
 }
 
 window.XFramework = XFramework;
+
+/* SOURCE: scripts/x_language.class.js */
+class XLanguage {
+  static getDefaultLanguage() {
+    return 'DE';
+  }
+
+  static normalizeLanguage(value) {
+    const normalized = String(value || '').trim().toUpperCase();
+
+    if (!/^[A-Z]{2}$/.test(normalized)) {
+      return XLanguage.getDefaultLanguage();
+    }
+
+    return normalized;
+  }
+
+  static setCurrentLanguage(language) {
+    window.LANG = XLanguage.normalizeLanguage(language);
+
+    if (document && document.documentElement) {
+      document.documentElement.setAttribute('lang', window.LANG.toLowerCase());
+    }
+
+    return window.LANG;
+  }
+
+  static getCurrentLanguage() {
+    if (typeof window.LANG === 'string' && window.LANG.trim() !== '') {
+      return XLanguage.normalizeLanguage(window.LANG);
+    }
+
+    return XLanguage.getDefaultLanguage();
+  }
+
+  static async loadConfig() {
+    const candidates = ['../config.json', '/config.json', './config.json'];
+
+    for (let i = 0; i < candidates.length; i += 1) {
+      const path = candidates[i];
+
+      try {
+        const response = await fetch(path, { cache: 'no-store' });
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const data = await response.json();
+
+        if (data && typeof data === 'object') {
+          return data;
+        }
+      } catch (_error) {
+        // Ignore and continue with next candidate.
+      }
+    }
+
+    return {};
+  }
+
+  static async init() {
+    const config = await XLanguage.loadConfig();
+    const language = config.Language || XLanguage.getDefaultLanguage();
+
+    return XLanguage.setCurrentLanguage(language);
+  }
+}
+
+window.XLanguage = XLanguage;
+window.LANG = XLanguage.getCurrentLanguage();
 
 /* SOURCE: scripts/x_router.class.js */
 class XRouter {
@@ -438,13 +617,13 @@ window.XTranslation = XTranslation;
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['body'] = `
-<div id="app">
-  {{Header}}
+<div id="App">
+  <header id="page_header"></header>
   <main id="page_main">
-    <article id="page_article">{{Article}}</article>
-    <aside id="page_aside">{{Sidebar}}</aside>
+    <article id="page_article"></article>
+    <aside id="page_aside"></aside>
   </main>
-  {{Footer}}
+  <footer id="page_footer"></footer>
 </div>
 `.trim();
 

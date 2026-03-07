@@ -1,6 +1,8 @@
 window.X6 = window.X6 || {};
 
-setTimeout(() => {
+(async () => {
+  await XLanguage.init();
+
   window.X6.framework = new XFramework({
     defaultController: 'index',
     defaultView: 'index'
@@ -14,4 +16,4 @@ setTimeout(() => {
 
   window.X6.framework.attachRouter(window.X6.router);
   window.X6.router.init();
-}, 1);
+})();
