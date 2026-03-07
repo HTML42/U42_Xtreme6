@@ -71,10 +71,10 @@ Generated outputs include:
 
 - `objects--dev.php`
 - `objects--prod.php`
-- `objects.test--prod.php`
+- `objects.test.php`
 - `objects--dev.js`
 - `objects--prod.js`
-- `objects.test--prod.js`
+- `objects.test.js`
 
 ### script/template/translation build
 
@@ -89,6 +89,15 @@ Generated outputs include:
   - `templates--prod.js`
   - `translations--dev.js`
   - `translations--prod.js`
+
+
+## deployment/webroot
+
+Production is intended to run with `dist/` as the webroot/document root.
+
+- `dist/` must be directly served by the web server.
+- project root files such as `config.json` must remain outside of the public webroot.
+- runtime config values needed by frontend code are injected server-side (for example in `execute--*.php`) instead of being fetched from `config.json` in the browser.
 
 ## include/require boundaries
 

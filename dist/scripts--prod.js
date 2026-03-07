@@ -386,34 +386,16 @@ class XLanguage {
     return XLanguage.getDefaultLanguage();
   }
 
-  static async loadConfig() {
-    const candidates = ['../config.json', '/config.json', './config.json'];
-
-    for (let i = 0; i < candidates.length; i += 1) {
-      const path = candidates[i];
-
-      try {
-        const response = await fetch(path, { cache: 'no-store' });
-
-        if (!response.ok) {
-          continue;
-        }
-
-        const data = await response.json();
-
-        if (data && typeof data === 'object') {
-          return data;
-        }
-      } catch (_error) {
-        // Ignore and continue with next candidate.
-      }
+  static loadConfig() {
+    if (window && window.X6_CONFIG && typeof window.X6_CONFIG === 'object') {
+      return window.X6_CONFIG;
     }
 
     return {};
   }
 
-  static async init() {
-    const config = await XLanguage.loadConfig();
+  static init() {
+    const config = XLanguage.loadConfig();
     const language = config.Language || XLanguage.getDefaultLanguage();
 
     return XLanguage.setCurrentLanguage(language);

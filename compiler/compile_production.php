@@ -58,18 +58,29 @@ foreach ($runtimePhpOrder as $name) {
 }
 
 $phpBody = implode("\n\n", $phpChunks);
-$phpOutput = "<?php\n\n" . $phpBody . "\n\n?><!doctype html>\n"
-    . "<html lang=\"de\">\n"
-    . "<head>\n"
-    . "  <meta charset=\"utf-8\">\n"
-    . "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
-    . "  <title>Xtreme-Webframework Version 6</title>\n"
-    . "  <script src=\"./app.js\" defer></script>\n"
-    . "</head>\n"
-    . "<body></body>\n"
-    . "</html>\n";
+$phpOutput = "<?php\n\n" . $phpBody . "\n\n"
+    . '$x6_public_config = [];' . "\n"
+    . '$config_path = dirname(__DIR__) . \'/config.json\';' . "\n"
+    . 'if (is_file($config_path)) {' . "\n"
+    . '    $decoded = json_decode((string) file_get_contents($config_path), true);' . "\n"
+    . '    if (is_array($decoded) && isset($decoded[\'Language\'])) {' . "\n"
+    . '        $x6_public_config[\'Language\'] = $decoded[\'Language\'];' . "\n"
+    . '    }' . "\n"
+    . '}' . "\n\n"
+    . '?><!doctype html>' . "\n"
+    . '<html lang="de">' . "\n"
+    . '<head>' . "\n"
+    . '  <meta charset="utf-8">' . "\n"
+    . '  <meta name="viewport" content="width=device-width, initial-scale=1">' . "\n"
+    . '  <title>Xtreme-Webframework Version 6</title>' . "\n"
+    . '  <script>window.X6_CONFIG = <?php echo json_encode($x6_public_config, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?>;</script>' . "\n"
+    . '  <script src="./app.js" defer></script>' . "\n"
+    . '</head>' . "\n"
+    . '<body></body>' . "\n"
+    . '</html>' . "\n";
 
 file_put_contents($distDir . DIRECTORY_SEPARATOR . 'app.php', $phpOutput);
 
 echo 'Compiled app.js (' . $jsCount . " files)\n";
 echo 'Compiled app.php (' . $phpCount . " files)\n";
+?>
