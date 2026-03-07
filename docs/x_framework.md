@@ -142,3 +142,37 @@ Examples:
 - `x_pluralize.class.php`
 
 `x_pluralize.class.php` is the canonical helper for singular/plural word transformation inside the framework.
+
+## frontend routing (hash-based c/v/a)
+
+The frontend runtime uses a hash router with the format:
+
+- `#!/controller/view`
+- `#!/controller/view/action`
+- `#!/controller/view/3` (numeric third segment is `id`)
+- `#!/controller/view/tab/statistics` (trailing key/value pairs become `params`)
+
+Routing rules:
+
+- first segment: `controller`
+- second segment: `view`
+- third segment:
+  - numeric => `id`
+  - non-numeric with odd remaining segment count => `action`
+- all remaining pairs => `params[key] = value`
+
+Runtime behavior:
+
+- router listens to `load` and `hashchange`
+- every URL change creates a fresh parsed route object
+- router emits `x6:route` events on `window`
+- framework listens to `x6:route`, resolves `XxxController`, and calls the resolved view method
+- bootstrap namespace is `window.X6` (`window.X6.framework`, `window.X6.router`)
+- startup keeps a short delayed bootstrap (`setTimeout`) for race-condition resilience in concatenated builds
+
+## controller file naming
+
+Controller source files use the controller suffix (without `.class`), for example:
+
+- `scripts/controllers/Index.Controller.js`
+
