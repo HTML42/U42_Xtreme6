@@ -1,6 +1,6 @@
 # dist request routing (.htaccess)
 
-# alle requests, die keine bilddateien sind, an execute.php weiterleiten.
+# alle requests, die keine bilddateien sind, an app.php weiterleiten.
 # bildendungen werden direkt ausgeliefert.
 
 RewriteEngine On
@@ -10,4 +10,4 @@ RewriteRule ^ - [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ execute.php [L,QSA]
+RewriteRule ^ app.php [L,QSA]
