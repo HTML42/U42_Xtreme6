@@ -22,25 +22,107 @@ window.IndexController = IndexController;
 window.X6 = window.X6 || {};
 
 (async () => {
-  await XLanguage.init();
-
-  window.X6.framework = new XFramework({
+  await XFramework.bootstrap({
     defaultController: 'index',
     defaultView: 'index'
   });
-
-  window.X6.router = new XRouter({
-    defaultController: 'index',
-    defaultView: 'index',
-    autoInit: false
-  });
-
-  window.X6.framework.attachRouter(window.X6.router);
-  window.X6.router.init();
 })();
 
 /* SOURCE: scripts/x_framework.class.js */
 class XFramework {
+  static sleep(delayMs) {
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, delayMs);
+    });
+  }
+
+  static getControllerClassName(controllerName) {
+    const normalized = String(controllerName || 'index').trim().toLowerCase();
+
+    if (!normalized) {
+      return 'IndexController';
+    }
+
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1) + 'Controller';
+  }
+
+  static async waitForBootReadiness(options = {}) {
+    const timeoutMs = Number(options.timeoutMs || 4000);
+    const intervalMs = Number(options.intervalMs || 40);
+    const controllerClassName = XFramework.getControllerClassName(options.defaultController);
+    const startedAt = Date.now();
+
+    while (Date.now() - startedAt < timeoutMs) {
+      const hasCore = typeof window.XFramework === 'function'
+        && typeof window.XRouter === 'function'
+        && typeof window.XLanguage === 'function'
+        && typeof window.XTemplate === 'function'
+        && typeof window.XTranslation === 'function';
+      const hasController = typeof window[controllerClassName] === 'function';
+
+      if (hasCore && hasController) {
+        return true;
+      }
+
+      await XFramework.sleep(intervalMs);
+    }
+
+    return false;
+  }
+
+  static ensureRuntimeState(options = {}) {
+    window.X6 = window.X6 || {};
+    window.X6.options = window.X6.options || {};
+
+    if (typeof window.X6.options.sidebar !== 'boolean') {
+      window.X6.options.sidebar = false;
+    }
+
+    if (!options || typeof options !== 'object') {
+      return;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(options, 'sidebar')) {
+      window.X6.options.sidebar = options.sidebar === true;
+    }
+  }
+
+  static async bootstrap(options = {}) {
+    const defaultController = options.defaultController || 'index';
+    const defaultView = options.defaultView || 'index';
+
+    XFramework.ensureRuntimeState(options);
+
+    const ready = await XFramework.waitForBootReadiness({
+      timeoutMs: options.timeoutMs,
+      intervalMs: options.intervalMs,
+      defaultController
+    });
+
+    if (!ready) {
+      console.warn('X6 startup timeout: framework classes are not fully loaded.');
+    }
+
+    await XLanguage.init();
+
+    window.X6.framework = new XFramework({
+      defaultController,
+      defaultView
+    });
+
+    window.X6.router = new XRouter({
+      defaultController,
+      defaultView,
+      autoInit: false
+    });
+
+    window.X6.framework.attachRouter(window.X6.router);
+
+    window.setTimeout(() => {
+      window.X6.router.init();
+    }, 0);
+  }
+
   constructor(options = {}) {
     this.defaultController = options.defaultController || 'index';
     this.defaultView = options.defaultView || 'index';
@@ -119,22 +201,17 @@ class XFramework {
       menu_privacy: XTranslation.t('menu.privacy')
     });
 
-    this.renderShellPart('page_aside', 'sidebar', {
-      sidebar_title: XTranslation.t('ui.sidebar.title'),
-      menu_home: XTranslation.t('menu.home'),
-      menu_support: XTranslation.t('menu.support'),
-      menu_contact: XTranslation.t('menu.contact')
-    });
+    if (window.X6 && window.X6.options && window.X6.options.sidebar === true) {
+      this.renderShellPart('page_aside', 'sidebar', {
+        sidebar_title: XTranslation.t('ui.sidebar.title'),
+        menu_home: XTranslation.t('menu.home'),
+        menu_support: XTranslation.t('menu.support'),
+        menu_contact: XTranslation.t('menu.contact')
+      });
+    }
 
     this.renderShellPart('page_footer', 'footer', {
-      footer_text: XTranslation.t('ui.footer.text', {
-        year: new Date().getFullYear(),
-        app: XTranslation.t('app.name'),
-        rights: 'All rights reserved'
-      }),
-      footer_domain: XTranslation.t('ui.footer.domain', {
-        domain: XTranslation.t('app.domain')
-      })
+      footer_text: XTranslation.t('ui.footer.text')
     });
   }
 

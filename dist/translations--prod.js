@@ -144,8 +144,7 @@ Object.assign(window.TRANSLATIONS, {
   'errors.email_confirmation.failed': 'E-Mail-Bestätigung fehlgeschlagen.',
 
   'ui.sidebar.title': 'Navigation',
-  'ui.footer.text': '© {{year}} {{app}} · {{rights}}',
-  'ui.footer.domain': 'Domain: {{domain}}',
+  'ui.footer.text': 'Extreme Web Framework Version 6',
 
   'ui.view.index.intro': 'Willkommen im Xtreme6 Frontend mit JS-Templates.',
   'ui.view.imprint.intro': 'Hier findest du alle rechtlichen Informationen (Impressum).',
