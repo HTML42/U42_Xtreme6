@@ -71,11 +71,9 @@ Generated outputs include:
 
 - `objects--dev.php`
 - `objects--prod.php`
-- `objects.test--dev.php`
 - `objects.test--prod.php`
 - `objects--dev.js`
 - `objects--prod.js`
-- `objects.test--dev.js`
 - `objects.test--prod.js`
 
 ### script/template/translation build
@@ -237,8 +235,8 @@ Use native links with hash routing in templates:
 
 ## final distribution compiler
 
-A final compiler is available at `compiler/compile_ex_final.php`.
+A final compiler is available at `compiler/compile_production.php`.
 
-- It concatenates all `dist/*--prod.js` files into `dist/ex_final--prod.js`.
-- It concatenates all `dist/*--prod.php` files into `dist/ex_final--prod.php`.
-- Run it after other compilers (its filename `compile_ex_final.php` is intended for last-step execution).
+- It concatenates all runtime `dist/*--prod.js` files into `dist/app.js`.
+- It concatenates runtime `dist/*--prod.php` files into `dist/app.php`.
+- Run it after object/script compilers as the last production assembly step.

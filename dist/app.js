@@ -101,12 +101,30 @@ window.IndexController = IndexController;
 /* SOURCE: scripts/projects.js */
 window.X6 = window.X6 || {};
 
-(async () => {
+const init = async () => {
   await XFramework.bootstrap({
     defaultController: 'index',
     defaultView: 'index'
   });
-})();
+};
+
+const appReady = () => {
+  const hasFrameworkClass = typeof window.XFramework === 'function' || typeof window.X_Framework === 'function';
+
+  if (!hasFrameworkClass) {
+    window.setTimeout(appReady, 1);
+    return;
+  }
+
+  if (!XFramework.Ready) {
+    window.setTimeout(appReady, 1);
+    return;
+  }
+
+  void init();
+};
+
+appReady();
 
 /* SOURCE: scripts/x_framework.class.js */
 class XFramework {
@@ -124,6 +142,16 @@ class XFramework {
     }
 
     return normalized.charAt(0).toUpperCase() + normalized.slice(1) + 'Controller';
+  }
+
+
+  static get Ready() {
+    const hasTemplateClass = typeof window.XTemplate === 'function' || typeof window.X_Template === 'function';
+    const hasTranslationClass = typeof window.XTranslation === 'function' || typeof window.X_Translation === 'function';
+    const hasTemplates = Array.isArray(window.Templates) || Array.isArray(window.TEMPLATES);
+    const hasTranslations = Array.isArray(window.Translations) || Array.isArray(window.TRANSLATIONS);
+
+    return hasTemplateClass && hasTranslationClass && hasTemplates && hasTranslations;
   }
 
   static async waitForBootReadiness(options = {}) {
@@ -251,7 +279,14 @@ class XFramework {
       if (existingRoot) {
         existingRoot.outerHTML = bodyTemplate;
       } else {
-        document.body.insertAdjacentHTML('beforeend', bodyTemplate);
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = bodyTemplate;
+
+        const nextRoot = wrapper.firstElementChild;
+
+        if (nextRoot) {
+          document.body.replaceChildren(nextRoot);
+        }
       }
     } else {
       const root = this.ensureAppRoot();
@@ -843,7 +878,7 @@ window.TEMPLATES['view.users.registration'] = `
 window.TRANSLATIONS = Array.isArray(window.TRANSLATIONS) ? window.TRANSLATIONS : [];
 
 Object.assign(window.TRANSLATIONS, {
-  'app.name': 'CloudMining42',
+  'app.name': 'Xtreme 6',
   'app.domain': 'cloudmining42.com',
 
   'menu.login': 'Anmelden',
@@ -927,7 +962,7 @@ Object.assign(window.TRANSLATIONS, {
   'tables.captions.admin': 'Admin',
   'tables.captions.active': 'Aktiv',
 
-  'popup.title': 'Xtreme Popup',
+  'popup.title': 'X6 Popup',
 
   'country.germany': 'Deutschland',
   'country.france': 'Frankreich',
@@ -985,9 +1020,9 @@ Object.assign(window.TRANSLATIONS, {
   'errors.email_confirmation.failed': 'E-Mail-Bestätigung fehlgeschlagen.',
 
   'ui.sidebar.title': 'Navigation',
-  'ui.footer.text': 'Extreme Web Framework Version 6',
+  'ui.footer.text': 'Xtreme-Webframework Version 6',
 
-  'ui.view.index.intro': 'Willkommen im Xtreme6 Frontend mit JS-Templates.',
+  'ui.view.index.intro': 'Willkommen im Xtreme 6 Frontend mit JS-Templates.',
   'ui.view.imprint.intro': 'Hier findest du alle rechtlichen Informationen (Impressum).',
   'ui.view.privacy.intro': 'Hier findest du unsere Datenschutzinformationen.',
   'ui.view.login.intro': 'Melde dich an, um deine Pläne, Einzahlungen und Auszahlungen zu verwalten.',

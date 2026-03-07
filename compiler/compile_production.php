@@ -38,7 +38,7 @@ if ($jsOutput !== '') {
     $jsOutput .= "\n";
 }
 
-file_put_contents($distDir . DIRECTORY_SEPARATOR . 'ex_final--prod.js', $jsOutput);
+file_put_contents($distDir . DIRECTORY_SEPARATOR . 'app.js', $jsOutput);
 
 $phpChunks = [];
 $phpCount = 0;
@@ -58,9 +58,18 @@ foreach ($runtimePhpOrder as $name) {
 }
 
 $phpBody = implode("\n\n", $phpChunks);
-$phpOutput = "<?php\n\n" . $phpBody . "\n\n?>\n";
+$phpOutput = "<?php\n\n" . $phpBody . "\n\n?><!doctype html>\n"
+    . "<html lang=\"de\">\n"
+    . "<head>\n"
+    . "  <meta charset=\"utf-8\">\n"
+    . "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+    . "  <title>Xtreme-Webframework Version 6</title>\n"
+    . "  <script src=\"./app.js\" defer></script>\n"
+    . "</head>\n"
+    . "<body></body>\n"
+    . "</html>\n";
 
-file_put_contents($distDir . DIRECTORY_SEPARATOR . 'ex_final--prod.php', $phpOutput);
+file_put_contents($distDir . DIRECTORY_SEPARATOR . 'app.php', $phpOutput);
 
-echo 'Compiled ex_final--prod.js (' . $jsCount . " files)\n";
-echo 'Compiled ex_final--prod.php (' . $phpCount . " files)\n";
+echo 'Compiled app.js (' . $jsCount . " files)\n";
+echo 'Compiled app.php (' . $phpCount . " files)\n";

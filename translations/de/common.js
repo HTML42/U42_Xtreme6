@@ -37,9 +37,9 @@ Object.assign(window.TRANSLATIONS, {
   'errors.email_confirmation.failed': 'E-Mail-Bestätigung fehlgeschlagen.',
 
   'ui.sidebar.title': 'Navigation',
-  'ui.footer.text': 'Extreme Web Framework Version 6',
+  'ui.footer.text': 'Xtreme-Webframework Version 6',
 
-  'ui.view.index.intro': 'Willkommen im Xtreme6 Frontend mit JS-Templates.',
+  'ui.view.index.intro': 'Willkommen im Xtreme 6 Frontend mit JS-Templates.',
   'ui.view.imprint.intro': 'Hier findest du alle rechtlichen Informationen (Impressum).',
   'ui.view.privacy.intro': 'Hier findest du unsere Datenschutzinformationen.',
   'ui.view.login.intro': 'Melde dich an, um deine Pläne, Einzahlungen und Auszahlungen zu verwalten.',

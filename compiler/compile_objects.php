@@ -17,10 +17,10 @@ if (!is_dir($distDir) && !mkdir($distDir, 0777, true) && !is_dir($distDir)) {
 }
 
 $targets = [
-    '.class.php' => ['base' => 'objects', 'lang' => 'php'],
-    '.class.js' => ['base' => 'objects', 'lang' => 'js'],
-    '.test.php' => ['base' => 'objects.test', 'lang' => 'php'],
-    '.test.js' => ['base' => 'objects.test', 'lang' => 'js'],
+    '.class.php' => ['base' => 'objects', 'lang' => 'php', 'dev' => true],
+    '.class.js' => ['base' => 'objects', 'lang' => 'js', 'dev' => true],
+    '.test.php' => ['base' => 'objects.test', 'lang' => 'php', 'dev' => false],
+    '.test.js' => ['base' => 'objects.test', 'lang' => 'js', 'dev' => false],
 ];
 
 $iter = new RecursiveIteratorIterator(
@@ -52,6 +52,7 @@ foreach ($targets as $suffix => $meta) {
 
     $lang = $meta['lang'];
     $base = $meta['base'];
+    $buildDev = $meta['dev'] === true;
     $isPhpTarget = $lang === 'php';
 
     $compiled = [];
@@ -102,8 +103,18 @@ foreach ($targets as $suffix => $meta) {
     $devName = $base . '--dev.' . $lang;
 
     file_put_contents($distDir . DIRECTORY_SEPARATOR . $prodName, $prodOutput);
-    file_put_contents($distDir . DIRECTORY_SEPARATOR . $devName, $devOutput);
 
-    echo "Compiled {$devName} + {$prodName} (" . count($bucket[$suffix]) . " files)\n";
+    if ($buildDev) {
+        file_put_contents($distDir . DIRECTORY_SEPARATOR . $devName, $devOutput);
+        echo "Compiled {$devName} + {$prodName} (" . count($bucket[$suffix]) . " files)\n";
+        continue;
+    }
+
+    $devPath = $distDir . DIRECTORY_SEPARATOR . $devName;
+    if (is_file($devPath)) {
+        unlink($devPath);
+    }
+
+    echo "Compiled {$prodName} (" . count($bucket[$suffix]) . " files)\n";
 }
 ?>

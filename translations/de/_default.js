@@ -1,7 +1,7 @@
 window.TRANSLATIONS = Array.isArray(window.TRANSLATIONS) ? window.TRANSLATIONS : [];
 
 Object.assign(window.TRANSLATIONS, {
-  'app.name': 'CloudMining42',
+  'app.name': 'Xtreme 6',
   'app.domain': 'cloudmining42.com',
 
   'menu.login': 'Anmelden',
@@ -85,7 +85,7 @@ Object.assign(window.TRANSLATIONS, {
   'tables.captions.admin': 'Admin',
   'tables.captions.active': 'Aktiv',
 
-  'popup.title': 'Xtreme Popup',
+  'popup.title': 'X6 Popup',
 
   'country.germany': 'Deutschland',
   'country.france': 'Frankreich',

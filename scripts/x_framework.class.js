@@ -150,7 +150,14 @@ class XFramework {
       if (existingRoot) {
         existingRoot.outerHTML = bodyTemplate;
       } else {
-        document.body.insertAdjacentHTML('beforeend', bodyTemplate);
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = bodyTemplate;
+
+        const nextRoot = wrapper.firstElementChild;
+
+        if (nextRoot) {
+          document.body.replaceChildren(nextRoot);
+        }
       }
     } else {
       const root = this.ensureAppRoot();
