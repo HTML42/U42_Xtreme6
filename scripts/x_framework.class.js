@@ -15,6 +15,16 @@ class XFramework {
     return normalized.charAt(0).toUpperCase() + normalized.slice(1) + 'Controller';
   }
 
+
+  static get Ready() {
+    const hasTemplateClass = typeof window.XTemplate === 'function' || typeof window.X_Template === 'function';
+    const hasTranslationClass = typeof window.XTranslation === 'function' || typeof window.X_Translation === 'function';
+    const hasTemplates = Array.isArray(window.Templates) || Array.isArray(window.TEMPLATES);
+    const hasTranslations = Array.isArray(window.Translations) || Array.isArray(window.TRANSLATIONS);
+
+    return hasTemplateClass && hasTranslationClass && hasTemplates && hasTranslations;
+  }
+
   static async waitForBootReadiness(options = {}) {
     const timeoutMs = Number(options.timeoutMs || 4000);
     const intervalMs = Number(options.intervalMs || 40);
