@@ -110,3 +110,15 @@ Media query aliases (documentation-level naming):
 - start with a config-like block for project base values (`color_main`, `color_secondary`, `distance_normal`, `font_size_normal`, `page_width`).
 - add structured element descriptions so AI can generate dedicated CSS files per element/component.
 - when an element spec changes, update the spec first, then regenerate/adjust CSS.
+
+
+## css compilation contract
+
+Styles are generated/maintained from markdown instructions and then compiled for runtime delivery.
+
+- source instructions: `styles/styles.md`
+- source css files: `styles/*.css`
+- compiler: `compiler/compile_styles.php`
+- runtime output: `dist/styles.css`
+
+`compiler/compile_production.php` includes `./styles.css` in `dist/app.php`, so style compilation must run before final production assembly.

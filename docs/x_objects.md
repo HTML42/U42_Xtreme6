@@ -17,6 +17,14 @@ Each domain concept must be modeled as a pair:
 
 Never create only one side of the pair.
 
+## markdown-only authoring principle
+
+The human author describes behavior in markdown. AI generates runtime code.
+
+- do not treat `.class.php` / `.class.js` as primary design documents.
+- describe object capabilities in `.class.md` with enough detail to generate methods, validations, and test expectations.
+- avoid static example datasets in runtime files; describe behavior and data contracts instead.
+
 ## feature-first decision rule
 
 Before creating a new object pair:
@@ -73,6 +81,16 @@ Typical characteristics:
 - loads a list or collection
 - may delegate single-item loading to the singular class
 - represents list-oriented access patterns
+
+## authentication capability example (user/users)
+
+If a project requires authentication and `x_user`/`x_users` is used:
+
+- the markdown spec must explicitly describe login and registration flows.
+- required login behavior includes username/password input contract, DB check contract, and result handling contract (success/failure states).
+- required registration behavior includes input validation contract (username/email/password), persistence contract, and post-registration login/redirect contract.
+
+These behaviors are documented in markdown and then generated into both runtime classes and tests.
 
 ## object file authoring rules
 

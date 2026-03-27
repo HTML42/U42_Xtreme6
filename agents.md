@@ -7,11 +7,12 @@
 - all ai agents and developers must read this file first.
 - this file is intentionally an overview and decision guide.
 - detailed operational documentation lives in `docs/x_framework.md`, `docs/x_objects.md`, and `docs/x_styles.md`.
+- `Routes.md` is a project-level route specification and is intentionally not prefixed with `x_`.
 - in case of conflicts, always apply: **`agents.md` over `docs/*`**.
 
 ## framework concept (xtreme6)
 
-u42 xtreme6 is a **markdown-driven framework** where behavior starts in `.class.md` files and code/tests are generated from that source.
+u42 xtreme6 is a **markdown-driven framework** where behavior starts in markdown files (`*.class.md`, `Routes.md`, `styles/styles.md`) and code/tests/assets are generated from that source.
 
 ## core principle: pluralization is central
 
@@ -51,5 +52,6 @@ when building features, always use this sequence:
 - `docs/x_objects.md`: detailed object modeling reference
 - `docs/x_styles.md`: style-token system and AI-driven styling workflow
 - `docs/project.md`: intentionally empty placeholder for downstream app projects
+- `Routes.md`: project route source-of-truth for controller/template generation
 
 `docs/*` may explain these rules, but must not redefine or contradict them.
