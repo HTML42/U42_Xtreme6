@@ -1,3 +1,45 @@
 :root {
-  --Distance: 20px;
+  --x-amplifier: 20%;
+  --x-page-width: 1200px;
+
+  --x-font-size-normal: 14px;
+  --x-font-size-small: 11.2px;
+  --x-font-size-tiny: 8.4px;
+  --x-font-size-big: 16.8px;
+  --x-font-size-huge: 19.6px;
+
+  --x-distance-normal: 20px;
+  --x-distance-small: 10px;
+  --x-distance-tiny: 5px;
+  --x-distance-big: 40px;
+  --x-distance-huge: 80px;
+
+  --x-color-main-lighter: #808b96;
+  --x-color-main-light: #566573;
+  --x-color-main-normal: #2c3e50;
+  --x-color-main-dark: #233240;
+  --x-color-main-darker: #1a2530;
+
+  --x-color-secondary-lighter: #82e0aa;
+  --x-color-secondary-light: #58d68d;
+  --x-color-secondary-normal: #2ecc71;
+  --x-color-secondary-dark: #25a35a;
+  --x-color-secondary-darker: #1c7a44;
+
+  --x-color-grey-normal: rgba(0, 0, 0, 0.2);
+  --x-color-grey-dark: rgba(0, 0, 0, 0.3);
+  --x-color-grey-darker: rgba(0, 0, 0, 0.4);
+  --x-color-grey-light: rgba(0, 0, 0, 0.1);
+  --x-color-grey-lighter: rgba(0, 0, 0, 0.05);
+  --x-color-white: #ffffff;
+
+  --x-header-height: 60px;
+  --x-header-height-scroll: 50px;
+  --x-logo-size: 220px;
+  --x-logo-margin: 10px;
+  --x-submenu-height: 40px;
+  --x-footer-min-height: 100px;
+
+  --x-bp-small-max: 570px;
+  --x-bp-big-min: 1200px;
 }

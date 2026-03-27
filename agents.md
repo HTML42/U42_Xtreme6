@@ -6,7 +6,7 @@
 
 - all ai agents and developers must read this file first.
 - this file is intentionally an overview and decision guide.
-- detailed operational documentation lives in `docs/x_framework.md` and `docs/x_objects.md`.
+- detailed operational documentation lives in `docs/x_framework.md`, `docs/x_objects.md`, and `docs/x_styles.md`.
 - in case of conflicts, always apply: **`agents.md` over `docs/*`**.
 
 ## framework concept (xtreme6)
@@ -41,6 +41,7 @@ when building features, always use this sequence:
 
 - `docs/x_framework.md`: framework architecture, build flow, include/require boundaries, php/js class constraints.
 - `docs/x_objects.md`: singular/plural object model, required file set, ai workflow, and object authoring rules.
+- `docs/x_styles.md`: framework style-token and AI-driven style workflow.
 - `docs/project.md`: intentionally empty in this framework repository.
 
 ## documentation layout
@@ -48,6 +49,7 @@ when building features, always use this sequence:
 - `agents.md`: authoritative overview and decision precedence (root)
 - `docs/x_framework.md`: detailed framework technical reference
 - `docs/x_objects.md`: detailed object modeling reference
+- `docs/x_styles.md`: style-token system and AI-driven styling workflow
 - `docs/project.md`: intentionally empty placeholder for downstream app projects
 
 `docs/*` may explain these rules, but must not redefine or contradict them.

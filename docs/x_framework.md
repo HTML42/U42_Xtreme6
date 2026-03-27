@@ -37,7 +37,7 @@ Core idea:
 
 - file names and directory names must be lowercase.
 - framework-specific files use the `x_` prefix.
-- framework documentation files also follow the `x_` convention, for example `x_framework.md` and `x_objects.md`.
+- framework documentation files follow the `x_` convention (underscore only), for example `x_framework.md`, `x_objects.md`, and `x_styles.md`.
 - framework code may be replaced during framework updates.
 
 ## source-of-truth model
