@@ -32,3 +32,10 @@ Singular framework class `x_user`.
 - no `toarray()`
 - no `validate()` method
 - no static seed array with example data
+
+## authentication extension contract
+- login flow must be spec-driven here (input: username + password)
+- must define DB check behavior for credential match/mismatch
+- must define structured result payload for success/error
+- registration flow must define required fields: username, email, password, password2
+- must define password confirmation validation and duplicate-user checks
