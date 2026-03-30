@@ -1,4 +1,4 @@
-/* SOURCE: styles/x_reset.css */
+/* SOURCE: styles\x_reset.css */
 /* x_reset.css - vereinheitlicht Browser-Defaults */
 
 *,
@@ -123,7 +123,7 @@ table {
   border-spacing: 0;
 }
 
-/* SOURCE: styles/x_variables.css */
+/* SOURCE: styles\x_variables.css */
 :root {
   --x-amplifier: 20%;
   --x-page-width: 1200px;
