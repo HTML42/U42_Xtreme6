@@ -1,5 +1,8 @@
-/* SOURCE: scripts\controllers\Index.Controller.js */
-import('../scripts/controllers/Index.Controller.js');
+/* SOURCE: scripts\controllers\index.controller.js */
+import('../scripts/controllers/index.controller.js');
+
+/* SOURCE: scripts\controllers\users.controller.js */
+import('../scripts/controllers/users.controller.js');
 
 /* SOURCE: scripts\projects.js */
 import('../scripts/projects.js');

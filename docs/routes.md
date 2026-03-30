@@ -18,6 +18,17 @@ From this file, AI/framework generation must derive:
 
 If a route is not declared here, its controller/template must not be generated as an assumed default.
 
+Controller generation rule:
+
+- each declared route `controller/view` must map to a method `view()` in `scripts/controllers/<controller>.controller.js`
+- example:
+  - route `#!/index/imprint`
+  - controller file `scripts/controllers/index.controller.js`
+  - method `imprint()`
+
+Controller details must be defined in `scripts/controllers/<controller>.controller.md`.
+These files refine behavior for each view but never replace the route declaration itself.
+
 ## access-path conventions
 
 - singular detail view pattern: `#!/<singular>/view/<id>` (example: `#!/user/view/17`)

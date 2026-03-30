@@ -71,6 +71,7 @@ Key outputs:
 - also compiles every additional entry matching `styles/styles.*.css`
 - resolves local `@import` directives recursively (within `styles/`)
 - writes compiled entry files to `dist/` using the same filename
+- applies a lightweight non-invasive minify step (`css_minify`) for the main `styles.css` production output
 
 Default outputs:
 
@@ -92,6 +93,7 @@ Runtime usage convention:
 - emits html shell in `dist/app.php`
 - includes stylesheet link:
   - `<link rel="stylesheet" href="./styles.css">`
+- applies a lightweight non-invasive JS minify step (`js_minify`) to `dist/app.js`
 
 ## local command examples
 

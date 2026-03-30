@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../x/x_functions.php';
+
 $root = dirname(__DIR__);
 $distDir = $root . DIRECTORY_SEPARATOR . 'dist';
 
@@ -35,6 +37,7 @@ foreach ($runtimeJsOrder as $name) {
 
 $jsOutput = implode("\n\n", $jsChunks);
 if ($jsOutput !== '') {
+    $jsOutput = js_minify($jsOutput);
     $jsOutput .= "\n";
 }
 

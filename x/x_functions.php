@@ -66,3 +66,59 @@ if (!function_exists('x_user_load')) {
         return x_user_new((int) ($identification ?? 0));
     }
 }
+
+if (!function_exists('css_minify')) {
+    /**
+     * Lightweight, non-invasive CSS minifier.
+     */
+    function css_minify(string $code): string
+    {
+        $output = str_replace(["\r\n", "\r"], "\n", $code);
+
+        // Remove regular block comments, keep /*! ... */ comments.
+        $output = preg_replace('~/\*(?!\!)[\s\S]*?\*/~', '', $output) ?? $output;
+
+        // Collapse whitespace sequences.
+        $output = preg_replace('/\s+/', ' ', $output) ?? $output;
+
+        // Trim around common CSS tokens.
+        $output = preg_replace('/\s*([{}:;,>])\s*/', '$1', $output) ?? $output;
+        $output = preg_replace('/;}/', '}', $output) ?? $output;
+
+        return trim($output);
+    }
+}
+
+if (!function_exists('js_minify')) {
+    /**
+     * Lightweight, non-invasive JS minifier.
+     * Only removes obvious comments/blank lines and trims line spaces.
+     */
+    function js_minify(string $code): string
+    {
+        $output = str_replace(["\r\n", "\r"], "\n", $code);
+
+        // Remove regular block comments, keep /*! ... */ comments.
+        $output = preg_replace('~/\*(?!\!)[\s\S]*?\*/~', '', $output) ?? $output;
+
+        $lines = explode("\n", $output);
+        $result = [];
+
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+
+            if ($trimmed === '') {
+                continue;
+            }
+
+            // Remove full-line single-line comments.
+            if (str_starts_with($trimmed, '//')) {
+                continue;
+            }
+
+            $result[] = $trimmed;
+        }
+
+        return implode("\n", $result);
+    }
+}

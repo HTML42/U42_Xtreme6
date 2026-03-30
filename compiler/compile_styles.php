@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../x/x_functions.php';
+
 $root = dirname(__DIR__);
 $stylesDir = $root . DIRECTORY_SEPARATOR . 'styles';
 $distDir = $root . DIRECTORY_SEPARATOR . 'dist';
@@ -118,6 +120,10 @@ foreach ($entryFiles as $entryPath) {
 
     $compiled = compile_css_file($entryPath, $root, $stylesDir, $visited, $stack);
     if ($compiled !== '') {
+        if (basename($entryPath) === 'styles.css') {
+            $compiled = css_minify($compiled);
+        }
+
         $compiled .= "\n";
     }
 

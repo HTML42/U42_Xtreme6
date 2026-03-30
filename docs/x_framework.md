@@ -78,6 +78,12 @@ Direct business-rule maintenance should happen in markdown first, not in the gen
 - it defines which routes/views/actions exist.
 - controllers, controller methods, and matching templates must be generated from `docs/routes.md`.
 
+Controller generation baseline:
+
+- for each controller in `docs/routes.md`, generate a matching controller file in `scripts/controllers/`
+- for each declared route `controller/view`, generate or update the corresponding controller method (`view`)
+- example: route `index/imprint` requires method `imprint()` in `index.controller.js`
+
 Example route outcomes:
 
 - `index/index` => index start page
@@ -115,11 +121,37 @@ Runtime behavior:
 
 ## controller file naming
 
-Controller source files use the controller suffix (without `.class`), for example:
+Controller source files use lowercase controller suffix naming (without `.class`), for example:
 
-- `scripts/controllers/Index.Controller.js`
+- `scripts/controllers/index.controller.js`
 
 Generated controllers and controller methods must stay in sync with `docs/routes.md`.
+
+## controller markdown overlays (required)
+
+Every controller must have a markdown specification file in addition to the generated controller runtime file.
+
+For controller behavior details, per-controller markdown overlays are required:
+
+- location: `scripts/controllers/`
+- naming: `<controller>.controller.md`
+- examples:
+  - `scripts/controllers/index.controller.md`
+  - `scripts/controllers/users.controller.md`
+
+Purpose of these files:
+
+- define view-specific constraints and behavior details that are too specific for `docs/routes.md`
+- define preconditions, auth rules, required params, response/render strategy, and side effects per view
+- guide AI/codegen without hardcoding business logic in generated JS files
+
+Precedence model for controller generation:
+
+1. `agents.md` (global rules)
+2. `docs/routes.md` (what routes and methods must exist)
+3. `scripts/controllers/<controller>.controller.md` (required per-controller behavior details)
+
+If a controller markdown file is missing, generation is considered incomplete and must be fixed before release.
 
 ## javascript template and translation runtime
 

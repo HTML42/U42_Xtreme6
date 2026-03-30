@@ -1,4 +1,4 @@
-/* SOURCE: scripts\controllers\Index.Controller.js */
+/* SOURCE: scripts\controllers\index.controller.js */
 class IndexController {
   constructor() {
     this.name = 'IndexController';
@@ -17,6 +17,26 @@ class IndexController {
 }
 
 window.IndexController = IndexController;
+
+/* SOURCE: scripts\controllers\users.controller.js */
+class UsersController {
+  constructor() {
+    this.name = 'UsersController';
+    this.route = null;
+  }
+
+  login(route) {
+    this.route = route;
+    console.log('UsersController.login', route);
+  }
+
+  registration(route) {
+    this.route = route;
+    console.log('UsersController.registration', route);
+  }
+}
+
+window.UsersController = UsersController;
 
 /* SOURCE: scripts\projects.js */
 window.X6 = window.X6 || {};
