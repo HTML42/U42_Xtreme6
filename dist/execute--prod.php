@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/objects--prod.php';
-
 $x6_public_config = [];
 $config_path = dirname(__DIR__) . '/config.json';
 if (is_file($config_path)) {

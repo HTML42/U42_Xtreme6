@@ -10,6 +10,9 @@ import('../scripts/projects.js');
 /* SOURCE: scripts\user.class.js */
 import('../scripts/user.class.js');
 
+/* SOURCE: scripts\x_api.class.js */
+import('../scripts/x_api.class.js');
+
 /* SOURCE: scripts\x_framework.class.js */
 import('../scripts/x_framework.class.js');
 

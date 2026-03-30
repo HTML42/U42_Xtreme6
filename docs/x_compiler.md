@@ -119,3 +119,16 @@ Typical runnable endpoints:
 
 - Production-facing entrypoints should include `./styles.css` in `<head>`.
 - Development entrypoints can include source stylesheet(s) directly from `../styles/`.
+- execute entrypoints are frontend bootstraps and should not include object PHP runtime directly.
+- object PHP runtime is consumed by API/server logic via shared API includes.
+
+## database config notes for environments
+
+- `config.json` controls the database engine via `Database` (`JSON` or `MYSQL`).
+- for `JSON`, runtime uses local JSON-table storage under `_db/`.
+- for `MYSQL`, runtime requires a root-level `_db.json` file (ignored by git).
+- each environment must create its own `_db.json` from `_db.example.json` and adjust credentials.
+
+## related docs
+
+- API routing/dimension/output rules: `docs/x_api.md`

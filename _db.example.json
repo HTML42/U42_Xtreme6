@@ -1,0 +1,7 @@
+{
+  "engine": "mysql",
+  "database": "test",
+  "user": "max",
+  "password": "1234",
+  "collation": "utf8_general_ci"
+}

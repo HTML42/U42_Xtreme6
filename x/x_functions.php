@@ -122,3 +122,34 @@ if (!function_exists('js_minify')) {
         return implode("\n", $result);
     }
 }
+
+if (!function_exists('x_api_payload')) {
+    /**
+     * Standard API payload format (X5-compatible contract).
+     */
+    function x_api_payload(bool $success = false, int $status = 200, $response = null, array $errors = []): array
+    {
+        return [
+            'success' => $success,
+            'status' => $status,
+            'response' => $response,
+            'errors' => $errors,
+        ];
+    }
+}
+
+if (!function_exists('x_api_output')) {
+    /**
+     * Sends a standardized JSON API response with HTTP 200.
+     */
+    function x_api_output(bool $success = false, int $status = 200, $response = null, array $errors = []): void
+    {
+        http_response_code(200);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(
+            x_api_payload($success, $status, $response, $errors),
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
+        exit;
+    }
+}

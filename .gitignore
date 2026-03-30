@@ -1,6 +1,6 @@
 # Runtime/storage folders on project root
-/_DB/
-/_TMP/
-/_Cache/
+/_db/
+/_tmp/
+/_cache/
 
 _db.json

@@ -5,6 +5,9 @@
 
 RewriteEngine On
 
+# API requests always go through api.php
+RewriteRule ^api(?:/(.*))?$ api.php?__path=$1 [L,QSA,NC]
+
 RewriteCond %{REQUEST_URI} \.(png|jpg|jpeg|gif|webp|svg|ico)$ [NC]
 RewriteRule ^ - [L]
 

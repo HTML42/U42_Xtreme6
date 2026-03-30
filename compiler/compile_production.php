@@ -17,9 +17,7 @@ $runtimeJsOrder = [
     'translations--prod.js',
 ];
 
-$runtimePhpOrder = [
-    'objects--prod.php',
-];
+$runtimePhpOrder = [];
 
 $jsChunks = [];
 $jsCount = 0;

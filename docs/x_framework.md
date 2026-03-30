@@ -45,6 +45,8 @@ Runtime files can still exist in the repository, but they are treated as generat
 - `docs/` — framework documentation
 - `styles/` — CSS source files
 - `docs/styles.md` — project style instructions
+- `_db.json` — environment-local database config (ignored in git, required for mysql engine)
+- `_db.example.json` — committed template for creating environment-specific `_db.json`
 
 ## naming rules
 
@@ -280,6 +282,17 @@ Reason: object classes and object tests must remain standalone source units that
 
 These files are responsible for composition and load order.
 
+API composition rule:
+
+- API endpoints should use a shared include bootstrap (for example `api/_includes.php`).
+- this bootstrap must load all framework php files from `x/` so helper functions and classes are available.
+- this bootstrap may load object runtime (`dist/objects--prod.php`) for API/business logic usage.
+
+Execute entrypoint rule:
+
+- `dist/execute--dev.php` and `dist/execute--prod.php` are HTML bootstraps and should not load object PHP runtime directly.
+- object PHP runtime is needed for API/server-side logic, not for client shell rendering.
+
 ## php constraints
 
 For framework object classes:
@@ -339,5 +352,35 @@ Examples:
 - `x_compiler.class.php`
 - `x_functions.php`
 - `x_pluralize.class.php`
+- `x_db.class.php`
+- `x_db_json.class.php`
+- `x_db_mysql.class.php`
+
+## database abstraction and engine selection
+
+Database access must go through `XDB` as the main abstraction.
+
+- `XDB` routes requests to engine-specific drivers:
+  - `XDBJson` (default)
+  - `XDBMysql`
+
+Engine selection:
+
+- `config.json` key: `Database`
+- allowed values: `JSON`, `MYSQL` (case-insensitive)
+- invalid values raise a runtime error.
+
+Environment file behavior:
+
+- JSON engine: no `_db.json` required.
+- MYSQL engine: `_db.json` is required and must be present in the project root.
+- `_db.json` is environment-local and ignored by git.
+- `_db.example.json` is the template that must be copied/adapted per environment.
+
+## api reference
+
+API routing, dimension rules, include bootstrap, and output contract are documented in:
+
+- `docs/x_api.md`
 
 `x_pluralize.class.php` is the canonical helper for singular/plural word transformation inside the framework.
