@@ -1,5 +1,4 @@
 #page_footer {
-  margin-top: var(--x-distance-big);
   min-height: var(--x-footer-min-height);
   background: var(--x-color-main-dark);
   color: var(--x-color-white);
