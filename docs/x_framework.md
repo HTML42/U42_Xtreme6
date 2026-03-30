@@ -34,7 +34,7 @@ Runtime files can still exist in the repository, but they are treated as generat
 ## repository structure
 
 - `objects/` — object markdown source and generated object runtime/test files
-- `Routes.md` — project route specification (project-owned, no `x_` prefix)
+- `docs/routes.md` — project route specification (project-owned, no `x_` prefix)
 - `x/` — framework core classes and helpers (`x_*`)
 - `compiler/` — build scripts for object, script, style, and production aggregation
 - `scripts/` — frontend/project runtime scripts and base runtime classes
@@ -47,9 +47,9 @@ Runtime files can still exist in the repository, but they are treated as generat
 
 ## naming rules
 
-- file names and directory names must be lowercase (except explicitly named project docs like `Routes.md`).
+- file names and directory names must be lowercase.
 - framework-specific files use the `x_` prefix.
-- framework documentation files follow the `x_` convention (underscore only), for example `x_framework.md`, `x_objects.md`, and `x_styles.md`.
+- framework documentation files follow the `x_` convention (underscore only), for example `x_framework.md`, `x_compiler.md`, `x_objects.md`, and `x_styles.md`.
 - framework code may be replaced during framework updates.
 
 ## source-of-truth model
@@ -70,12 +70,12 @@ Direct business-rule maintenance should happen in markdown first, not in the gen
 
 ## routes as markdown source-of-truth
 
-`Routes.md` is a **project file**, not a framework file.
+`docs/routes.md` is a **project file**, not a framework file.
 
 - it intentionally has no `x_` prefix.
 - it is maintained continuously during project feature work.
 - it defines which routes/views/actions exist.
-- controllers, controller methods, and matching templates must be generated from `Routes.md`.
+- controllers, controller methods, and matching templates must be generated from `docs/routes.md`.
 
 Example route outcomes:
 
@@ -118,7 +118,7 @@ Controller source files use the controller suffix (without `.class`), for exampl
 
 - `scripts/controllers/Index.Controller.js`
 
-Generated controllers and controller methods must stay in sync with `Routes.md`.
+Generated controllers and controller methods must stay in sync with `docs/routes.md`.
 
 ## javascript template and translation runtime
 
@@ -126,7 +126,7 @@ Template definitions live in JavaScript files under `templates/`.
 
 - template files assign multiline HTML template strings directly to `window.TEMPLATES['template.name']`.
 - templates are resolved and rendered through `XTemplate.render(name, params)`.
-- templates should only exist if a route/component is declared in markdown specs (for route-views: from `Routes.md`).
+- templates should only exist if a route/component is declared in markdown specs (for route-views: from `docs/routes.md`).
 
 Translations are JavaScript-based and grouped by locale folder under `translations/`.
 
