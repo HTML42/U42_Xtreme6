@@ -10,9 +10,14 @@ class IndexController {
     console.log('IndexController.index', route);
   }
 
-  view(route) {
+  imprint(route) {
     this.route = route;
-    console.log('IndexController.view', route);
+    console.log('IndexController.imprint', route);
+  }
+
+  privacy(route) {
+    this.route = route;
+    console.log('IndexController.privacy', route);
   }
 }
 
