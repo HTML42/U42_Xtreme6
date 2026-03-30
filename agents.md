@@ -12,7 +12,7 @@
 
 ## framework concept (xtreme6)
 
-u42 xtreme6 is a **markdown-driven framework** where behavior starts in markdown files (`*.class.md`, `docs/routes.md`, `styles/styles.md`) and code/tests/assets are generated from that source.
+u42 xtreme6 is a **markdown-driven framework** where behavior starts in markdown files (`*.class.md`, `docs/routes.md`, `docs/styles.md`) and code/tests/assets are generated from that source.
 
 ## core principle: pluralization is central
 
@@ -44,6 +44,7 @@ when building features, always use this sequence:
 - `docs/x_compiler.md`: compiler pipeline, build order, and outputs in `dist/`.
 - `docs/x_objects.md`: singular/plural object model, required file set, ai workflow, and object authoring rules.
 - `docs/x_styles.md`: framework style-token and AI-driven style workflow.
+- `docs/styles.md`: project style instruction source for AI-driven css generation.
 - `docs/project.md`: intentionally empty in this framework repository.
 
 ## documentation layout
@@ -53,6 +54,7 @@ when building features, always use this sequence:
 - `docs/x_compiler.md`: compiler pipeline and build command reference
 - `docs/x_objects.md`: detailed object modeling reference
 - `docs/x_styles.md`: style-token system and AI-driven styling workflow
+- `docs/styles.md`: project style source-of-truth for generated css decisions
 - `docs/project.md`: intentionally empty placeholder for downstream app projects
 - `docs/routes.md` is a project route source-of-truth for controller/template generation
 

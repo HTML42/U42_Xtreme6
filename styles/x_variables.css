@@ -41,5 +41,7 @@
   --x-footer-min-height: 100px;
 
   --x-bp-small-max: 570px;
+  --x-bp-medium-min: 571px;
+  --x-bp-medium-max: 1199px;
   --x-bp-big-min: 1200px;
 }

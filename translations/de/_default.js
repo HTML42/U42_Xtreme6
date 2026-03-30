@@ -1,6 +1,12 @@
 window.TRANSLATIONS = Array.isArray(window.TRANSLATIONS) ? window.TRANSLATIONS : [];
+window.TRANSLATIONS_BY_LANG = window.TRANSLATIONS_BY_LANG && typeof window.TRANSLATIONS_BY_LANG === 'object'
+  ? window.TRANSLATIONS_BY_LANG
+  : {};
+window.TRANSLATIONS_BY_LANG.de = Array.isArray(window.TRANSLATIONS_BY_LANG.de)
+  ? window.TRANSLATIONS_BY_LANG.de
+  : [];
 
-Object.assign(window.TRANSLATIONS, {
+Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'app.name': 'Xtreme 6',
   'app.domain': 'cloudmining42.com',
 
@@ -102,3 +108,5 @@ Object.assign(window.TRANSLATIONS, {
   'country.japan': 'Japan',
   'country.india': 'Indien'
 });
+
+Object.assign(window.TRANSLATIONS, window.TRANSLATIONS_BY_LANG.de);

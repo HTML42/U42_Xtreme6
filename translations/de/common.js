@@ -1,6 +1,12 @@
 window.TRANSLATIONS = Array.isArray(window.TRANSLATIONS) ? window.TRANSLATIONS : [];
+window.TRANSLATIONS_BY_LANG = window.TRANSLATIONS_BY_LANG && typeof window.TRANSLATIONS_BY_LANG === 'object'
+  ? window.TRANSLATIONS_BY_LANG
+  : {};
+window.TRANSLATIONS_BY_LANG.de = Array.isArray(window.TRANSLATIONS_BY_LANG.de)
+  ? window.TRANSLATIONS_BY_LANG.de
+  : [];
 
-Object.assign(window.TRANSLATIONS, {
+Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'errors.missing_parameters': 'Fehlende Parameter.',
   'errors.no_permission': 'Keine Berechtigung.',
   'errors.invalid_currency': 'Ungültige Währung.',
@@ -45,3 +51,5 @@ Object.assign(window.TRANSLATIONS, {
   'ui.view.login.intro': 'Melde dich an, um deine Pläne, Einzahlungen und Auszahlungen zu verwalten.',
   'ui.view.registration.intro': 'Bitte fülle alle Felder aus, um dein Konto zu erstellen.'
 });
+
+Object.assign(window.TRANSLATIONS, window.TRANSLATIONS_BY_LANG.de);

@@ -1,9 +1,10 @@
-/* SOURCE: objects/x_user/x_user.class.js */
+/* SOURCE: objects\x_user\x_user.class.js */
 class XUser {
   static _CACHE = {};
 
   constructor(id = 0) {
     this.id = Number(id) || 0;
+    this.login = false;
     this.insert_date = 0;
     this.update_date = 0;
     this.delete_date = 0;
@@ -23,6 +24,7 @@ class XUser {
     await Promise.resolve();
 
     const now = Math.floor(Date.now() / 1000);
+    user.login = normalizedId > 0;
     user.insert_date = now;
     user.update_date = now;
     user.delete_date = 0;
@@ -38,7 +40,7 @@ class XUser {
 
 globalThis.XUser = XUser;
 
-/* SOURCE: objects/x_users/x_users.class.js */
+/* SOURCE: objects\x_users\x_users.class.js */
 class XUsers {
   static _CACHE = {};
 

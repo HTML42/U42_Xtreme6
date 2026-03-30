@@ -1,4 +1,4 @@
-/* SOURCE: templates/body.js */
+/* SOURCE: templates\body.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['body'] = `
@@ -12,7 +12,7 @@ window.TEMPLATES['body'] = `
 </div>
 `.trim();
 
-/* SOURCE: templates/footer.js */
+/* SOURCE: templates\footer.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['footer'] = `
@@ -21,7 +21,7 @@ window.TEMPLATES['footer'] = `
 </footer>
 `.trim();
 
-/* SOURCE: templates/form.login.js */
+/* SOURCE: templates\form.login.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['form.login'] = `
@@ -36,37 +36,55 @@ window.TEMPLATES['form.login'] = `
 </form>
 `.trim();
 
-/* SOURCE: templates/header.js */
+/* SOURCE: templates\header.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['header'] = `
 <header id="page_header">
-  <a class="logo" href="#!/index/index">{{app_name}}</a>
+  <div class="header_inner">
+    <a class="logo" href="#!/index/index">{{app_name}}</a>
 
-  <nav class="menu_main">
-    <ul class="clean_list" data-status="loggedin">
-      <li><a href="#!/index/index">{{menu_home}}</a></li>
-      <li><a href="#!/users/profile">{{menu_profile}}</a></li>
-      <li><a href="#!/users/wallets">{{menu_wallets}}</a></li>
-      <li><a href="#!/users/deposit">{{menu_deposit}}</a></li>
-      <li><a href="#!/users/withdraw">{{menu_withdraw}}</a></li>
-      <li><a href="#!/plans/index">{{menu_plans}}</a></li>
-      <li data-isadmin><a href="#!/admin/dashboard">{{menu_admin}}</a></li>
-      <li><a href="#!/users/logout">{{menu_logout}}</a></li>
-    </ul>
+    <input class="navigation_mobile_toggle" id="navigation_mobile_toggle" type="checkbox" aria-label="Navigation öffnen" />
 
-    <ul class="clean_list" data-status="loggedout">
+    <nav class="navigation_top" aria-label="Top Navigation">
+      <ul class="clean_list">
+        <li><a href="#!/index/index">{{menu_home}}</a></li>
+        <li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
+        <li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
+        <li data-logout-show data-login-hide><a href="#!/users/login">{{menu_login}}</a></li>
+        <li data-logout-show data-login-hide><a href="#!/users/registration">{{menu_registration}}</a></li>
+        <li data-login-show data-logout-hide><a href="#!/users/logout">{{menu_logout}}</a></li>
+      </ul>
+    </nav>
+
+    <label class="navigation_mobile_icon" for="navigation_mobile_toggle" aria-label="Mobile Navigation">☰</label>
+  </div>
+
+  <nav class="navigation_mobile_top" aria-label="Mobile Top Navigation">
+    <ul class="clean_list">
       <li><a href="#!/index/index">{{menu_home}}</a></li>
-      <li><a href="#!/users/login">{{menu_login}}</a></li>
-      <li><a href="#!/users/registration">{{menu_registration}}</a></li>
       <li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
       <li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
+      <li data-logout-show data-login-hide><a href="#!/users/login">{{menu_login}}</a></li>
+      <li data-logout-show data-login-hide><a href="#!/users/registration">{{menu_registration}}</a></li>
+      <li data-login-show data-logout-hide><a href="#!/users/logout">{{menu_logout}}</a></li>
+    </ul>
+  </nav>
+
+  <nav class="navigation_mobile_bottom" aria-label="Mobile Bottom Navigation">
+    <ul class="clean_list">
+      <li><a href="#!/index/index">{{menu_home}}</a></li>
+      <li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
+      <li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
+      <li data-logout-show data-login-hide><a href="#!/users/login">{{menu_login}}</a></li>
+      <li data-logout-show data-login-hide><a href="#!/users/registration">{{menu_registration}}</a></li>
+      <li data-login-show data-logout-hide><a href="#!/users/logout">{{menu_logout}}</a></li>
     </ul>
   </nav>
 </header>
 `.trim();
 
-/* SOURCE: templates/sidebar.js */
+/* SOURCE: templates\sidebar.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['sidebar'] = `
@@ -80,7 +98,7 @@ window.TEMPLATES['sidebar'] = `
 </section>
 `.trim();
 
-/* SOURCE: templates/view.index.imprint.js */
+/* SOURCE: templates\view.index.imprint.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['view.index.imprint'] = `
@@ -90,7 +108,7 @@ window.TEMPLATES['view.index.imprint'] = `
 </section>
 `.trim();
 
-/* SOURCE: templates/view.index.index.js */
+/* SOURCE: templates\view.index.index.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['view.index.index'] = `
@@ -100,7 +118,7 @@ window.TEMPLATES['view.index.index'] = `
 </section>
 `.trim();
 
-/* SOURCE: templates/view.index.privacy.js */
+/* SOURCE: templates\view.index.privacy.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['view.index.privacy'] = `
@@ -110,7 +128,7 @@ window.TEMPLATES['view.index.privacy'] = `
 </section>
 `.trim();
 
-/* SOURCE: templates/view.users.login.js */
+/* SOURCE: templates\view.users.login.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['view.users.login'] = `
@@ -121,7 +139,7 @@ window.TEMPLATES['view.users.login'] = `
 </section>
 `.trim();
 
-/* SOURCE: templates/view.users.registration.js */
+/* SOURCE: templates\view.users.registration.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['view.users.registration'] = `

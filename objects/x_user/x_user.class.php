@@ -5,6 +5,7 @@ class XUser
     public static array $_CACHE = [];
 
     public int $id = 0;
+    public bool $login = false;
     public int $insert_date = 0;
     public int $update_date = 0;
     public int $delete_date = 0;
@@ -39,6 +40,7 @@ class XUser
         }
 
         $user = new self($id);
+        $user->login = true;
         $now = time();
         $user->insert_date = $now;
         $user->update_date = $now;

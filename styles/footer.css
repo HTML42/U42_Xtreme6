@@ -1,0 +1,22 @@
+#page_footer {
+  margin-top: var(--x-distance-big);
+  min-height: var(--x-footer-min-height);
+  background: var(--x-color-main-dark);
+  color: var(--x-color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--x-distance-normal);
+  text-align: center;
+
+  p {
+    font-size: var(--x-font-size-normal);
+    opacity: 0.92;
+  }
+}
+
+@media (max-width: var(--x-bp-medium-max)) {
+  #page_footer {
+    padding-bottom: calc(var(--x-distance-normal) + var(--x-mobile-bottom-nav-height));
+  }
+}

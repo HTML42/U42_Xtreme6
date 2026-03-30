@@ -1,6 +1,6 @@
 <?php
 
-/* SOURCE: objects/x_user/x_user.test.php */
+/* SOURCE: objects\x_user\x_user.test.php */
 // Basic runtime assertions for XUser.
 
 XUser::clear_cache();
@@ -19,7 +19,7 @@ if ($user->id !== 1) {
 echo "PASS: x_user.test.php - XUser id is 1\n";
 
 
-/* SOURCE: objects/x_users/x_users.test.php */
+/* SOURCE: objects\x_users\x_users.test.php */
 // Basic runtime assertions for XUsers.
 
 XUsers::clear_cache();

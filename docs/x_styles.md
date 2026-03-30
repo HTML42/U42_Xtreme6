@@ -12,10 +12,10 @@ This document defines the **framework-level style system** for xtreme6.
 
 xtreme6 style handling is intentionally **AI-driven** and split into two layers:
 
-1. `styles/styles.md` contains project style instructions (config + element descriptions)
+1. `docs/styles.md` contains project style instructions (config + element descriptions)
 2. CSS variables and component CSS are generated from those instructions plus the variable rules in this document
 
-In downstream projects, style instructions should be maintained in `styles/styles.md` as the primary AI input for CSS generation.
+In downstream projects, style instructions should be maintained in `docs/styles.md` as the primary AI input for CSS generation.
 
 ## design baseline: one main + one accent color
 
@@ -87,6 +87,8 @@ The framework baseline mirrors the previous style-variable concept and keeps pre
 ### responsive breakpoints
 
 - `--x-bp-small-max` (default `570px`)
+- `--x-bp-medium-min` (default `571px`)
+- `--x-bp-medium-max` (default `1199px`)
 - `--x-bp-big-min` (default `1200px`)
 
 Media query aliases (documentation-level naming):
@@ -97,16 +99,20 @@ Media query aliases (documentation-level naming):
 - `non-small`: from `571px`
 - `non-big`: up to `1199px`
 
+For tablet-specific behavior, use the medium range via
+`(min-width: var(--x-bp-medium-min)) and (max-width: var(--x-bp-medium-max))`.
+
 ## implementation notes
 
 - keep framework defaults in `styles/x_variables.css`.
 - project-specific overrides may be layered in project CSS, but variable keys should stay stable.
 - avoid hardcoded colors/sizes in components when a token exists.
+- keep CSS organized with nested rules where supported, so component styles remain grouped and readable.
 
 
 ## styles.md authoring rules
 
-- `styles/styles.md` is instruction-oriented (no decision log/changelog format).
+- `docs/styles.md` is instruction-oriented (no decision log/changelog format).
 - start with a config-like block for project base values (`color_main`, `color_secondary`, `distance_normal`, `font_size_normal`, `page_width`).
 - add structured element descriptions so AI can generate dedicated CSS files per element/component.
 - when an element spec changes, update the spec first, then regenerate/adjust CSS.
@@ -116,9 +122,13 @@ Media query aliases (documentation-level naming):
 
 Styles are generated/maintained from markdown instructions and then compiled for runtime delivery.
 
-- source instructions: `styles/styles.md`
-- source css files: `styles/*.css`
+- source instructions: `docs/styles.md`
+- source css entry file: `styles/styles.css`
+- additional optional entry files: `styles/styles.*.css`
+- source css components/import targets: `styles/*.css`
 - compiler: `compiler/compile_styles.php`
-- runtime output: `dist/styles.css`
+- runtime output: `dist/styles.css` (+ optional `dist/styles.*.css`)
 
 `compiler/compile_production.php` includes `./styles.css` in `dist/app.php`, so style compilation must run before final production assembly.
+
+In development, `dist/execute--dev.php` may link directly to `../styles/styles.css` to use source imports without production bundling.

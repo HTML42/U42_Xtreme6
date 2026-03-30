@@ -1,10 +1,11 @@
 /* DIST SOURCE: objects--prod.js */
-/* SOURCE: objects/x_user/x_user.class.js */
+/* SOURCE: objects\x_user\x_user.class.js */
 class XUser {
   static _CACHE = {};
 
   constructor(id = 0) {
     this.id = Number(id) || 0;
+    this.login = false;
     this.insert_date = 0;
     this.update_date = 0;
     this.delete_date = 0;
@@ -24,6 +25,7 @@ class XUser {
     await Promise.resolve();
 
     const now = Math.floor(Date.now() / 1000);
+    user.login = normalizedId > 0;
     user.insert_date = now;
     user.update_date = now;
     user.delete_date = 0;
@@ -39,7 +41,7 @@ class XUser {
 
 globalThis.XUser = XUser;
 
-/* SOURCE: objects/x_users/x_users.class.js */
+/* SOURCE: objects\x_users\x_users.class.js */
 class XUsers {
   static _CACHE = {};
 
@@ -78,7 +80,7 @@ class XUsers {
 globalThis.XUsers = XUsers;
 
 /* DIST SOURCE: scripts--prod.js */
-/* SOURCE: scripts/controllers/Index.Controller.js */
+/* SOURCE: scripts\controllers\Index.Controller.js */
 class IndexController {
   constructor() {
     this.name = 'IndexController';
@@ -98,13 +100,14 @@ class IndexController {
 
 window.IndexController = IndexController;
 
-/* SOURCE: scripts/projects.js */
+/* SOURCE: scripts\projects.js */
 window.X6 = window.X6 || {};
 
 const init = async () => {
   await XFramework.bootstrap({
     defaultController: 'index',
-    defaultView: 'index'
+    defaultView: 'index',
+    userClass: 'User'
   });
 };
 
@@ -126,7 +129,39 @@ const appReady = () => {
 
 appReady();
 
-/* SOURCE: scripts/x_framework.class.js */
+/* SOURCE: scripts\user.class.js */
+class User extends XUser {
+  static _CACHE = {};
+
+  static async load(id = 0) {
+    const normalizedId = Number(id) || 0;
+    const cacheKey = JSON.stringify({ id: normalizedId });
+
+    if (User._CACHE[cacheKey]) {
+      return User._CACHE[cacheKey];
+    }
+
+    const base = await super.load(normalizedId);
+    const user = new User(base.id || normalizedId);
+
+    Object.assign(user, base);
+    user.login = user.login === true;
+
+    User._CACHE[cacheKey] = user;
+    return user;
+  }
+
+  static clear_cache() {
+    User._CACHE = {};
+    if (typeof XUser.clear_cache === 'function') {
+      XUser.clear_cache();
+    }
+  }
+}
+
+window.User = User;
+
+/* SOURCE: scripts\x_framework.class.js */
 class XFramework {
   static sleep(delayMs) {
     return new Promise((resolve) => {
@@ -186,6 +221,14 @@ class XFramework {
       window.X6.options.sidebar = false;
     }
 
+    if (typeof window.X6.options.login !== 'boolean') {
+      window.X6.options.login = false;
+    }
+
+    if (typeof window.X6.options.userClass !== 'string' || window.X6.options.userClass.trim() === '') {
+      window.X6.options.userClass = 'User';
+    }
+
     if (!options || typeof options !== 'object') {
       return;
     }
@@ -193,6 +236,74 @@ class XFramework {
     if (Object.prototype.hasOwnProperty.call(options, 'sidebar')) {
       window.X6.options.sidebar = options.sidebar === true;
     }
+
+    if (Object.prototype.hasOwnProperty.call(options, 'login')) {
+      window.X6.options.login = options.login === true;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(options, 'userClass')) {
+      const normalizedUserClass = String(options.userClass || '').trim();
+      window.X6.options.userClass = normalizedUserClass || 'User';
+    }
+  }
+
+  static resolveUserClass(options = {}) {
+    const preferredByOption = String(options.userClass || '').trim();
+    const preferredByRuntime = String(window.X6?.options?.userClass || '').trim();
+    const preferredClassName = preferredByOption || preferredByRuntime || 'User';
+
+    if (typeof window[preferredClassName] === 'function') {
+      return window[preferredClassName];
+    }
+
+    if (typeof window.User === 'function') {
+      return window.User;
+    }
+
+    if (typeof window.XUser === 'function') {
+      return window.XUser;
+    }
+
+    return null;
+  }
+
+  static async initCurrentUser(options = {}) {
+    if (window.ME && typeof window.ME === 'object') {
+      if (typeof window.ME.login !== 'boolean') {
+        window.ME.login = !!window.ME.login;
+      }
+
+      return window.ME;
+    }
+
+    const UserClass = XFramework.resolveUserClass(options);
+    const meId = Number(options.meId || 0) || 0;
+    let me = null;
+
+    if (UserClass && typeof UserClass.load === 'function') {
+      me = await UserClass.load(meId);
+    }
+
+    if (!me && UserClass) {
+      me = new UserClass(meId);
+    }
+
+    if (!me || typeof me !== 'object') {
+      me = { id: meId };
+    }
+
+    if (typeof me.login !== 'boolean') {
+      me.login = (Number(me.id || 0) > 0);
+    }
+
+    window.ME = me;
+
+    if (window.X6 && window.X6.options) {
+      window.X6.options.login = me.login === true;
+      window.X6.options.userClass = UserClass && UserClass.name ? UserClass.name : window.X6.options.userClass;
+    }
+
+    return me;
   }
 
   static async bootstrap(options = {}) {
@@ -200,6 +311,7 @@ class XFramework {
     const defaultView = options.defaultView || 'index';
 
     XFramework.ensureRuntimeState(options);
+    await XFramework.initCurrentUser(options);
 
     const ready = await XFramework.waitForBootReadiness({
       timeoutMs: options.timeoutMs,
@@ -271,6 +383,8 @@ class XFramework {
   }
 
   renderBaseLayout() {
+    this.applyLoginStateToBody();
+
     const bodyTemplate = XTemplate.get('body');
 
     if (bodyTemplate) {
@@ -328,6 +442,50 @@ class XFramework {
     this.renderShellPart('page_footer', 'footer', {
       footer_text: XTranslation.t('ui.footer.text')
     });
+  }
+
+  isLoggedIn() {
+    if (window.ME && typeof window.ME === 'object' && typeof window.ME.login === 'boolean') {
+      return window.ME.login === true;
+    }
+
+    return !!(window.X6 && window.X6.options && window.X6.options.login === true);
+  }
+
+  applyLoginStateToBody() {
+    if (!document || !document.body) {
+      return;
+    }
+
+    document.body.setAttribute('data-login', this.isLoggedIn() ? 'true' : 'false');
+  }
+
+  setLoginState(isLoggedIn) {
+    window.X6 = window.X6 || {};
+    window.X6.options = window.X6.options || {};
+    window.X6.options.login = isLoggedIn === true;
+
+    if (!window.ME || typeof window.ME !== 'object') {
+      window.ME = { id: 0, login: false };
+    }
+
+    window.ME.login = isLoggedIn === true;
+
+    this.applyLoginStateToBody();
+  }
+
+  setCurrentUser(user) {
+    if (!user || typeof user !== 'object') {
+      return;
+    }
+
+    window.ME = user;
+
+    if (typeof window.ME.login !== 'boolean') {
+      window.ME.login = !!window.ME.login;
+    }
+
+    this.applyLoginStateToBody();
   }
 
   ensureAppRoot() {
@@ -432,7 +590,7 @@ class XFramework {
 
 window.XFramework = XFramework;
 
-/* SOURCE: scripts/x_language.class.js */
+/* SOURCE: scripts\x_language.class.js */
 class XLanguage {
   static getDefaultLanguage() {
     return 'DE';
@@ -485,7 +643,7 @@ class XLanguage {
 window.XLanguage = XLanguage;
 window.LANG = XLanguage.getCurrentLanguage();
 
-/* SOURCE: scripts/x_router.class.js */
+/* SOURCE: scripts\x_router.class.js */
 class XRouter {
   constructor(options = {}) {
     this.defaultController = options.defaultController || 'index';
@@ -600,7 +758,7 @@ class XRouter {
 
 window.XRouter = XRouter;
 
-/* SOURCE: scripts/x_template.class.js */
+/* SOURCE: scripts\x_template.class.js */
 class XTemplate {
   static ensureStore() {
     if (!Array.isArray(window.TEMPLATES)) {
@@ -653,14 +811,50 @@ class XTemplate {
 
 window.XTemplate = XTemplate;
 
-/* SOURCE: scripts/x_translation.class.js */
+/* SOURCE: scripts\x_translation.class.js */
 class XTranslation {
+  static normalizeLanguage(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+
+    if (!/^[a-z]{2}$/.test(normalized)) {
+      return 'de';
+    }
+
+    return normalized;
+  }
+
+  static getCurrentLanguage() {
+    if (window.XLanguage && typeof window.XLanguage.getCurrentLanguage === 'function') {
+      return XTranslation.normalizeLanguage(window.XLanguage.getCurrentLanguage());
+    }
+
+    if (typeof window.LANG === 'string' && window.LANG.trim() !== '') {
+      return XTranslation.normalizeLanguage(window.LANG);
+    }
+
+    return 'de';
+  }
+
   static ensureStore() {
     if (!Array.isArray(window.TRANSLATIONS)) {
       window.TRANSLATIONS = [];
     }
 
     return window.TRANSLATIONS;
+  }
+
+  static ensureLanguageStore(language = null) {
+    if (!window.TRANSLATIONS_BY_LANG || typeof window.TRANSLATIONS_BY_LANG !== 'object') {
+      window.TRANSLATIONS_BY_LANG = {};
+    }
+
+    const lang = XTranslation.normalizeLanguage(language || XTranslation.getCurrentLanguage());
+
+    if (!Array.isArray(window.TRANSLATIONS_BY_LANG[lang])) {
+      window.TRANSLATIONS_BY_LANG[lang] = [];
+    }
+
+    return window.TRANSLATIONS_BY_LANG[lang];
   }
 
   static set(key, value) {
@@ -672,6 +866,7 @@ class XTranslation {
 
     const text = String(value ?? '');
     XTranslation.ensureStore()[translationKey] = text;
+    XTranslation.ensureLanguageStore()[translationKey] = text;
 
     return text;
   }
@@ -681,6 +876,20 @@ class XTranslation {
 
     if (!translationKey) {
       return '';
+    }
+
+    const languageStore = XTranslation.ensureLanguageStore();
+    const languageText = languageStore[translationKey];
+
+    if (typeof languageText === 'string') {
+      return languageText;
+    }
+
+    const fallbackStore = XTranslation.ensureLanguageStore('de');
+    const fallbackText = fallbackStore[translationKey];
+
+    if (typeof fallbackText === 'string') {
+      return fallbackText;
     }
 
     const text = XTranslation.ensureStore()[translationKey];
@@ -707,7 +916,7 @@ class XTranslation {
 window.XTranslation = XTranslation;
 
 /* DIST SOURCE: templates--prod.js */
-/* SOURCE: templates/body.js */
+/* SOURCE: templates\body.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['body'] = `
@@ -721,7 +930,7 @@ window.TEMPLATES['body'] = `
 </div>
 `.trim();
 
-/* SOURCE: templates/footer.js */
+/* SOURCE: templates\footer.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['footer'] = `
@@ -730,7 +939,7 @@ window.TEMPLATES['footer'] = `
 </footer>
 `.trim();
 
-/* SOURCE: templates/form.login.js */
+/* SOURCE: templates\form.login.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['form.login'] = `
@@ -745,37 +954,55 @@ window.TEMPLATES['form.login'] = `
 </form>
 `.trim();
 
-/* SOURCE: templates/header.js */
+/* SOURCE: templates\header.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['header'] = `
 <header id="page_header">
-  <a class="logo" href="#!/index/index">{{app_name}}</a>
+  <div class="header_inner">
+    <a class="logo" href="#!/index/index">{{app_name}}</a>
 
-  <nav class="menu_main">
-    <ul class="clean_list" data-status="loggedin">
-      <li><a href="#!/index/index">{{menu_home}}</a></li>
-      <li><a href="#!/users/profile">{{menu_profile}}</a></li>
-      <li><a href="#!/users/wallets">{{menu_wallets}}</a></li>
-      <li><a href="#!/users/deposit">{{menu_deposit}}</a></li>
-      <li><a href="#!/users/withdraw">{{menu_withdraw}}</a></li>
-      <li><a href="#!/plans/index">{{menu_plans}}</a></li>
-      <li data-isadmin><a href="#!/admin/dashboard">{{menu_admin}}</a></li>
-      <li><a href="#!/users/logout">{{menu_logout}}</a></li>
-    </ul>
+    <input class="navigation_mobile_toggle" id="navigation_mobile_toggle" type="checkbox" aria-label="Navigation öffnen" />
 
-    <ul class="clean_list" data-status="loggedout">
+    <nav class="navigation_top" aria-label="Top Navigation">
+      <ul class="clean_list">
+        <li><a href="#!/index/index">{{menu_home}}</a></li>
+        <li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
+        <li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
+        <li data-logout-show data-login-hide><a href="#!/users/login">{{menu_login}}</a></li>
+        <li data-logout-show data-login-hide><a href="#!/users/registration">{{menu_registration}}</a></li>
+        <li data-login-show data-logout-hide><a href="#!/users/logout">{{menu_logout}}</a></li>
+      </ul>
+    </nav>
+
+    <label class="navigation_mobile_icon" for="navigation_mobile_toggle" aria-label="Mobile Navigation">☰</label>
+  </div>
+
+  <nav class="navigation_mobile_top" aria-label="Mobile Top Navigation">
+    <ul class="clean_list">
       <li><a href="#!/index/index">{{menu_home}}</a></li>
-      <li><a href="#!/users/login">{{menu_login}}</a></li>
-      <li><a href="#!/users/registration">{{menu_registration}}</a></li>
       <li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
       <li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
+      <li data-logout-show data-login-hide><a href="#!/users/login">{{menu_login}}</a></li>
+      <li data-logout-show data-login-hide><a href="#!/users/registration">{{menu_registration}}</a></li>
+      <li data-login-show data-logout-hide><a href="#!/users/logout">{{menu_logout}}</a></li>
+    </ul>
+  </nav>
+
+  <nav class="navigation_mobile_bottom" aria-label="Mobile Bottom Navigation">
+    <ul class="clean_list">
+      <li><a href="#!/index/index">{{menu_home}}</a></li>
+      <li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
+      <li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
+      <li data-logout-show data-login-hide><a href="#!/users/login">{{menu_login}}</a></li>
+      <li data-logout-show data-login-hide><a href="#!/users/registration">{{menu_registration}}</a></li>
+      <li data-login-show data-logout-hide><a href="#!/users/logout">{{menu_logout}}</a></li>
     </ul>
   </nav>
 </header>
 `.trim();
 
-/* SOURCE: templates/sidebar.js */
+/* SOURCE: templates\sidebar.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['sidebar'] = `
@@ -789,7 +1016,7 @@ window.TEMPLATES['sidebar'] = `
 </section>
 `.trim();
 
-/* SOURCE: templates/view.index.imprint.js */
+/* SOURCE: templates\view.index.imprint.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['view.index.imprint'] = `
@@ -799,7 +1026,7 @@ window.TEMPLATES['view.index.imprint'] = `
 </section>
 `.trim();
 
-/* SOURCE: templates/view.index.index.js */
+/* SOURCE: templates\view.index.index.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['view.index.index'] = `
@@ -809,7 +1036,7 @@ window.TEMPLATES['view.index.index'] = `
 </section>
 `.trim();
 
-/* SOURCE: templates/view.index.privacy.js */
+/* SOURCE: templates\view.index.privacy.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['view.index.privacy'] = `
@@ -819,7 +1046,7 @@ window.TEMPLATES['view.index.privacy'] = `
 </section>
 `.trim();
 
-/* SOURCE: templates/view.users.login.js */
+/* SOURCE: templates\view.users.login.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['view.users.login'] = `
@@ -830,7 +1057,7 @@ window.TEMPLATES['view.users.login'] = `
 </section>
 `.trim();
 
-/* SOURCE: templates/view.users.registration.js */
+/* SOURCE: templates\view.users.registration.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['view.users.registration'] = `
@@ -856,10 +1083,16 @@ window.TEMPLATES['view.users.registration'] = `
 `.trim();
 
 /* DIST SOURCE: translations--prod.js */
-/* SOURCE: translations/de/_default.js */
+/* SOURCE: translations\de\_default.js */
 window.TRANSLATIONS = Array.isArray(window.TRANSLATIONS) ? window.TRANSLATIONS : [];
+window.TRANSLATIONS_BY_LANG = window.TRANSLATIONS_BY_LANG && typeof window.TRANSLATIONS_BY_LANG === 'object'
+  ? window.TRANSLATIONS_BY_LANG
+  : {};
+window.TRANSLATIONS_BY_LANG.de = Array.isArray(window.TRANSLATIONS_BY_LANG.de)
+  ? window.TRANSLATIONS_BY_LANG.de
+  : [];
 
-Object.assign(window.TRANSLATIONS, {
+Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'app.name': 'Xtreme 6',
   'app.domain': 'cloudmining42.com',
 
@@ -962,10 +1195,18 @@ Object.assign(window.TRANSLATIONS, {
   'country.india': 'Indien'
 });
 
-/* SOURCE: translations/de/common.js */
-window.TRANSLATIONS = Array.isArray(window.TRANSLATIONS) ? window.TRANSLATIONS : [];
+Object.assign(window.TRANSLATIONS, window.TRANSLATIONS_BY_LANG.de);
 
-Object.assign(window.TRANSLATIONS, {
+/* SOURCE: translations\de\common.js */
+window.TRANSLATIONS = Array.isArray(window.TRANSLATIONS) ? window.TRANSLATIONS : [];
+window.TRANSLATIONS_BY_LANG = window.TRANSLATIONS_BY_LANG && typeof window.TRANSLATIONS_BY_LANG === 'object'
+  ? window.TRANSLATIONS_BY_LANG
+  : {};
+window.TRANSLATIONS_BY_LANG.de = Array.isArray(window.TRANSLATIONS_BY_LANG.de)
+  ? window.TRANSLATIONS_BY_LANG.de
+  : [];
+
+Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'errors.missing_parameters': 'Fehlende Parameter.',
   'errors.no_permission': 'Keine Berechtigung.',
   'errors.invalid_currency': 'Ungültige Währung.',
@@ -1010,3 +1251,5 @@ Object.assign(window.TRANSLATIONS, {
   'ui.view.login.intro': 'Melde dich an, um deine Pläne, Einzahlungen und Auszahlungen zu verwalten.',
   'ui.view.registration.intro': 'Bitte fülle alle Felder aus, um dein Konto zu erstellen.'
 });
+
+Object.assign(window.TRANSLATIONS, window.TRANSLATIONS_BY_LANG.de);

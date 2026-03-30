@@ -1,11 +1,12 @@
 <?php
 
-/* SOURCE: objects/x_user/x_user.class.php */
+/* SOURCE: objects\x_user\x_user.class.php */
 class XUser
 {
     public static array $_CACHE = [];
 
     public int $id = 0;
+    public bool $login = false;
     public int $insert_date = 0;
     public int $update_date = 0;
     public int $delete_date = 0;
@@ -40,6 +41,7 @@ class XUser
         }
 
         $user = new self($id);
+        $user->login = true;
         $now = time();
         $user->insert_date = $now;
         $user->update_date = $now;
@@ -78,7 +80,7 @@ class XUser
 }
 
 
-/* SOURCE: objects/x_users/x_users.class.php */
+/* SOURCE: objects\x_users\x_users.class.php */
 class XUsers
 {
     public static array $_CACHE = [];

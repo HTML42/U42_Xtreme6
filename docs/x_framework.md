@@ -43,7 +43,8 @@ Runtime files can still exist in the repository, but they are treated as generat
 - `api/` — HTTP endpoints
 - `dist/` — compiled or aggregated outputs
 - `docs/` — framework documentation
-- `styles/` — CSS files + `styles/styles.md` style instructions
+- `styles/` — CSS source files
+- `docs/styles.md` — project style instructions
 
 ## naming rules
 
@@ -207,7 +208,7 @@ Generated outputs include:
 
 - scans `styles/` for `*.css`
 - concatenates styles into `dist/styles.css`
-- keeps CSS build aligned with AI-generated style files from `styles/styles.md`
+- keeps CSS build aligned with AI-generated style files from `docs/styles.md`
 
 ## final distribution compiler
 
@@ -270,6 +271,32 @@ Object class files are designed to run in the framework loading model without mo
 
 - PHP object classes use `$_CACHE`
 - JavaScript object classes use `_CACHE`
+
+## user priority model (project override)
+
+The framework base user class is `XUser` (PHP + JS) and remains updateable in framework updates.
+
+For project-specific user behavior, define a project class `User` that extends `XUser`.
+
+Priority resolution is:
+
+1. `User` (project override)
+2. `XUser` (framework fallback)
+
+In frontend runtime, `window.ME` is initialized from this priority and is expected to contain `me.login`.
+The body login state uses this flag via `data-login="true|false"`.
+
+Runtime helper behavior:
+
+- `XFramework.bootstrap()` initializes `window.ME` via project-priority class resolution.
+- `XFramework.setCurrentUser(user)` replaces `window.ME` and refreshes body login state.
+- `XFramework.setLoginState(bool)` updates both `window.ME.login` and `body[data-login]`.
+
+For PHP-side class priority resolution, framework helper functions are available in `x/x_functions.php`:
+
+- `x_user_class_name()`
+- `x_user_new()`
+- `x_user_load()`
 
 ## framework helpers
 

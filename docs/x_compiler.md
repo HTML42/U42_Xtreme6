@@ -67,11 +67,21 @@ Key outputs:
 
 `compiler/compile_styles.php`
 
-- scans `styles/` recursively for `*.css`
-- concatenates css in deterministic order
-- writes runtime stylesheet to `dist/styles.css`
+- uses `styles/styles.css` as the main entry stylesheet
+- also compiles every additional entry matching `styles/styles.*.css`
+- resolves local `@import` directives recursively (within `styles/`)
+- writes compiled entry files to `dist/` using the same filename
 
-This step is mandatory for styled output in `dist/execute--*.php` and `dist/app.php`.
+Default outputs:
+
+- `dist/styles.css` (from `styles/styles.css`)
+- `dist/styles.<name>.css` (from `styles/styles.<name>.css`, if present)
+
+Runtime usage convention:
+
+- dev entry (`dist/execute--dev.php`) links `../styles/styles.css`
+- prod entry (`dist/execute--prod.php` / `dist/app.php`) links `./styles.css`
+- for extra bundles (`styles.<name>.css`), project entry files must add matching `<link>` tags manually.
 
 ### 4) production compiler
 
@@ -105,4 +115,5 @@ Typical runnable endpoints:
 - `dist/execute--test.php`
 - `dist/app.php`
 
-All browser-facing php entrypoints should include `./styles.css` in `<head>`.
+- Production-facing entrypoints should include `./styles.css` in `<head>`.
+- Development entrypoints can include source stylesheet(s) directly from `../styles/`.

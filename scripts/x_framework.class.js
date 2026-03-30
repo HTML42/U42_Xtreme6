@@ -57,6 +57,14 @@ class XFramework {
       window.X6.options.sidebar = false;
     }
 
+    if (typeof window.X6.options.login !== 'boolean') {
+      window.X6.options.login = false;
+    }
+
+    if (typeof window.X6.options.userClass !== 'string' || window.X6.options.userClass.trim() === '') {
+      window.X6.options.userClass = 'User';
+    }
+
     if (!options || typeof options !== 'object') {
       return;
     }
@@ -64,6 +72,74 @@ class XFramework {
     if (Object.prototype.hasOwnProperty.call(options, 'sidebar')) {
       window.X6.options.sidebar = options.sidebar === true;
     }
+
+    if (Object.prototype.hasOwnProperty.call(options, 'login')) {
+      window.X6.options.login = options.login === true;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(options, 'userClass')) {
+      const normalizedUserClass = String(options.userClass || '').trim();
+      window.X6.options.userClass = normalizedUserClass || 'User';
+    }
+  }
+
+  static resolveUserClass(options = {}) {
+    const preferredByOption = String(options.userClass || '').trim();
+    const preferredByRuntime = String(window.X6?.options?.userClass || '').trim();
+    const preferredClassName = preferredByOption || preferredByRuntime || 'User';
+
+    if (typeof window[preferredClassName] === 'function') {
+      return window[preferredClassName];
+    }
+
+    if (typeof window.User === 'function') {
+      return window.User;
+    }
+
+    if (typeof window.XUser === 'function') {
+      return window.XUser;
+    }
+
+    return null;
+  }
+
+  static async initCurrentUser(options = {}) {
+    if (window.ME && typeof window.ME === 'object') {
+      if (typeof window.ME.login !== 'boolean') {
+        window.ME.login = !!window.ME.login;
+      }
+
+      return window.ME;
+    }
+
+    const UserClass = XFramework.resolveUserClass(options);
+    const meId = Number(options.meId || 0) || 0;
+    let me = null;
+
+    if (UserClass && typeof UserClass.load === 'function') {
+      me = await UserClass.load(meId);
+    }
+
+    if (!me && UserClass) {
+      me = new UserClass(meId);
+    }
+
+    if (!me || typeof me !== 'object') {
+      me = { id: meId };
+    }
+
+    if (typeof me.login !== 'boolean') {
+      me.login = (Number(me.id || 0) > 0);
+    }
+
+    window.ME = me;
+
+    if (window.X6 && window.X6.options) {
+      window.X6.options.login = me.login === true;
+      window.X6.options.userClass = UserClass && UserClass.name ? UserClass.name : window.X6.options.userClass;
+    }
+
+    return me;
   }
 
   static async bootstrap(options = {}) {
@@ -71,6 +147,7 @@ class XFramework {
     const defaultView = options.defaultView || 'index';
 
     XFramework.ensureRuntimeState(options);
+    await XFramework.initCurrentUser(options);
 
     const ready = await XFramework.waitForBootReadiness({
       timeoutMs: options.timeoutMs,
@@ -142,6 +219,8 @@ class XFramework {
   }
 
   renderBaseLayout() {
+    this.applyLoginStateToBody();
+
     const bodyTemplate = XTemplate.get('body');
 
     if (bodyTemplate) {
@@ -199,6 +278,50 @@ class XFramework {
     this.renderShellPart('page_footer', 'footer', {
       footer_text: XTranslation.t('ui.footer.text')
     });
+  }
+
+  isLoggedIn() {
+    if (window.ME && typeof window.ME === 'object' && typeof window.ME.login === 'boolean') {
+      return window.ME.login === true;
+    }
+
+    return !!(window.X6 && window.X6.options && window.X6.options.login === true);
+  }
+
+  applyLoginStateToBody() {
+    if (!document || !document.body) {
+      return;
+    }
+
+    document.body.setAttribute('data-login', this.isLoggedIn() ? 'true' : 'false');
+  }
+
+  setLoginState(isLoggedIn) {
+    window.X6 = window.X6 || {};
+    window.X6.options = window.X6.options || {};
+    window.X6.options.login = isLoggedIn === true;
+
+    if (!window.ME || typeof window.ME !== 'object') {
+      window.ME = { id: 0, login: false };
+    }
+
+    window.ME.login = isLoggedIn === true;
+
+    this.applyLoginStateToBody();
+  }
+
+  setCurrentUser(user) {
+    if (!user || typeof user !== 'object') {
+      return;
+    }
+
+    window.ME = user;
+
+    if (typeof window.ME.login !== 'boolean') {
+      window.ME.login = !!window.ME.login;
+    }
+
+    this.applyLoginStateToBody();
   }
 
   ensureAppRoot() {

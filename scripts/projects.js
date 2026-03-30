@@ -3,7 +3,8 @@ window.X6 = window.X6 || {};
 const init = async () => {
   await XFramework.bootstrap({
     defaultController: 'index',
-    defaultView: 'index'
+    defaultView: 'index',
+    userClass: 'User'
   });
 };
 

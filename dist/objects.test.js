@@ -1,4 +1,4 @@
-/* SOURCE: objects/x_user/x_user.test.js */
+/* SOURCE: objects\x_user\x_user.test.js */
 // Basic runtime assertions for XUser.
 (() => {
   if (typeof window.XUser !== 'function') {
@@ -22,7 +22,7 @@
   console.log('PASS: x_user.test.js - XUser id is 1');
 })();
 
-/* SOURCE: objects/x_users/x_users.test.js */
+/* SOURCE: objects\x_users\x_users.test.js */
 // Basic runtime assertions for XUsers.
 (async () => {
   if (typeof window.XUsers !== 'function') {

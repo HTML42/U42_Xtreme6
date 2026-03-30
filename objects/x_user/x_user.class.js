@@ -3,6 +3,7 @@ class XUser {
 
   constructor(id = 0) {
     this.id = Number(id) || 0;
+    this.login = false;
     this.insert_date = 0;
     this.update_date = 0;
     this.delete_date = 0;
@@ -22,6 +23,7 @@ class XUser {
     await Promise.resolve();
 
     const now = Math.floor(Date.now() / 1000);
+    user.login = normalizedId > 0;
     user.insert_date = now;
     user.update_date = now;
     user.delete_date = 0;
