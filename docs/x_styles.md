@@ -104,7 +104,7 @@ For tablet-specific behavior, use the medium range via
 
 ## implementation notes
 
-- keep framework defaults in `styles/x_variables.css`.
+- keep project-editable default tokens in `styles/variables.css` (no `x_` prefix, intended for project maintenance).
 - project-specific overrides may be layered in project CSS, but variable keys should stay stable.
 - avoid hardcoded colors/sizes in components when a token exists.
 - keep CSS organized with nested rules where supported, so component styles remain grouped and readable.

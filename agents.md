@@ -31,6 +31,8 @@ when building features, always use this sequence:
 - file and directory names must be lowercase.
 - prefix `x` marks framework-specific artifacts (`x*`).
 - `x*` files belong to the framework core and may be replaced during framework updates.
+- therefore never rely on direct edits in `x_` files for long-term project behavior; those edits can be lost on update.
+- persistent project changes must be implemented in non-`x_` files whenever possible.
 - project code must respect all x-rules.
 - global runtime window variables must use uppercase names for core stores (`window.TEMPLATES`, `window.TRANSLATIONS`, `window.X6`).
 
