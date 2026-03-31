@@ -54,6 +54,8 @@ Runtime files can still exist in the repository, but they are treated as generat
 - framework-specific files use the `x_` prefix.
 - framework documentation files follow the `x_` convention (underscore only), for example `x_framework.md`, `x_compiler.md`, `x_objects.md`, and `x_styles.md`.
 - framework code may be replaced during framework updates.
+- do not edit `x_` runtime/project files for persistent project customization; treat them as framework-owned and overwriteable on update.
+- place project-maintained code/config in non-`x_` files (for example `styles/variables.css`, `docs/routes.md`, project controllers/templates).
 
 ## source-of-truth model
 
