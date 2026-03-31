@@ -26,6 +26,7 @@ echo "Gefunden: " . count($xFiles) . " x_*-Dateien\n";
 
 echo "[4/4] Kopiere Dateien ins Projekt\n";
 $copied = 0;
+$skipped = 0;
 foreach ($xFiles as $sourceFile) {
     $relative = ltrim(str_replace($extractedRoot, '', $sourceFile), DIRECTORY_SEPARATOR);
     if ($relative === '') {
@@ -37,15 +38,26 @@ foreach ($xFiles as $sourceFile) {
 
     ensureDirectory($targetDir);
 
+    if (is_file($targetFile)) {
+        $sourceMd5 = md5_file($sourceFile);
+        $targetMd5 = md5_file($targetFile);
+
+        if ($sourceMd5 !== false && $targetMd5 !== false && $sourceMd5 === $targetMd5) {
+            $skipped++;
+            echo "  = unverändert: {$relative}\n";
+            continue;
+        }
+    }
+
     if (!copy($sourceFile, $targetFile)) {
         throw new RuntimeException('Konnte Datei nicht kopieren: ' . $relative);
     }
 
     $copied++;
-    echo "  - {$relative}\n";
+    echo "  + aktualisiert: {$relative}\n";
 }
 
-echo "Fertig. {$copied} x_*-Dateien aktualisiert.\n";
+echo "Fertig. {$copied} aktualisiert, {$skipped} unverändert übersprungen.\n";
 
 function ensureDirectory(string $path): void
 {
