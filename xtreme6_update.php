@@ -39,8 +39,8 @@ foreach ($xFiles as $sourceFile) {
     ensureDirectory($targetDir);
 
     if (is_file($targetFile)) {
-        $sourceMd5 = md5_file($sourceFile);
-        $targetMd5 = md5_file($targetFile);
+        $sourceMd5 = normalizedMd5($sourceFile);
+        $targetMd5 = normalizedMd5($targetFile);
 
         if ($sourceMd5 !== false && $targetMd5 !== false && $sourceMd5 === $targetMd5) {
             $skipped++;
@@ -153,6 +153,17 @@ function findXFiles(string $root): array
 
     sort($result);
     return $result;
+}
+
+function normalizedMd5(string $path): string|false
+{
+    $content = @file_get_contents($path);
+    if ($content === false) {
+        return false;
+    }
+
+    $normalized = str_replace(["\r\n", "\r"], "\n", $content);
+    return md5($normalized);
 }
 
 ?>
