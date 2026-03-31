@@ -2,5 +2,6 @@
 /_db/
 /_tmp/
 /_cache/
+/__xupdate/
 
 _db.json
