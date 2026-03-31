@@ -59,6 +59,13 @@ foreach ($xFiles as $sourceFile) {
 
 echo "Fertig. {$copied} aktualisiert, {$skipped} unverändert übersprungen.\n";
 
+clearDirectory($updateDir);
+if (is_dir($updateDir) && !rmdir($updateDir)) {
+    throw new RuntimeException('Konnte __xupdate nicht löschen: ' . $updateDir);
+}
+
+echo "Cleanup: __xupdate wurde gelöscht.\n";
+
 function ensureDirectory(string $path): void
 {
     if (!is_dir($path) && !mkdir($path, 0777, true) && !is_dir($path)) {
