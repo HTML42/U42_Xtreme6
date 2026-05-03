@@ -202,19 +202,12 @@ class XDBMysql
             }
 
             $type = strtolower((string) ($def['type'] ?? 'string'));
-            $required = strtolower((string) ($def['required'] ?? 'no')) === 'yes';
+            $allowsNull = str_contains($type, 'null') || strtolower((string) ($def['required'] ?? 'no')) !== 'yes';
 
-            $sqlType = 'VARCHAR(255)';
-            if (str_contains($type, 'int')) {
-                $sqlType = 'INT';
-            }
-
-            if ($column === 'hash') {
-                $sqlType = 'CHAR(10)';
-            }
-
-            $nullSql = $required ? 'NOT NULL' : 'NULL';
-            $columns[] = '`' . $column . '` ' . $sqlType . ' ' . $nullSql;
+            $sqlType = $this->modelSqlType($column, $type, $def);
+            $nullSql = $allowsNull ? 'NULL' : 'NOT NULL';
+            $defaultSql = $this->modelDefaultSql($def);
+            $columns[] = '`' . $column . '` ' . $sqlType . ' ' . $nullSql . $defaultSql;
         }
 
         if (!array_key_exists('id', $fields)) {
@@ -222,22 +215,78 @@ class XDBMysql
         }
 
         $unique = [];
+        $indexes = [];
         foreach ($fields as $fieldName => $definition) {
             $def = is_array($definition) ? $definition : [];
+            $column = $this->safeColumn((string) $fieldName);
             $isUnique = strtolower((string) ($def['unique'] ?? 'no')) === 'yes';
-            if ($isUnique) {
-                $column = $this->safeColumn((string) $fieldName);
-                if ($column !== 'id') {
-                    $unique[] = 'UNIQUE KEY `uniq_' . $tableName . '_' . $column . '` (`' . $column . '`)';
-                }
+            $isIndex = strtolower((string) ($def['index'] ?? 'no')) === 'yes';
+            if ($isUnique && $column !== 'id') {
+                $unique[] = 'UNIQUE KEY `uniq_' . $tableName . '_' . $column . '` (`' . $column . '`)';
+                continue;
+            }
+            if ($isIndex && $column !== 'id') {
+                $indexes[] = 'KEY `idx_' . $tableName . '_' . $column . '` (`' . $column . '`)';
             }
         }
 
-        $definitions = array_merge($columns, ['PRIMARY KEY (`id`)'], $unique);
+        $definitions = array_merge($columns, ['PRIMARY KEY (`id`)'], $unique, $indexes);
 
         return 'CREATE TABLE IF NOT EXISTS `' . $tableName . '` ('
             . implode(', ', $definitions)
             . ') ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
+    }
+
+    private function modelSqlType(string $column, string $type, array $def): string
+    {
+        if ($column === 'hash') {
+            return 'CHAR(10)';
+        }
+
+        if (str_contains($type, 'int')) {
+            return 'INT';
+        }
+
+        if ($type === 'bool') {
+            return 'TINYINT(1)';
+        }
+
+        if ($type === 'float') {
+            return 'DOUBLE';
+        }
+
+        if ($type === 'json') {
+            return 'JSON';
+        }
+
+        if ($type === 'text') {
+            return 'TEXT';
+        }
+
+        $max = (int) ($def['max'] ?? 255);
+        if ($max < 1 || $max > 4096) {
+            $max = 255;
+        }
+
+        return 'VARCHAR(' . $max . ')';
+    }
+
+    private function modelDefaultSql(array $def): string
+    {
+        if (!array_key_exists('default', $def)) {
+            return '';
+        }
+
+        $default = trim((string) $def['default'], "` \t\n\r\0\x0B");
+        if (strtolower($default) === 'null') {
+            return ' DEFAULT NULL';
+        }
+
+        if (is_numeric($default)) {
+            return ' DEFAULT ' . $default;
+        }
+
+        return " DEFAULT '" . str_replace("'", "''", $default) . "'";
     }
 }
 ?>

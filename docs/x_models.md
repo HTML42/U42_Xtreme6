@@ -78,9 +78,9 @@ Bei `n:m` muss zusätzlich eine Join-Tabelle beschrieben werden.
 
 JSON- und MySQL-Engine müssen dieselben Modellregeln respektieren.
 
-- JSON nutzt die Model-MDs für Tabellen-Bootstrap und spätere Validierung.
-- MySQL nutzt die Model-MDs für `CREATE TABLE IF NOT EXISTS` und spätere Schema-/Validierungschecks.
-- Model-Änderungen brauchen künftig eine Migration-/Schema-Update-Strategie; aktuell ist nur Create-if-missing aktiv.
+- JSON nutzt die Model-MDs für Tabellen-Bootstrap und Insert-/Update-Validierung.
+- MySQL nutzt die Model-MDs für `CREATE TABLE IF NOT EXISTS`, Index-/Unique-Planung und dieselbe Insert-/Update-Validierung über `XDB`.
+- Model-Änderungen werden vor Anwendung als Dry-Run/Report sichtbar; destructive Alter/Migrationen werden nicht automatisch ausgeführt.
 
 ## AI-Workflow
 
@@ -105,6 +105,25 @@ Beim Initialisieren von `XDB` werden Models aus `models/*.md` geladen und an die
   - versucht beim Start die DB-Verbindung aufzubauen
   - wirft bei Verbindungsfehlern einen klaren Fehler
   - vergleicht vorhandene Tabellen mit den Models und erstellt fehlende Tabellen automatisch
+
+## Schema-Compiler / Dry-Run
+
+`php compiler/report_model_schema.php` parst `models/*.md` in ein internes Schemaformat und gibt aus:
+
+- JSON-Tabellen-/Meta-Dateien, die aus Models entstehen
+- MySQL-`CREATE TABLE IF NOT EXISTS` Plan inklusive Typen, Defaults, Unique Keys und Indizes
+- Validierungsfelder je Tabelle
+
+Der Report ist non-destruktiv und dient als Schema-Diff-/Migrationsvorstufe.
+
+Aktuell erzwingt `XDB` vor `insert` und `update` zentrale Model-Validierungen:
+
+- Feld existiert im Model
+- required/default/null-Regeln
+- Typprüfung für `int`, `string`, `bool`, `float`, `json`, `text`
+- `min`, `max`, `enum`
+- `format: email`, `format: password hash`, `format: exactly 10 characters`
+- `unique: yes` gegen vorhandene Datensätze
 
 ## Beispiel: users
 

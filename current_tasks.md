@@ -197,17 +197,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 18: datenbank-schema compiler aus models/*.md
 
-- [ ] **subtask 18.1**: `models/*.md` in ein internes Schemaformat parsen (fields, type, required, default, unique, index).
-- [ ] **subtask 18.2**: DB-Validierungen aus Model-MD ableiten (format, range, enum, custom rules).
-- [ ] **subtask 18.3**: JSON-Engine Schema-Checks vor Insert/Update erzwingen.
-- [ ] **subtask 18.4**: MySQL-Engine Schema-Create/Alter-Plan aus Model-MD generieren.
-- [ ] **subtask 18.5**: Schema-Diff/Dry-Run für DB-Migrationen einführen.
+- [x] **subtask 18.1**: `models/*.md` in ein internes Schemaformat parsen (fields, type, required, default, unique, index).
+- [x] **subtask 18.2**: DB-Validierungen aus Model-MD ableiten (format, range, enum, custom rules).
+- [x] **subtask 18.3**: JSON-Engine Schema-Checks vor Insert/Update erzwingen.
+- [x] **subtask 18.4**: MySQL-Engine Schema-Create/Alter-Plan aus Model-MD generieren.
+- [x] **subtask 18.5**: Schema-Diff/Dry-Run für DB-Migrationen einführen.
 
 ### acceptance criteria (task 18)
 
-- [ ] DB-Felder, Defaults, Indizes und Unique-Regeln kommen aus `models/*.md`.
-- [ ] JSON und MySQL validieren konsistent gegen dasselbe Model-MD.
-- [ ] Schema-Änderungen können vor Anwendung als Dry-Run geprüft werden.
+- [x] DB-Felder, Defaults, Indizes und Unique-Regeln kommen aus `models/*.md`.
+- [x] JSON und MySQL validieren konsistent gegen dasselbe Model-MD.
+- [x] Schema-Änderungen können vor Anwendung als Dry-Run geprüft werden.
 
 ## task 19: db relationship engine aus md
 
