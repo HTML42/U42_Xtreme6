@@ -58,6 +58,39 @@ That means:
 
 Generated PHP, JavaScript, and test files should not be treated as the primary business specification.
 
+## object generator contract
+
+Object generation is specified MD-first and checked before release.
+
+Canonical flow:
+
+1. update `objects/<object>/<object>.class.md`
+2. run `php compiler/check_md_first.php`
+3. review `php compiler/report_object_generation.php`
+4. run `php compiler/compile_objects.php`
+
+Every object MD must expose a machine-readable-ish `## generator schema` section with these keys:
+
+- `object`: object name, e.g. `x_user`
+- `pair`: `singular` or `plural`
+- `counterpart`: required paired object, e.g. `x_users`
+- `runtime`: generated/maintained runtime artifacts
+- `tests`: generated/maintained test artifacts
+
+Required object-MD sections:
+
+- `## role`
+- `## generator schema`
+- `## properties`
+- `## methods`
+- `## validation rules`
+- `## persistence`
+- `## tests`
+
+`compiler/check_md_first.php` enforces that each object has both singular and plural directories/MD files according to `XPluralize`.
+
+`compiler/report_object_generation.php` prints an object runtime diff/readiness report before files are generated or overwritten.
+
 ## singular object expectations
 
 A singular object typically represents one record or one entity.

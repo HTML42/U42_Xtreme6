@@ -1,9 +1,13 @@
 <?php
 
+require_once __DIR__ . '/../x/x_pluralize.class.php';
+
 $root = dirname(__DIR__);
 $errors = [];
 
 checkObjects($root, $errors);
+checkObjectPairs($root, $errors);
+checkObjectContracts($root, $errors);
 checkApiDimensions($root, $errors);
 checkApiContracts($root, $errors);
 checkControllers($root, $errors);
@@ -34,6 +38,57 @@ function checkObjects(string $root, array &$errors): void
             $runtime = $dir . DIRECTORY_SEPARATOR . $name . '.' . $suffix;
             if (is_file($runtime) && !is_file($md)) {
                 $errors[] = 'Object runtime without markdown source: ' . relativePath($root, $runtime);
+            }
+        }
+    }
+}
+
+function checkObjectPairs(string $root, array &$errors): void
+{
+    $objectDirs = glob($root . DIRECTORY_SEPARATOR . 'objects' . DIRECTORY_SEPARATOR . '*', GLOB_ONLYDIR) ?: [];
+    $names = [];
+    foreach ($objectDirs as $dir) {
+        $names[basename($dir)] = true;
+    }
+
+    foreach (array_keys($names) as $name) {
+        $singular = XPluralize::singularize($name);
+        $plural = XPluralize::pluralize($singular);
+
+        foreach ([$singular, $plural] as $requiredName) {
+            $dir = $root . DIRECTORY_SEPARATOR . 'objects' . DIRECTORY_SEPARATOR . $requiredName;
+            $md = $dir . DIRECTORY_SEPARATOR . $requiredName . '.class.md';
+            if (!is_dir($dir) || !is_file($md)) {
+                $errors[] = 'Object pair incomplete for ' . $name . ': missing objects/' . $requiredName . '/' . $requiredName . '.class.md';
+            }
+        }
+    }
+}
+
+function checkObjectContracts(string $root, array &$errors): void
+{
+    $objectDirs = glob($root . DIRECTORY_SEPARATOR . 'objects' . DIRECTORY_SEPARATOR . '*', GLOB_ONLYDIR) ?: [];
+    $requiredSections = [
+        '## role',
+        '## generator schema',
+        '## properties',
+        '## methods',
+        '## validation rules',
+        '## persistence',
+        '## tests',
+    ];
+
+    foreach ($objectDirs as $dir) {
+        $name = basename($dir);
+        $md = $dir . DIRECTORY_SEPARATOR . $name . '.class.md';
+        if (!is_file($md)) {
+            continue;
+        }
+
+        $content = strtolower((string) file_get_contents($md));
+        foreach ($requiredSections as $section) {
+            if (!str_contains($content, $section)) {
+                $errors[] = 'Object contract missing section "' . $section . '": ' . relativePath($root, $md);
             }
         }
     }

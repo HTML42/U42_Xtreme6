@@ -97,11 +97,11 @@ Jede API-Dimension muss mindestens enthalten:
 Jedes Object-MD muss mindestens enthalten:
 
 - role/purpose
+- generator schema
 - properties/fields
 - public methods
 - validation rules
 - persistence/API interactions
-- success/failure contracts
 - test expectations
 
 ## required workflow markdown sections
@@ -123,6 +123,8 @@ Jedes Workflow-MD unter `docs/workflows/` muss mindestens enthalten:
 Ein Build-/QA-Check muss fehlschlagen, wenn:
 
 - ein Object-Runtime-Artefakt ohne `.class.md` existiert
+- ein Object-MD nicht alle Pflichtsektionen für Generator-Schema, Properties, Methoden, Validierung, Persistence und Tests enthält
+- ein Objekt ohne Singular/Plural-Gegenstück existiert
 - eine API-Dimension ohne `<dimension>.md` existiert
 - eine API-Dimension nicht alle Pflichtsektionen für Versionierung, Request/Response, Errors, Auth, Validation und Testability enthält
 - eine Model-Tabelle ohne `models/<table>.md` verwendet wird

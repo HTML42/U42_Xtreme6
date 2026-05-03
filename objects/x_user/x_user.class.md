@@ -3,6 +3,54 @@
 ## role
 Singular framework class `x_user`.
 
+## generator schema
+
+- object: `x_user`
+- pair: `singular`
+- counterpart: `x_users`
+- runtime: `x_user.class.php`, `x_user.class.js`
+- tests: `x_user.test.php`, `x_user.test.js`
+
+## properties
+
+- `id`: integer identifier.
+- `insert_date`: Unix timestamp in seconds.
+- `update_date`: Unix timestamp in seconds.
+- `delete_date`: Unix timestamp in seconds.
+- `username`: normalized lowercase login name.
+- `email`: normalized email address.
+- `hash`: public user hash.
+- `password`: stored password hash only, never plain text.
+- `lastlogin_date`: Unix timestamp of last successful login.
+
+## methods
+
+- `__construct(int $id = 0)` initializes optional object loading.
+- `load($identification = null)` loads by supported identifier.
+- `load_by_id($id)` loads by numeric id.
+- `load_by_name($name)` loads by username/name.
+- `login($username, $password)` validates credentials and returns standard result data.
+- `registration($username, $email, $password, $password2)` validates and persists a new user.
+
+## validation rules
+
+- username is required and normalized lowercase.
+- email is required and must be a valid email format.
+- password is required for login/registration inputs.
+- password2 must match password during registration.
+- duplicate username/email is rejected through `x_users` lookup helpers.
+
+## persistence
+
+- Persistence uses `XDB` and the `users` model source from `models/users.md`.
+- Select cache invalidation is handled by the DB abstraction after write operations.
+
+## tests
+
+- PHP tests cover load/login/registration expectations.
+- JS tests remain standalone and avoid imports/exports.
+- Smoke coverage is provided by `compiler/smoke_database.php`.
+
 ## php rules
 - never use `declare(strict_types=1);`
 - never use `final class`

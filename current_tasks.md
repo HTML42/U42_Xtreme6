@@ -183,17 +183,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 17: object generator aus md spezifizieren
 
-- [ ] **subtask 17.1**: Object-MD-Schema zu Properties, Methoden, Validierungen, Persistence und Tests maschinenlesbar machen.
-- [ ] **subtask 17.2**: Generator-Regeln dokumentieren: `objects/<object>/<object>.class.md` -> PHP/JS/Test-Artefakte.
-- [ ] **subtask 17.3**: Singular/Plural-Pair-Regel im Generator erzwingen (`x_user` + `x_users`).
-- [ ] **subtask 17.4**: Object-Runtime-Diffs als Report ausgeben, bevor Dateien überschrieben werden.
-- [ ] **subtask 17.5**: Beispielgenerierung für `x_user`/`x_users` als Referenz definieren.
+- [x] **subtask 17.1**: Object-MD-Schema zu Properties, Methoden, Validierungen, Persistence und Tests maschinenlesbar machen.
+- [x] **subtask 17.2**: Generator-Regeln dokumentieren: `objects/<object>/<object>.class.md` -> PHP/JS/Test-Artefakte.
+- [x] **subtask 17.3**: Singular/Plural-Pair-Regel im Generator erzwingen (`x_user` + `x_users`).
+- [x] **subtask 17.4**: Object-Runtime-Diffs als Report ausgeben, bevor Dateien überschrieben werden.
+- [x] **subtask 17.5**: Beispielgenerierung für `x_user`/`x_users` als Referenz definieren.
 
 ### acceptance criteria (task 17)
 
-- [ ] Neue Objekte entstehen nie ohne Singular/Plural-Paar.
-- [ ] Runtime-Klassen sind eindeutig auf Object-MDs zurückführbar.
-- [ ] Generator kann fehlende oder veraltete Artefakte reporten.
+- [x] Neue Objekte entstehen nie ohne Singular/Plural-Paar.
+- [x] Runtime-Klassen sind eindeutig auf Object-MDs zurückführbar.
+- [x] Generator kann fehlende oder veraltete Artefakte reporten.
 
 ## task 18: datenbank-schema compiler aus models/*.md
 

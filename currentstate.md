@@ -58,3 +58,4 @@
 - `docs/release_qa.md` definiert Smoke-Tests und Commit-/PR-Checkliste.
 - `compiler/check_md_first.php`, `compiler/check_secret_leaks.php`, Compiler-Pipeline und `compiler/smoke_database.php` sind die aktuelle Mindest-QA.
 - Workflow-MD-Governance ist aktiv: `docs/workflows/users.registration.md` dokumentiert den Users-Registration-Prozess, `compiler/check_md_first.php` prüft Workflow-Referenzen/Pflichtsektionen, und `compiler/report_workflow_traceability.php` erzeugt den Prozess-zu-API/Object-Report.
+- Object-Generator-Governance ist aktiv: Object-MDs enthalten Generator-Schema/Properties/Methods/Validation/Persistence/Tests, `compiler/check_md_first.php` erzwingt Singular/Plural-Paare, und `compiler/report_object_generation.php` reportet Artefakt-Readiness vor Generatorläufen.

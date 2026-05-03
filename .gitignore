@@ -6,3 +6,6 @@
 
 _db.json
 _secrets.json
+
+# accidental shell redirect target from mixed Windows/Git-Bash environments
+/nul
