@@ -21,6 +21,14 @@ class XTranslation {
     return 'de';
   }
 
+  static getFallbackLanguage() {
+    if (window.XLanguage && typeof window.XLanguage.getFallbackLanguage === 'function') {
+      return XTranslation.normalizeLanguage(window.XLanguage.getFallbackLanguage());
+    }
+
+    return 'de';
+  }
+
   static ensureStore() {
     if (!Array.isArray(window.TRANSLATIONS)) {
       window.TRANSLATIONS = [];
@@ -71,7 +79,7 @@ class XTranslation {
       return languageText;
     }
 
-    const fallbackStore = XTranslation.ensureLanguageStore('de');
+    const fallbackStore = XTranslation.ensureLanguageStore(XTranslation.getFallbackLanguage());
     const fallbackText = fallbackStore[translationKey];
 
     if (typeof fallbackText === 'string') {

@@ -20,6 +20,8 @@ Core idea:
 2. generate runtime code and tests from that definition
 3. aggregate generated sources into build outputs under `dist/`
 
+MD-first governance, source mapping, and build-gate expectations are documented in `docs/md_first.md`.
+
 ## no hand-written feature code as source-of-truth
 
 The framework is designed so that humans no longer maintain business logic directly in runtime files.
@@ -47,6 +49,8 @@ Runtime files can still exist in the repository, but they are treated as generat
 - `docs/styles.md` — project style instructions
 - `_db.json` — environment-local database config (ignored in git, required for mysql engine)
 - `_db.example.json` — committed template for creating environment-specific `_db.json`
+- `_secrets.json` — environment-local credentials/secrets file (ignored in git, backend-only)
+- `_secrets.example.json` — committed template for environment-specific `_secrets.json`
 
 ## naming rules
 
@@ -172,6 +176,14 @@ Translations are JavaScript-based and grouped by locale folder under `translatio
 - `XTemplate` renders templates with `{{placeholder}}` replacement.
 - `XTranslation` resolves translation strings with `{{placeholder}}` replacement.
 
+i18n runtime behavior:
+
+- language codes are normalized lowercase (`de`, `en`, ...).
+- `config.json` can define `Language`, `FallbackLanguage`, and `AvailableLanguages`.
+- runtime language priority is URL `?lang=xx` > localStorage (`x6.language`) > config language.
+- `XLanguage.setCurrentLanguage(...)` updates `<html lang>`, persists the choice, and emits `x6:language`.
+- dev/prod execute files output `<meta name="language">` and `link rel="alternate" hreflang="..."` for all configured languages plus `x-default`.
+
 ## template naming convention (views + partials)
 
 Template files inside `templates/` are JavaScript files and can be named freely, but the project convention is:
@@ -214,6 +226,8 @@ Use native links with hash routing in templates:
 - groups files by suffix
 - validates PHP object files
 - produces aggregated outputs in `dist/`
+
+`compiler/check_md_first.php` verifies the mandatory MD-first source mapping for objects, API dimensions, and controllers.
 
 Generated outputs include:
 
@@ -372,12 +386,28 @@ Engine selection:
 - allowed values: `JSON`, `MYSQL` (case-insensitive)
 - invalid values raise a runtime error.
 
+Select cache behavior (`XDB`):
+
+- `config.json` key: `DatabaseSelectCacheTtl`
+- value is interpreted as seconds (minimum `1`)
+- default is `60` if not set
+- cache keys are parameter-based (`table + where + engine`)
+- all select-cache entries for a table are invalidated automatically after successful `insert`, `update`, or `delete` on that table
+
 Environment file behavior:
 
 - JSON engine: no `_db.json` required.
 - MYSQL engine: `_db.json` is required and must be present in the project root.
 - `_db.json` is environment-local and ignored by git.
 - `_db.example.json` is the template that must be copied/adapted per environment.
+
+## secrets reference
+
+Credentials/secrets rules and helper functions are documented in:
+
+- `docs/secrets.md`
+
+Release QA should run `compiler/check_secret_leaks.php` to prevent obvious secret names from leaking into `dist/*`.
 
 ## api reference
 

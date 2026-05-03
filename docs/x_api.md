@@ -82,3 +82,7 @@ Helper functions:
 - `x_api_output(...)`
 
 Both are defined in `x/x_functions.php`.
+
+## security/auth reference
+
+- rollout specification: `docs/security_auth.md`

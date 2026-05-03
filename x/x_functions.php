@@ -67,6 +67,55 @@ if (!function_exists('x_user_load')) {
     }
 }
 
+if (!function_exists('x_secrets_load')) {
+    /**
+     * Loads environment-local secrets from _secrets.json.
+     * Secrets must never be exposed to frontend runtime config.
+     */
+    function x_secrets_load(): array
+    {
+        static $cache = null;
+
+        if (is_array($cache)) {
+            return $cache;
+        }
+
+        $path = dirname(__DIR__) . DIRECTORY_SEPARATOR . '_secrets.json';
+        if (!is_file($path)) {
+            $cache = [];
+            return $cache;
+        }
+
+        $decoded = json_decode((string) file_get_contents($path), true);
+        $cache = is_array($decoded) ? $decoded : [];
+        return $cache;
+    }
+}
+
+if (!function_exists('x_secret_get')) {
+    /**
+     * Reads a dot-path value from _secrets.json without exposing the full store.
+     */
+    function x_secret_get(string $path, $default = null)
+    {
+        $segments = array_values(array_filter(explode('.', trim($path)), static fn($segment) => $segment !== ''));
+        if ($segments === []) {
+            return $default;
+        }
+
+        $current = x_secrets_load();
+        foreach ($segments as $segment) {
+            if (!is_array($current) || !array_key_exists($segment, $current)) {
+                return $default;
+            }
+
+            $current = $current[$segment];
+        }
+
+        return $current;
+    }
+}
+
 if (!function_exists('css_minify')) {
     /**
      * Lightweight, non-invasive CSS minifier.

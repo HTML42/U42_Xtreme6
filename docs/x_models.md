@@ -21,6 +21,67 @@ werden hier in Markdown beschrieben.
 4. Modell-Dateinamen sind immer **lowercase** und entsprechen dem Tabellennamen (Plural), z. B. `users.md`.
 5. Modelle sind die Source-of-Truth für Felder, Typen, Defaults, Constraints und Validierung.
 
+## Feld-Konvention
+
+Jedes Feld wird mit `### <fieldname>` beschrieben. Erlaubte/empfohlene Keys:
+
+- `type`: `int`, `int|null`, `string`, `string|null`, `bool`, `float`, `json`, `text`
+- `required`: `yes|no`
+- `default`: fester Defaultwert oder `null`
+- `unique`: `yes|no`
+- `index`: `yes|no`
+- `auto increment`: `yes|no`
+- `format`: menschenlesbare Formatregel (z. B. `email`, `sha256`, `exactly 10 characters`)
+- `min`: Minimalwert oder Mindestlänge
+- `max`: Maximalwert oder Maximallänge
+- `enum`: erlaubte Werte, kommasepariert
+- `note`: fachliche Beschreibung
+
+## Validierungs-Konvention
+
+Der Abschnitt `## validation` beschreibt feldübergreifende und fachliche Regeln.
+
+Regeln müssen so formuliert sein, dass daraus später Code und Tests generiert werden können:
+
+- Feldpflichten (`username` darf nicht leer sein)
+- Formatregeln (`email` muss valides E-Mail-Format haben)
+- Sicherheitsregeln (`password` wird nur als Hash gespeichert)
+- Uniqueness/Index-Regeln
+- Cross-field-Regeln (z. B. `password` und `password2` müssen übereinstimmen)
+
+## Beziehungs-Konvention
+
+Der optionale Abschnitt `## relations` beschreibt Datenbankbeziehungen.
+
+Empfohlenes Format:
+
+```md
+### user_profile
+
+- type: 1:1
+- local field: id
+- foreign table: user_profiles
+- foreign field: user_id
+- on delete: cascade|restrict|set null
+- on update: cascade|restrict
+```
+
+Erlaubte Beziehungstypen:
+
+- `1:1`
+- `1:n`
+- `n:m`
+
+Bei `n:m` muss zusätzlich eine Join-Tabelle beschrieben werden.
+
+## Engine-Konsistenz
+
+JSON- und MySQL-Engine müssen dieselben Modellregeln respektieren.
+
+- JSON nutzt die Model-MDs für Tabellen-Bootstrap und spätere Validierung.
+- MySQL nutzt die Model-MDs für `CREATE TABLE IF NOT EXISTS` und spätere Schema-/Validierungschecks.
+- Model-Änderungen brauchen künftig eine Migration-/Schema-Update-Strategie; aktuell ist nur Create-if-missing aktiv.
+
 ## AI-Workflow
 
 Wenn eine neue Tabelle benötigt wird:

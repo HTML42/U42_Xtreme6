@@ -1,4 +1,8 @@
 {
   "Database": "JSON",
-  "Language": "DE"
+  "DatabaseSelectCacheTtl": 60,
+  "ApiMode": "live",
+  "Language": "de",
+  "FallbackLanguage": "de",
+  "AvailableLanguages": ["de"]
 }

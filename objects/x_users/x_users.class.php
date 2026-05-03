@@ -15,21 +15,50 @@ class XUsers
 
     public static function load($identification = null): array
     {
-        $cache_key = json_encode(['load' => $identification]);
-        if (isset(self::$_CACHE[$cache_key])) {
-            return self::$_CACHE[$cache_key];
+        $cacheKey = json_encode(['load' => $identification]);
+        if (isset(self::$_CACHE[$cacheKey])) {
+            return self::$_CACHE[$cacheKey];
         }
 
-        $list = [];
-        if (is_int($identification) || (is_string($identification) && is_numeric($identification))) {
-            $loaded = XUser::load_by_id((int) $identification);
-            if ($loaded->id > 0) {
-                $list[] = $loaded;
-            }
+        $rows = [];
+        if ($identification === null) {
+            $rows = $GLOBALS['XDB']->select('users');
+        } elseif (is_int($identification) || (is_string($identification) && is_numeric($identification))) {
+            $rows = $GLOBALS['XDB']->select('users', ['id' => (int) $identification]);
         }
 
-        self::$_CACHE[$cache_key] = $list;
-        return $list;
+        $users = [];
+        foreach ($rows as $row) {
+            $users[] = [
+                'id' => (int) ($row['id'] ?? 0),
+                'username' => (string) ($row['username'] ?? ''),
+                'email' => (string) ($row['email'] ?? ''),
+                'hash' => (string) ($row['hash'] ?? ''),
+            ];
+        }
+
+        self::$_CACHE[$cacheKey] = $users;
+        return $users;
+    }
+
+    public static function exists_by_username(string $username): bool
+    {
+        if (trim($username) === '') {
+            return false;
+        }
+
+        $rows = $GLOBALS['XDB']->select('users', ['username' => strtolower(trim($username))]);
+        return $rows !== [];
+    }
+
+    public static function exists_by_email(string $email): bool
+    {
+        if (trim($email) === '') {
+            return false;
+        }
+
+        $rows = $GLOBALS['XDB']->select('users', ['email' => strtolower(trim($email))]);
+        return $rows !== [];
     }
 
     public static function clear_cache(): void

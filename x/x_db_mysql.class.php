@@ -68,6 +68,10 @@ class XDBMysql
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
 
+        if (!array_key_exists('id', $row)) {
+            $row['id'] = (int) $this->pdo->lastInsertId();
+        }
+
         return $row;
     }
 
