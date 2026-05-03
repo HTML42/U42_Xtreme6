@@ -53,6 +53,8 @@ Regeln müssen so formuliert sein, dass daraus später Code und Tests generiert 
 
 Der optionale Abschnitt `## relations` beschreibt Datenbankbeziehungen.
 
+Wenn eine Tabelle keine direkten Beziehungen hat, muss dies explizit als `- none` oder als Satz mit `keine direkten Beziehungen` dokumentiert werden.
+
 Empfohlenes Format:
 
 ```md
@@ -62,6 +64,9 @@ Empfohlenes Format:
 - local field: id
 - foreign table: user_profiles
 - foreign field: user_id
+- join table: user_role_map
+- join local field: user_id
+- join foreign field: role_id
 - on delete: cascade|restrict|set null
 - on update: cascade|restrict
 ```
@@ -73,6 +78,29 @@ Erlaubte Beziehungstypen:
 - `n:m`
 
 Bei `n:m` muss zusätzlich eine Join-Tabelle beschrieben werden.
+
+Pflichtkeys für Relationen:
+
+- `type`: `1:1`, `1:n`, `n:m`
+- `local field`: Feld im aktuellen Model
+- `foreign table`: Ziel-Model/Tabelle
+- `foreign field`: Feld im Ziel-Model
+- `on delete`: `cascade`, `restrict`, `set null`
+- `on update`: `cascade`, `restrict`
+- bei `n:m` zusätzlich: `join table`, `join local field`, `join foreign field`
+
+`php compiler/report_model_relationships.php` validiert diese Angaben non-destruktiv und gibt JSON-/MySQL-Planung aus.
+
+MySQL-Planung:
+
+- `1:1` und `1:n` werden als `ALTER TABLE ... ADD CONSTRAINT ... FOREIGN KEY ...` geplant.
+- `n:m` wird als Join-Table-Plan mit zwei FK-Constraints geplant.
+- Pläne werden nur berichtet, nicht automatisch angewendet.
+
+JSON-Planung:
+
+- Referential-Integrity wird als Vorprüfung für zukünftige Insert/Update/Delete-Checks berichtet.
+- Bewusste Unterschiede zwischen JSON und MySQL müssen im Model oder API/Object-Layer dokumentiert werden.
 
 ## Engine-Konsistenz
 

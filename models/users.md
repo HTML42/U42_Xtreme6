@@ -98,5 +98,12 @@ Basis-Tabelle für Accounts/Benutzer.
 
 ## relations
 
+- none
 - keine direkten Beziehungen im Basismodell.
 - Erweiterungen wie Profile, Rollen oder Sessions müssen eigene Models definieren und hier referenzieren.
+
+## relationship traceability
+
+- API/Object-Layer: `api/users/users.md`, `objects/x_user/x_user.class.md`, `objects/x_users/x_users.class.md`.
+- Current policy: no direct FK constraints for the base users table.
+- Future profile/role/session relations must be added here before runtime/API changes.

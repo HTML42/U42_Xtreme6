@@ -211,17 +211,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 19: db relationship engine aus md
 
-- [ ] **subtask 19.1**: Relationship-MD-Schema finalisieren: `1:1`, `1:n`, `n:m`, FK, on delete, on update.
-- [ ] **subtask 19.2**: Relationship-Validator für Model-MDs bauen.
-- [ ] **subtask 19.3**: MySQL-FK-Planung aus Beziehungen ableiten.
-- [ ] **subtask 19.4**: JSON-Engine Referential-Integrity-Checks definieren.
-- [ ] **subtask 19.5**: API/Object-Layer muss Beziehungen nachvollziehbar dokumentieren.
+- [x] **subtask 19.1**: Relationship-MD-Schema finalisieren: `1:1`, `1:n`, `n:m`, FK, on delete, on update.
+- [x] **subtask 19.2**: Relationship-Validator für Model-MDs bauen.
+- [x] **subtask 19.3**: MySQL-FK-Planung aus Beziehungen ableiten.
+- [x] **subtask 19.4**: JSON-Engine Referential-Integrity-Checks definieren.
+- [x] **subtask 19.5**: API/Object-Layer muss Beziehungen nachvollziehbar dokumentieren.
 
 ### acceptance criteria (task 19)
 
-- [ ] Beziehungen sind in MD definiert, nicht implizit im Code.
-- [ ] Delete/Update Policies sind testbar.
-- [ ] JSON/MySQL verhalten sich bei Beziehungen konsistent oder dokumentieren bewusste Unterschiede.
+- [x] Beziehungen sind in MD definiert, nicht implizit im Code.
+- [x] Delete/Update Policies sind testbar.
+- [x] JSON/MySQL verhalten sich bei Beziehungen konsistent oder dokumentieren bewusste Unterschiede.
 
 ## task 20: api compiler und contract tests
 
