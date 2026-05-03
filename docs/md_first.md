@@ -2,13 +2,17 @@
 
 ## purpose
 
-Xtreme6 ist ein KI-driven Framework. Markdown-Dateien sind die verbindliche Source-of-Truth für Objekte, Prozesse, Workflows, Datenmodelle und API-Verträge.
+Markdown-Dateien sind die verbindliche Source-of-Truth für Objekte, Prozesse, Workflows, Datenmodelle und API-Verträge.
 
 Runtime-Dateien (`*.php`, `*.js`, Tests, Bundles) sind abgeleitete Artefakte und dürfen nicht als primäre Spezifikation behandelt werden.
+
+Für die Auswahl der passenden Dokumentation gilt zuerst `agents.md` → **task documentation routing**. Dieses Dokument beschreibt danach nur die Source-of-Truth-Zuordnung und Build-Gates.
 
 ## mandatory rule
 
 Jede neue oder geänderte Funktion muss zuerst in einer passenden Markdown-Datei beschrieben werden.
+
+Dokumentation soll nicht mehrfach ausgeschrieben werden: Wenn eine Regel bereits in einer kanonischen Datei steht, wird sie verlinkt statt kopiert.
 
 ## source mapping
 
@@ -48,9 +52,22 @@ Jede neue oder geänderte Funktion muss zuerst in einer passenden Markdown-Datei
   - `templates/view.<controller>.<view>.js`
   - benötigte Translation-Keys
 
+### project governance documents
+
+- Quelle/Steuerung:
+  - `docs/md_first.md`
+  - `docs/routes.md`
+  - `docs/ui_primitives.md`
+  - `docs/release_qa.md`
+- Geführt:
+  - route-driven templates/controllers
+  - ui primitive runtime/templates
+  - release qa checks and task acceptance
+
 ### workflows/processes
 
-- Quelle: projektspezifische Markdown-Dateien, bevorzugt unter `docs/workflows/`
+- Quelle: projektspezifische Markdown-Dateien unter `docs/workflows/<workflow>.md`
+- Naming: lowercase dot-separated workflow names, e.g. `users.registration.md`
 - Inhalt:
   - Ziel des Workflows
   - Inputs
@@ -58,11 +75,14 @@ Jede neue oder geänderte Funktion muss zuerst in einer passenden Markdown-Datei
   - API-/Objekt-Aufrufe
   - Nebenwirkungen
   - Success-/Failure-Pfade
+- Traceability: Workflow-MDs müssen die betroffenen API-Endpunkte, Objektmethoden und Frontend-Controller/Templates nennen.
+- Report: `php compiler/report_workflow_traceability.php` gibt eine lesbare Prozess-zu-API/Object-Übersicht aus.
 
 ## required api markdown sections
 
 Jede API-Dimension muss mindestens enthalten:
 
+- contract version
 - endpoints
 - methods
 - request body/query params
@@ -70,6 +90,7 @@ Jede API-Dimension muss mindestens enthalten:
 - error responses
 - auth requirements
 - validation rules
+- testability
 
 ## required object markdown sections
 
@@ -83,11 +104,31 @@ Jedes Object-MD muss mindestens enthalten:
 - success/failure contracts
 - test expectations
 
+## required workflow markdown sections
+
+Jedes Workflow-MD unter `docs/workflows/` muss mindestens enthalten:
+
+- goal
+- inputs
+- steps
+- api calls
+- object calls
+- side effects
+- success path
+- failure paths
+- traceability
+
 ## build gate expectation
 
 Ein Build-/QA-Check muss fehlschlagen, wenn:
 
 - ein Object-Runtime-Artefakt ohne `.class.md` existiert
 - eine API-Dimension ohne `<dimension>.md` existiert
+- eine API-Dimension nicht alle Pflichtsektionen für Versionierung, Request/Response, Errors, Auth, Validation und Testability enthält
 - eine Model-Tabelle ohne `models/<table>.md` verwendet wird
 - ein Controller ohne `.controller.md` existiert
+- ein `templates/view.<controller>.<view>.js` ohne Route in `docs/routes.md` existiert
+- eine deklarierte Route kein passendes View-Template hat
+- ein `workflow: <name>` Verweis keine Datei `docs/workflows/<name>.md` hat
+- ein Workflow-MD nicht alle Pflichtsektionen enthält
+- ein verpflichtendes Governance-Dokument fehlt

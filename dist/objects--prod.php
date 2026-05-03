@@ -7,6 +7,12 @@ class XUser
 
     public int $id = 0;
     public bool $login = false;
+    public string $username = '';
+    public string $password = '';
+    public string $email = '';
+    public string $hash = '';
+    public int $validate_date = 0;
+    public int $lastlogin_date = 0;
     public int $insert_date = 0;
     public int $update_date = 0;
     public int $delete_date = 0;
@@ -35,41 +41,163 @@ class XUser
             return new self();
         }
 
-        $cache_key = json_encode(['id' => $id]);
-        if (isset(self::$_CACHE[$cache_key])) {
-            return self::$_CACHE[$cache_key];
+        $cacheKey = json_encode(['id' => $id]);
+        if (isset(self::$_CACHE[$cacheKey])) {
+            return self::$_CACHE[$cacheKey];
         }
 
-        $user = new self($id);
-        $user->login = true;
-        $now = time();
-        $user->insert_date = $now;
-        $user->update_date = $now;
-        $user->delete_date = 0;
+        $rows = $GLOBALS['XDB']->select('users', ['id' => $id]);
+        if ($rows === []) {
+            return new self();
+        }
 
-        self::$_CACHE[$cache_key] = $user;
+        $user = self::from_row($rows[0]);
+        self::$_CACHE[$cacheKey] = $user;
         return $user;
     }
 
     public static function load_by_name(string $name): self
     {
-        $normalized_name = trim(strtolower($name));
-        if ($normalized_name === '') {
+        $normalizedName = trim(strtolower($name));
+        if ($normalizedName === '') {
             return new self();
         }
 
-        $cache_key = json_encode(['name' => $normalized_name]);
-        if (isset(self::$_CACHE[$cache_key])) {
-            return self::$_CACHE[$cache_key];
+        $cacheKey = json_encode(['name' => $normalizedName]);
+        if (isset(self::$_CACHE[$cacheKey])) {
+            return self::$_CACHE[$cacheKey];
         }
 
-        $user = new self();
-        $now = time();
-        $user->insert_date = $now;
-        $user->update_date = $now;
-        $user->delete_date = 0;
+        $rows = $GLOBALS['XDB']->select('users', ['username' => $normalizedName]);
+        if ($rows === []) {
+            return new self();
+        }
 
-        self::$_CACHE[$cache_key] = $user;
+        $user = self::from_row($rows[0]);
+        self::$_CACHE[$cacheKey] = $user;
+        return $user;
+    }
+
+    public static function register(array $payload): array
+    {
+        $username = trim(strtolower((string) ($payload['username'] ?? '')));
+        $email = trim(strtolower((string) ($payload['email'] ?? '')));
+        $password = (string) ($payload['password'] ?? '');
+        $password2 = (string) ($payload['password2'] ?? '');
+
+        $errors = [];
+        if ($username === '') {
+            $errors['username'] = 'username is required';
+        }
+        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'email is invalid';
+        }
+        if ($password === '') {
+            $errors['password'] = 'password is required';
+        }
+        if ($password !== $password2) {
+            $errors['password2'] = 'password confirmation mismatch';
+        }
+
+        if (XUsers::exists_by_username($username)) {
+            $errors['username'] = 'username already exists';
+        }
+
+        if (XUsers::exists_by_email($email)) {
+            $errors['email'] = 'email already exists';
+        }
+
+        if ($errors !== []) {
+            return ['success' => false, 'status' => 422, 'response' => null, 'errors' => $errors];
+        }
+
+        $now = time();
+        $row = [
+            'username' => $username,
+            'email' => $email,
+            'password' => password_hash($password, PASSWORD_DEFAULT),
+            'validate_date' => null,
+            'lastlogin_date' => null,
+            'hash' => strtoupper(substr(sha1(uniqid((string) mt_rand(), true)), 0, 10)),
+            'insert_date' => $now,
+            'update_date' => $now,
+            'delete_date' => null,
+        ];
+
+        $inserted = $GLOBALS['XDB']->insert('users', $row);
+
+        return [
+            'success' => true,
+            'status' => 200,
+            'response' => [
+                'id' => (int) ($inserted['id'] ?? 0),
+                'username' => (string) ($inserted['username'] ?? ''),
+                'email' => (string) ($inserted['email'] ?? ''),
+                'hash' => (string) ($inserted['hash'] ?? ''),
+            ],
+            'errors' => [],
+        ];
+    }
+
+    public static function login(string $username, string $password): array
+    {
+        $normalizedUsername = trim(strtolower($username));
+        if ($normalizedUsername === '' || $password === '') {
+            $errors = [];
+            if ($normalizedUsername === '') {
+                $errors['username'] = 'username is required';
+            }
+            if ($password === '') {
+                $errors['password'] = 'password is required';
+            }
+
+            return [
+                'success' => false,
+                'status' => 422,
+                'response' => null,
+                'errors' => $errors,
+            ];
+        }
+
+        $user = self::load_by_name($normalizedUsername);
+        if ($user->id < 1) {
+            return ['success' => false, 'status' => 401, 'response' => null, 'errors' => ['credentials' => 'invalid login']];
+        }
+
+        if (!password_verify($password, $user->password)) {
+            return ['success' => false, 'status' => 401, 'response' => null, 'errors' => ['credentials' => 'invalid login']];
+        }
+
+        $now = time();
+        $GLOBALS['XDB']->update('users', ['id' => $user->id], ['lastlogin_date' => $now]);
+
+        return [
+            'success' => true,
+            'status' => 200,
+            'response' => [
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+                'hash' => $user->hash,
+                'lastlogin_date' => $now,
+            ],
+            'errors' => [],
+        ];
+    }
+
+    private static function from_row(array $row): self
+    {
+        $user = new self((int) ($row['id'] ?? 0));
+        $user->login = $user->id > 0;
+        $user->username = (string) ($row['username'] ?? '');
+        $user->password = (string) ($row['password'] ?? '');
+        $user->email = (string) ($row['email'] ?? '');
+        $user->hash = (string) ($row['hash'] ?? '');
+        $user->validate_date = (int) ($row['validate_date'] ?? 0);
+        $user->lastlogin_date = (int) ($row['lastlogin_date'] ?? 0);
+        $user->insert_date = (int) ($row['insert_date'] ?? 0);
+        $user->update_date = (int) ($row['update_date'] ?? 0);
+        $user->delete_date = (int) ($row['delete_date'] ?? 0);
         return $user;
     }
 
@@ -96,21 +224,50 @@ class XUsers
 
     public static function load($identification = null): array
     {
-        $cache_key = json_encode(['load' => $identification]);
-        if (isset(self::$_CACHE[$cache_key])) {
-            return self::$_CACHE[$cache_key];
+        $cacheKey = json_encode(['load' => $identification]);
+        if (isset(self::$_CACHE[$cacheKey])) {
+            return self::$_CACHE[$cacheKey];
         }
 
-        $list = [];
-        if (is_int($identification) || (is_string($identification) && is_numeric($identification))) {
-            $loaded = XUser::load_by_id((int) $identification);
-            if ($loaded->id > 0) {
-                $list[] = $loaded;
-            }
+        $rows = [];
+        if ($identification === null) {
+            $rows = $GLOBALS['XDB']->select('users');
+        } elseif (is_int($identification) || (is_string($identification) && is_numeric($identification))) {
+            $rows = $GLOBALS['XDB']->select('users', ['id' => (int) $identification]);
         }
 
-        self::$_CACHE[$cache_key] = $list;
-        return $list;
+        $users = [];
+        foreach ($rows as $row) {
+            $users[] = [
+                'id' => (int) ($row['id'] ?? 0),
+                'username' => (string) ($row['username'] ?? ''),
+                'email' => (string) ($row['email'] ?? ''),
+                'hash' => (string) ($row['hash'] ?? ''),
+            ];
+        }
+
+        self::$_CACHE[$cacheKey] = $users;
+        return $users;
+    }
+
+    public static function exists_by_username(string $username): bool
+    {
+        if (trim($username) === '') {
+            return false;
+        }
+
+        $rows = $GLOBALS['XDB']->select('users', ['username' => strtolower(trim($username))]);
+        return $rows !== [];
+    }
+
+    public static function exists_by_email(string $email): bool
+    {
+        if (trim($email) === '') {
+            return false;
+        }
+
+        $rows = $GLOBALS['XDB']->select('users', ['email' => strtolower(trim($email))]);
+        return $rows !== [];
     }
 
     public static function clear_cache(): void

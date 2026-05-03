@@ -81,11 +81,154 @@ this.route = null;
 }
 login(route) {
 this.route = route;
-console.log('UsersController.login', route);
+this.renderUserView('view.users.login', route, {
+FormLogin: XTemplate.render('form.login', this.getFormTranslations())
+});
+this.bindForm('login_form', 'users/login', (result) => {
+if (result.success && result.response && window.X6 && window.X6.framework) {
+window.X6.framework.setCurrentUser(Object.assign({ login: true }, result.response));
+window.X6.framework.renderConfiguredShellParts();
+}
+}, {
+successKey: 'forms.callbacks.login_success',
+successFallback: 'Du bist erfolgreich angemeldet.',
+failKey: 'forms.callbacks.login_fail',
+failFallback: 'Anmeldung fehlgeschlagen. Bitte prüfe deine Eingaben.',
+clearOnSuccess: false,
+clearPasswordFields: true
+});
 }
 registration(route) {
 this.route = route;
-console.log('UsersController.registration', route);
+this.renderUserView('view.users.registration', route);
+this.bindForm('registration_form', 'users/registration', null, {
+successKey: 'forms.callbacks.registration_success',
+successFallback: 'Deine Registrierung war erfolgreich.',
+failKey: 'forms.callbacks.registration_fail',
+failFallback: 'Registrierung fehlgeschlagen. Bitte prüfe deine Eingaben.',
+clearOnSuccess: true,
+clearPasswordFields: true
+});
+}
+t(key, fallback = '') {
+if (window.XTranslation && typeof window.XTranslation.t === 'function') {
+const translated = window.XTranslation.t(key);
+if (translated && translated !== key) {
+return translated;
+}
+}
+return fallback || key;
+}
+getFormTranslations() {
+return {
+label_username: this.t('forms.labels.username', 'Benutzername'),
+label_email: this.t('forms.labels.email', 'E-Mail'),
+label_password: this.t('forms.labels.password', 'Passwort'),
+label_password2: this.t('forms.labels.password2', 'Passwort erneut'),
+action_login: this.t('forms.labels.login', 'Anmelden'),
+action_registration: this.t('menu.registration', 'Registrierung')
+};
+}
+getViewTranslations(route) {
+const controller = route && route.controller ? route.controller : 'users';
+const view = route && route.view ? route.view : 'login';
+return Object.assign({
+caption: this.t(`captions.${controller}.${view}`, view),
+intro: this.t(`ui.view.${view}.intro`, '')
+}, this.getFormTranslations());
+}
+renderUserView(templateName, route, params = {}) {
+const article = document.getElementById('page_article');
+if (!article || !window.XTemplate || typeof window.XTemplate.render !== 'function') {
+return;
+}
+const markup = XTemplate.render(templateName, Object.assign(
+this.getViewTranslations(route),
+params
+));
+if (markup) {
+article.innerHTML = markup;
+}
+}
+setFormStatus(form, message = '', type = 'info') {
+const status = form ? form.querySelector('.x_form_status') : null;
+if (!status) {
+return;
+}
+status.textContent = message;
+status.setAttribute('data-type', String(type || 'info'));
+status.hidden = String(message || '').trim() === '';
+}
+clearFormFields(form, options = {}) {
+if (!form || typeof form.querySelectorAll !== 'function') {
+return;
+}
+const clearAll = options.clearAll === true;
+const clearPasswordFields = options.clearPasswordFields !== false;
+form.querySelectorAll('input, textarea, select').forEach((field) => {
+const type = String(field.getAttribute('type') || field.type || '').toLowerCase();
+const shouldClear = clearAll || (clearPasswordFields && type === 'password');
+if (!shouldClear) {
+return;
+}
+if (type === 'checkbox' || type === 'radio') {
+field.checked = false;
+return;
+}
+field.value = '';
+});
+}
+bindForm(formId, apiPath, onSuccess = null, options = {}) {
+const form = document.getElementById(formId);
+if (!form || form.dataset.x6Bound === 'true') {
+return;
+}
+if (!window.XApi || typeof window.XApi.submitForm !== 'function') {
+this.setFormStatus(form, 'XApi is not available.', 'error');
+return;
+}
+form.dataset.x6Bound = 'true';
+form.addEventListener('submit', async (event) => {
+event.preventDefault();
+this.setFormStatus(form, this.t('forms.callbacks.loading', 'Bitte warten...'), 'loading');
+let result;
+try {
+result = await XApi.submitForm(form, {
+path: apiPath,
+method: 'POST'
+});
+} catch (error) {
+result = {
+success: false,
+status: 500,
+response: null,
+errors: {
+request: error && error.message ? error.message : 'API request failed'
+}
+};
+if (window.XApi && typeof window.XApi.setFormState === 'function') {
+window.XApi.setFormState(form, 'error');
+}
+if (window.XApi && typeof window.XApi.renderFormErrors === 'function') {
+window.XApi.renderFormErrors(form, result.errors);
+}
+}
+if (result.success && typeof onSuccess === 'function') {
+onSuccess(result);
+}
+if (result.success && options.clearOnSuccess === true) {
+this.clearFormFields(form, { clearAll: true });
+} else if (options.clearPasswordFields !== false) {
+this.clearFormFields(form, { clearPasswordFields: true });
+}
+this.setFormStatus(
+form,
+result.success
+? this.t(options.successKey || 'forms.callbacks.success', options.successFallback || 'Formular erfolgreich gesendet!')
+: this.t(options.failKey || 'forms.callbacks.fail', options.failFallback || 'Formular konnte nicht gesendet werden.'),
+result.success ? 'success' : 'error'
+);
+});
 }
 }
 window.UsersController = UsersController;
@@ -134,6 +277,58 @@ XUser.clear_cache();
 }
 window.User = User;
 class XApi {
+static _MOCKS = [];
+static getApiMode() {
+const config = window.X6_CONFIG && typeof window.X6_CONFIG === 'object' ? window.X6_CONFIG : {};
+return String(config.ApiMode || 'live').toLowerCase() === 'sandbox' ? 'sandbox' : 'live';
+}
+static isSandbox() {
+return XApi.getApiMode() === 'sandbox';
+}
+static registerMock(path, handlerOrPayload, options = {}) {
+XApi._MOCKS.push({
+path: path instanceof RegExp ? path : XApi.normalizePath(path),
+handlerOrPayload,
+delay: Number(options.delay || 0),
+method: options.method ? String(options.method).toUpperCase() : null
+});
+}
+static clearMocks() {
+XApi._MOCKS = [];
+}
+static findMock(path, method = 'GET') {
+const normalizedPath = XApi.normalizePath(path);
+const normalizedMethod = String(method || 'GET').toUpperCase();
+return XApi._MOCKS.find((mock) => {
+if (mock.method && mock.method !== normalizedMethod) {
+return false;
+}
+if (mock.path instanceof RegExp) {
+return mock.path.test(normalizedPath);
+}
+return mock.path === normalizedPath;
+}) || null;
+}
+static sleep(delayMs = 0) {
+return new Promise((resolve) => window.setTimeout(resolve, Math.max(0, Number(delayMs || 0))));
+}
+static async runMock(mock, context = {}) {
+if (!mock) {
+return XApi.normalizePayload({
+success: false,
+status: 404,
+response: null,
+errors: { mock: 'mock not found' }
+});
+}
+if (mock.delay > 0) {
+await XApi.sleep(mock.delay);
+}
+const payload = typeof mock.handlerOrPayload === 'function'
+? await mock.handlerOrPayload(context)
+: mock.handlerOrPayload;
+return XApi.normalizePayload(payload);
+}
 static normalizePath(path = '') {
 const normalized = String(path || '').trim().replace(/^\/+|\/+$/g, '');
 return normalized;
@@ -158,7 +353,7 @@ const base = {
 success: false,
 status: 200,
 response: null,
-errors: []
+errors: {}
 };
 if (!payload || typeof payload !== 'object') {
 return base;
@@ -167,16 +362,148 @@ return {
 success: payload.success === true,
 status: Number(payload.status || 200),
 response: Object.prototype.hasOwnProperty.call(payload, 'response') ? payload.response : null,
-errors: Array.isArray(payload.errors) ? payload.errors : []
+errors: XApi.normalizeErrors(payload.errors)
 };
+}
+static normalizeErrors(errors) {
+if (Array.isArray(errors)) {
+return errors;
+}
+if (errors && typeof errors === 'object') {
+return errors;
+}
+if (typeof errors === 'string' && errors.trim() !== '') {
+return [errors.trim()];
+}
+return {};
+}
+static isFormData(value) {
+return typeof FormData !== 'undefined' && value instanceof FormData;
+}
+static formDataToObject(formData) {
+const result = {};
+if (!XApi.isFormData(formData)) {
+return result;
+}
+for (const [key, value] of formData.entries()) {
+if (Object.prototype.hasOwnProperty.call(result, key)) {
+if (!Array.isArray(result[key])) {
+result[key] = [result[key]];
+}
+result[key].push(value);
+} else {
+result[key] = value;
+}
+}
+return result;
+}
+static getErrorMessages(errors) {
+const normalized = XApi.normalizeErrors(errors);
+if (Array.isArray(normalized)) {
+return normalized.map((message) => String(message || '').trim()).filter(Boolean);
+}
+return Object.values(normalized)
+.flat()
+.map((message) => String(message || '').trim())
+.filter(Boolean);
+}
+static cssEscape(value) {
+if (window.CSS && typeof window.CSS.escape === 'function') {
+return window.CSS.escape(value);
+}
+return String(value || '').replace(/[^a-zA-Z0-9_-]/g, '\\$&');
+}
+static clearFormErrors(formElement) {
+if (!formElement || typeof formElement.querySelectorAll !== 'function') {
+return;
+}
+formElement.querySelectorAll('.x_form_error_summary, .x_form_input_error').forEach((node) => node.remove());
+formElement.querySelectorAll('[aria-invalid="true"]').forEach((field) => {
+field.removeAttribute('aria-invalid');
+field.removeAttribute('aria-describedby');
+});
+}
+static setFormState(formElement, state = 'idle') {
+if (!formElement || typeof formElement.setAttribute !== 'function') {
+return;
+}
+const normalizedState = String(state || 'idle').toLowerCase();
+formElement.setAttribute('data-state', normalizedState);
+const disabled = normalizedState === 'loading' || normalizedState === 'disabled';
+formElement.querySelectorAll('input, textarea, select, button').forEach((field) => {
+field.disabled = disabled;
+});
+}
+static renderFormErrors(formElement, errors = {}) {
+if (!formElement || typeof formElement.querySelector !== 'function') {
+return;
+}
+XApi.clearFormErrors(formElement);
+const normalized = XApi.normalizeErrors(errors);
+const messages = XApi.getErrorMessages(normalized);
+if (messages.length < 1) {
+return;
+}
+const summary = document.createElement('div');
+summary.className = 'x_form_error_summary';
+summary.setAttribute('role', 'alert');
+const list = document.createElement('ul');
+messages.forEach((message) => {
+const item = document.createElement('li');
+item.textContent = message;
+list.appendChild(item);
+});
+summary.appendChild(list);
+const submit = formElement.querySelector('[type="submit"]');
+if (submit && submit.parentNode) {
+submit.parentNode.insertBefore(summary, submit);
+} else {
+formElement.appendChild(summary);
+}
+if (!Array.isArray(normalized) && normalized && typeof normalized === 'object') {
+Object.entries(normalized).forEach(([fieldName, fieldErrors]) => {
+const field = formElement.querySelector(`[name="${XApi.cssEscape(fieldName)}"]`);
+if (!field) {
+return;
+}
+const errorText = Array.isArray(fieldErrors) ? fieldErrors.join(' ') : String(fieldErrors || '');
+if (errorText.trim() === '') {
+return;
+}
+const errorId = `${formElement.id || 'x_form'}_${fieldName}_error`;
+const errorNode = document.createElement('div');
+errorNode.id = errorId;
+errorNode.className = 'x_form_input_error';
+errorNode.textContent = errorText;
+field.setAttribute('aria-invalid', 'true');
+field.setAttribute('aria-describedby', errorId);
+field.insertAdjacentElement('afterend', errorNode);
+});
+}
 }
 static async request(path, options = {}) {
 const method = String(options.method || 'GET').toUpperCase();
 const headers = Object.assign({}, options.headers || {});
 const queryString = XApi.toQueryString(options.query || {});
 const endpoint = `/api/${XApi.normalizePath(path)}${queryString}`;
+if (XApi.isSandbox()) {
+const mock = XApi.findMock(path, method);
+return XApi.runMock(mock, {
+path: XApi.normalizePath(path),
+method,
+query: options.query || {},
+body: options.body,
+headers
+});
+}
 const fetchOptions = { method, headers };
 if (Object.prototype.hasOwnProperty.call(options, 'body')) {
+if (XApi.isFormData(options.body)) {
+fetchOptions.body = options.body;
+if (Object.prototype.hasOwnProperty.call(headers, 'Content-Type')) {
+delete headers['Content-Type'];
+}
+} else {
 fetchOptions.body = typeof options.body === 'string'
 ? options.body
 : JSON.stringify(options.body);
@@ -184,10 +511,21 @@ if (!headers['Content-Type']) {
 headers['Content-Type'] = 'application/json';
 }
 }
+}
 try {
 const response = await fetch(endpoint, fetchOptions);
+const contentType = String(response.headers.get('content-type') || '').toLowerCase();
+if (contentType.includes('application/json')) {
 const json = await response.json();
 return XApi.normalizePayload(json);
+}
+const text = await response.text();
+return XApi.normalizePayload({
+success: false,
+status: response.ok ? 500 : response.status,
+response: null,
+errors: [text || 'invalid api response format']
+});
 } catch (error) {
 return XApi.normalizePayload({
 success: false,
@@ -196,6 +534,45 @@ response: null,
 errors: [error && error.message ? error.message : 'API request failed']
 });
 }
+}
+static async submitForm(formElement, options = {}) {
+if (!formElement || typeof formElement !== 'object') {
+return XApi.normalizePayload({
+success: false,
+status: 500,
+response: null,
+errors: { form: 'invalid form element' }
+});
+}
+const path = String(options.path || '').trim();
+if (path === '') {
+return XApi.normalizePayload({
+success: false,
+status: 500,
+response: null,
+errors: { path: 'missing api path' }
+});
+}
+XApi.clearFormErrors(formElement);
+XApi.setFormState(formElement, 'loading');
+const method = String(options.method || formElement.method || 'POST').toUpperCase();
+const formData = new FormData(formElement);
+const hasFiles = Array.from(formData.values()).some((value) => {
+return typeof File !== 'undefined' && value instanceof File;
+});
+const useMultipart = options.multipart === true || hasFiles;
+const body = useMultipart ? formData : XApi.formDataToObject(formData);
+const result = await XApi.request(path, {
+method,
+headers: Object.assign({}, options.headers || {}),
+query: options.query || {},
+body
+});
+XApi.setFormState(formElement, result.success ? 'success' : 'error');
+if (!result.success) {
+XApi.renderFormErrors(formElement, result.errors);
+}
+return result;
 }
 }
 window.XApi = XApi;
@@ -431,8 +808,8 @@ when: () => !!(window.X6 && window.X6.options && window.X6.options.sidebar === t
 translationMap: {
 sidebar_title: 'ui.sidebar.title',
 menu_home: 'menu.home',
-menu_support: 'menu.support',
-menu_contact: 'menu.contact'
+menu_imprint: 'menu.imprint',
+menu_privacy: 'menu.privacy'
 }
 },
 {
@@ -558,20 +935,52 @@ return stringValue.charAt(0).toUpperCase() + stringValue.slice(1);
 window.XFramework = XFramework;
 class XLanguage {
 static getDefaultLanguage() {
-return 'DE';
+const config = XLanguage.loadConfig();
+return XLanguage.normalizeLanguage(config.Language || 'de');
 }
 static normalizeLanguage(value) {
-const normalized = String(value || '').trim().toUpperCase();
-if (!/^[A-Z]{2}$/.test(normalized)) {
-return XLanguage.getDefaultLanguage();
+const normalized = String(value || '').trim().toLowerCase();
+if (!/^[a-z]{2}$/.test(normalized)) {
+return 'de';
 }
 return normalized;
 }
+static getAvailableLanguages() {
+const config = XLanguage.loadConfig();
+const languages = Array.isArray(config.AvailableLanguages) ? config.AvailableLanguages : [XLanguage.getDefaultLanguage()];
+return [...new Set(languages.map((lang) => XLanguage.normalizeLanguage(lang)))];
+}
+static getFallbackLanguage() {
+const config = XLanguage.loadConfig();
+return XLanguage.normalizeLanguage(config.FallbackLanguage || XLanguage.getDefaultLanguage());
+}
+static getUrlLanguage() {
+const params = new URLSearchParams(window.location.search || '');
+const lang = params.get('lang');
+return lang ? XLanguage.normalizeLanguage(lang) : null;
+}
+static getStoredLanguage() {
+try {
+return window.localStorage ? XLanguage.normalizeLanguage(window.localStorage.getItem('x6.language')) : null;
+} catch (error) {
+return null;
+}
+}
+static storeLanguage(language) {
+try {
+if (window.localStorage) {
+window.localStorage.setItem('x6.language', XLanguage.normalizeLanguage(language));
+}
+} catch (error) {
+}
+}
 static setCurrentLanguage(language) {
 window.LANG = XLanguage.normalizeLanguage(language);
+XLanguage.storeLanguage(window.LANG);
 if (document && document.documentElement) {
-document.documentElement.setAttribute('lang', window.LANG.toLowerCase());
+document.documentElement.setAttribute('lang', window.LANG);
 }
+window.dispatchEvent(new CustomEvent('x6:language', { detail: { language: window.LANG } }));
 return window.LANG;
 }
 static getCurrentLanguage() {
@@ -588,7 +997,10 @@ return {};
 }
 static init() {
 const config = XLanguage.loadConfig();
-const language = config.Language || XLanguage.getDefaultLanguage();
+const language = XLanguage.getUrlLanguage()
+|| XLanguage.getStoredLanguage()
+|| config.Language
+|| XLanguage.getDefaultLanguage();
 return XLanguage.setCurrentLanguage(language);
 }
 }
@@ -742,6 +1154,12 @@ return XTranslation.normalizeLanguage(window.LANG);
 }
 return 'de';
 }
+static getFallbackLanguage() {
+if (window.XLanguage && typeof window.XLanguage.getFallbackLanguage === 'function') {
+return XTranslation.normalizeLanguage(window.XLanguage.getFallbackLanguage());
+}
+return 'de';
+}
 static ensureStore() {
 if (!Array.isArray(window.TRANSLATIONS)) {
 window.TRANSLATIONS = [];
@@ -778,7 +1196,7 @@ const languageText = languageStore[translationKey];
 if (typeof languageText === 'string') {
 return languageText;
 }
-const fallbackStore = XTranslation.ensureLanguageStore('de');
+const fallbackStore = XTranslation.ensureLanguageStore(XTranslation.getFallbackLanguage());
 const fallbackText = fallbackStore[translationKey];
 if (typeof fallbackText === 'string') {
 return fallbackText;
@@ -819,11 +1237,12 @@ window.TEMPLATES['footer'] = `
 `.trim();
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 window.TEMPLATES['form.login'] = `
-<form id="login_form">
-<label>{{label_username}}</label>
-<input name="username" type="text" />
-<label>{{label_password}}</label>
-<input name="password" type="password" />
+<form id="login_form" method="post" novalidate>
+<label for="login_username">{{label_username}}</label>
+<input id="login_username" name="username" type="text" autocomplete="username" required />
+<label for="login_password">{{label_password}}</label>
+<input id="login_password" name="password" type="password" autocomplete="current-password" required />
+<div class="x_form_status" aria-live="polite" hidden></div>
 <button type="submit">{{action_login}}</button>
 </form>
 `.trim();
@@ -869,12 +1288,12 @@ window.TEMPLATES['header'] = `
 `.trim();
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 window.TEMPLATES['sidebar'] = `
-<section id="page_sidebar">
-<h3>{{sidebar_title}}</h3>
+<section id="page_sidebar" aria-labelledby="page_sidebar_title">
+<h3 id="page_sidebar_title">{{sidebar_title}}</h3>
 <ul class="clean_list">
 <li><a href="#!/index/index">{{menu_home}}</a></li>
-<li><a href="#!/support/index">{{menu_support}}</a></li>
-<li><a href="#!/index/contact">{{menu_contact}}</a></li>
+<li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
+<li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
 </ul>
 </section>
 `.trim();
@@ -912,15 +1331,16 @@ window.TEMPLATES['view.users.registration'] = `
 <section class="view view_users_registration">
 <h1>{{caption}}</h1>
 <p>{{intro}}</p>
-<form id="registration_form">
-<label>{{label_username}}</label>
-<input name="username" type="text" />
-<label>{{label_email}}</label>
-<input name="email" type="email" />
-<label>{{label_password}}</label>
-<input name="password" type="password" />
-<label>{{label_password2}}</label>
-<input name="password2" type="password" />
+<form id="registration_form" method="post" novalidate>
+<label for="registration_username">{{label_username}}</label>
+<input id="registration_username" name="username" type="text" autocomplete="username" required />
+<label for="registration_email">{{label_email}}</label>
+<input id="registration_email" name="email" type="email" autocomplete="email" required />
+<label for="registration_password">{{label_password}}</label>
+<input id="registration_password" name="password" type="password" autocomplete="new-password" required />
+<label for="registration_password2">{{label_password2}}</label>
+<input id="registration_password2" name="password2" type="password" autocomplete="new-password" required />
+<div class="x_form_status" aria-live="polite" hidden></div>
 <button type="submit">{{action_registration}}</button>
 </form>
 </section>
@@ -965,8 +1385,13 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
 'forms.labels.name': 'Name',
 'forms.labels.submit': 'Absenden',
 'forms.please_choose': 'Bitte auswählen',
+'forms.callbacks.loading': 'Bitte warten...',
 'forms.callbacks.success': 'Formular erfolgreich gesendet!',
 'forms.callbacks.fail': 'Formular konnte nicht gesendet werden.',
+'forms.callbacks.login_success': 'Du bist erfolgreich angemeldet.',
+'forms.callbacks.login_fail': 'Anmeldung fehlgeschlagen. Bitte prüfe deine Eingaben.',
+'forms.callbacks.registration_success': 'Deine Registrierung war erfolgreich.',
+'forms.callbacks.registration_fail': 'Registrierung fehlgeschlagen. Bitte prüfe deine Eingaben.',
 'words.welcome': 'Willkommen',
 'words.yes': 'Ja',
 'words.no': 'Nein',
@@ -999,6 +1424,8 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
 'words.processing': 'Bitte warten...',
 'words.history': 'Historie',
 'captions.index.index': 'Willkommen',
+'captions.index.imprint': 'Impressum',
+'captions.index.privacy': 'Datenschutz',
 'captions.users.login': 'Anmeldung',
 'captions.users.registration': 'Registrierung',
 'captions.users.profile': 'Benutzerprofil',
@@ -1068,6 +1495,13 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
 'errors.email_confirmation.failed': 'E-Mail-Bestätigung fehlgeschlagen.',
 'ui.sidebar.title': 'Navigation',
 'ui.footer.text': 'Xtreme-Webframework Version 6',
+'forms.callbacks.loading': 'Bitte warten...',
+'forms.callbacks.login_success': 'Du bist erfolgreich angemeldet.',
+'forms.callbacks.login_fail': 'Anmeldung fehlgeschlagen. Bitte prüfe deine Eingaben.',
+'forms.callbacks.registration_success': 'Deine Registrierung war erfolgreich.',
+'forms.callbacks.registration_fail': 'Registrierung fehlgeschlagen. Bitte prüfe deine Eingaben.',
+'captions.index.imprint': 'Impressum',
+'captions.index.privacy': 'Datenschutz',
 'ui.view.index.intro': 'Willkommen im Xtreme 6 Frontend mit JS-Templates.',
 'ui.view.imprint.intro': 'Hier findest du alle rechtlichen Informationen (Impressum).',
 'ui.view.privacy.intro': 'Hier findest du unsere Datenschutzinformationen.',

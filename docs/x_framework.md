@@ -5,6 +5,7 @@
 This document is the **detailed technical reference** for the xtreme6 framework.
 
 - `agents.md` defines decision priority and top-level rules.
+- `agents.md` also defines which documentation must be read for each task type.
 - this file explains the framework architecture and technical boundaries.
 - if any statement here conflicts with `agents.md`, `agents.md` wins.
 
@@ -22,14 +23,14 @@ Core idea:
 
 MD-first governance, source mapping, and build-gate expectations are documented in `docs/md_first.md`.
 
-## no hand-written feature code as source-of-truth
+## markdown is the source-of-truth
 
 The framework is designed so that humans no longer maintain business logic directly in runtime files.
 
 - no example files as feature specification source.
 - no manual programming in object runtime classes as primary workflow.
 - no manual programming in controller/template runtime files as primary workflow.
-- markdown files are the authoritative specification for AI-assisted generation.
+- markdown files are the authoritative specification for generation.
 
 Runtime files can still exist in the repository, but they are treated as generated artifacts.
 
@@ -60,6 +61,32 @@ Runtime files can still exist in the repository, but they are treated as generat
 - framework code may be replaced during framework updates.
 - do not edit `x_` runtime/project files for persistent project customization; treat them as framework-owned and overwriteable on update.
 - place project-maintained code/config in non-`x_` files (for example `styles/variables.css`, `docs/routes.md`, project controllers/templates).
+
+## framework update process for `x_` files
+
+`xtreme6_update.php` is the framework update helper for framework-owned artifacts.
+
+Update rule:
+
+- The updater recursively scans the incoming framework source for files whose basename starts with `x_`.
+- Matching target files in the project are overwritten **plain** when the incoming file differs.
+- No merge, patch, conflict resolution, or local-change preservation is attempted for `x_` files.
+- Unchanged files may be reported as unchanged and skipped because the resulting file content is identical.
+
+Risk model:
+
+- Local edits in `x_` files are intentionally disposable and can be lost during update.
+- Persistent project behavior must be implemented in non-`x_` files whenever possible.
+- For user behavior, prefer project overrides such as `User extends XUser` instead of editing `XUser` directly.
+- For routing, templates, styles, translations, API contracts, and project rules, use project-owned files such as `docs/routes.md`, `templates/*`, `styles/*`, `translations/*`, and non-`x_` controllers.
+
+Report/dry-run mode:
+
+- `php xtreme6_update.php --dry-run`
+- alias: `php xtreme6_update.php --report`
+- The report mode downloads/unpacks the framework source but does not write target files.
+- It reports files that would be newly created, plain overwritten, or unchanged.
+- For QA without network access, a local framework source can be supplied with `--source-dir=/path/to/U42_Xtreme6`.
 
 ## source-of-truth model
 
@@ -176,6 +203,28 @@ Translations are JavaScript-based and grouped by locale folder under `translatio
 - `XTemplate` renders templates with `{{placeholder}}` replacement.
 - `XTranslation` resolves translation strings with `{{placeholder}}` replacement.
 
+Translation file convention:
+
+- Every configured language from `config.json` key `AvailableLanguages` must have a directory `translations/<lang>/`.
+- Each language directory must contain `translations/<lang>/_default.js` as the baseline language file.
+- Optional modular files such as `translations/<lang>/common.js` may extend or override keys for that language.
+- Translation filenames must be lowercase.
+- Translation files assign keys into `window.TRANSLATIONS_BY_LANG.<lang>` and then merge into `window.TRANSLATIONS` for the active/default runtime store.
+
+Required translation keys:
+
+- Core app/menu keys: `app.name`, `menu.home`, `menu.login`, `menu.logout`, `menu.registration`, `menu.imprint`, `menu.privacy`.
+- Core form labels: `forms.labels.username`, `forms.labels.email`, `forms.labels.password`, `forms.labels.password2`, `forms.labels.login`.
+- Core form callbacks: `forms.callbacks.loading`, `forms.callbacks.success`, `forms.callbacks.fail`, `forms.callbacks.login_success`, `forms.callbacks.login_fail`, `forms.callbacks.registration_success`, `forms.callbacks.registration_fail`.
+- Every route in `docs/routes.md` requires `captions.<controller>.<view>` and `ui.view.<view>.intro` in every configured language.
+
+Translation governance build check:
+
+- `compiler/compile_scripts.php` validates all configured languages before writing the translation bundle.
+- The check fails if a configured language directory or `_default.js` file is missing.
+- The check fails if any required key is missing in any configured language.
+- Adding a new route/view therefore requires adding its caption and intro keys to all configured languages before the build can pass.
+
 i18n runtime behavior:
 
 - language codes are normalized lowercase (`de`, `en`, ...).
@@ -215,6 +264,16 @@ Use native links with hash routing in templates:
 
 - Use `href="#!/controller/view"`
 - Do not use `data-href` for routing links
+- Template links must point to routes declared in `docs/routes.md`.
+
+## ui primitive governance
+
+Reusable project UI primitives are inventoried and governed in `docs/ui_primitives.md`.
+
+- Runtime artifacts include shell, header navigation, mobile navigation, sidebar, and footer templates.
+- Missing primitives such as breadcrumb and slideshow must be specified in Markdown before runtime creation.
+- Visible labels must use translation keys available in every configured language.
+- Primitive links must use declared hash routes only.
 
 ## build flow
 

@@ -25,13 +25,14 @@ window.TEMPLATES['footer'] = `
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['form.login'] = `
-<form id="login_form">
-  <label>{{label_username}}</label>
-  <input name="username" type="text" />
+<form id="login_form" method="post" novalidate>
+  <label for="login_username">{{label_username}}</label>
+  <input id="login_username" name="username" type="text" autocomplete="username" required />
 
-  <label>{{label_password}}</label>
-  <input name="password" type="password" />
+  <label for="login_password">{{label_password}}</label>
+  <input id="login_password" name="password" type="password" autocomplete="current-password" required />
 
+  <div class="x_form_status" aria-live="polite" hidden></div>
   <button type="submit">{{action_login}}</button>
 </form>
 `.trim();
@@ -88,12 +89,12 @@ window.TEMPLATES['header'] = `
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['sidebar'] = `
-<section id="page_sidebar">
-  <h3>{{sidebar_title}}</h3>
+<section id="page_sidebar" aria-labelledby="page_sidebar_title">
+  <h3 id="page_sidebar_title">{{sidebar_title}}</h3>
   <ul class="clean_list">
     <li><a href="#!/index/index">{{menu_home}}</a></li>
-    <li><a href="#!/support/index">{{menu_support}}</a></li>
-    <li><a href="#!/index/contact">{{menu_contact}}</a></li>
+    <li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
+    <li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
   </ul>
 </section>
 `.trim();
@@ -146,19 +147,20 @@ window.TEMPLATES['view.users.registration'] = `
 <section class="view view_users_registration">
   <h1>{{caption}}</h1>
   <p>{{intro}}</p>
-  <form id="registration_form">
-    <label>{{label_username}}</label>
-    <input name="username" type="text" />
+  <form id="registration_form" method="post" novalidate>
+    <label for="registration_username">{{label_username}}</label>
+    <input id="registration_username" name="username" type="text" autocomplete="username" required />
 
-    <label>{{label_email}}</label>
-    <input name="email" type="email" />
+    <label for="registration_email">{{label_email}}</label>
+    <input id="registration_email" name="email" type="email" autocomplete="email" required />
 
-    <label>{{label_password}}</label>
-    <input name="password" type="password" />
+    <label for="registration_password">{{label_password}}</label>
+    <input id="registration_password" name="password" type="password" autocomplete="new-password" required />
 
-    <label>{{label_password2}}</label>
-    <input name="password2" type="password" />
+    <label for="registration_password2">{{label_password2}}</label>
+    <input id="registration_password2" name="password2" type="password" autocomplete="new-password" required />
 
+    <div class="x_form_status" aria-live="polite" hidden></div>
     <button type="submit">{{action_registration}}</button>
   </form>
 </section>

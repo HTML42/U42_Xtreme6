@@ -23,6 +23,7 @@ Plural framework class `x_users` for lists and collections.
 - `delete_date` (Unix timestamp in seconds)
 
 ## authentication collection contract
+- workflow: `users.registration`
 - must define list/query behavior needed by login and registration lookups
 - must define lookup by username/email for duplicate checks
 - must define collection-level helpers used by registration/login orchestration

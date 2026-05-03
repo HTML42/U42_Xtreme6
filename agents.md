@@ -6,9 +6,46 @@
 
 - all ai agents and developers must read this file first.
 - this file is intentionally an overview and decision guide.
-- detailed operational documentation lives in `docs/x_framework.md`, `docs/x_objects.md`, `docs/x_styles.md`, and `docs/x_compiler.md`.
+- detailed operational documentation lives in `docs/*`; read only the files relevant to the current task, but always start from the routing table below.
 - `docs/routes.md` is a project-level route specification and is intentionally not prefixed with `x_`.
 - in case of conflicts, always apply: **`agents.md` over `docs/*`**.
+
+## mandatory agent workflow
+
+1. read `agents.md` first.
+2. identify the task type.
+3. read the matching task documentation from **task documentation routing** before editing files.
+4. update the markdown source-of-truth before changing runtime/generated artifacts.
+5. run only non-interactive terminal commands; never start commands that wait for `q` or open a pager.
+
+### non-interactive terminal rule
+
+- never use terminal commands that can block in an interactive pager.
+- for git diffs/logs/show commands, use `git --no-pager ...`.
+- preferred examples:
+  - `git --no-pager diff --stat`
+  - `git --no-pager diff -- path/to/file`
+  - `git --no-pager log --oneline -n 20`
+- avoid plain `git diff`, `git log`, `git show`, or any command that requires pressing `q` to continue.
+
+## task documentation routing
+
+Use this map to avoid scattered or duplicated AI documentation. Keep detailed rules in the canonical target file and link to it instead of repeating it elsewhere.
+
+| task type | read first | canonical source / follow-up docs |
+| --- | --- | --- |
+| general architecture or build flow | `docs/x_framework.md` | `docs/x_compiler.md`, `docs/release_qa.md` |
+| objects/domain modeling | `docs/x_objects.md` | `docs/md_first.md`, matching `objects/<name>/<name>.class.md` |
+| api/backend contract | `docs/x_api.md` | `docs/md_first.md`, matching `api/<dimension>/<dimension>.md` |
+| routes/controllers/templates | `docs/routes.md` | `docs/md_first.md`, `scripts/controllers/<controller>.controller.md` |
+| database/model work | `docs/x_models.md` | matching `models/<table>.md` |
+| styles/ui css | `docs/styles.md` | `docs/x_styles.md` |
+| ui primitives/navigation/sidebar/breadcrumb | `docs/ui_primitives.md` | `docs/routes.md`, translations |
+| secrets/security config | `docs/secrets.md` | `docs/security_auth.md`, `compiler/check_secret_leaks.php` |
+| sandbox/mock/api demos | `docs/sandbox.md` | `scripts/x_api.class.js`, API markdown |
+| release/checkpoint/qa | `docs/release_qa.md` | `current_tasks.md`, `currentstate.md` |
+
+Documentation rule: do not create new AI-process documentation unless no canonical target exists. Prefer concise links and checklists over duplicated explanations.
 
 ## framework concept (xtreme6)
 
@@ -48,6 +85,8 @@ when building features, always use this sequence:
 - `docs/x_styles.md`: framework style-token and AI-driven style workflow.
 - `docs/styles.md`: project style instruction source for AI-driven css generation.
 - `docs/project.md`: intentionally empty in this framework repository.
+- `docs/md_first.md`: source-of-truth mapping and build-gate expectations.
+- `docs/release_qa.md`: non-interactive QA/checkpoint commands and release checklist.
 
 ## documentation layout
 

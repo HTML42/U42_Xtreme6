@@ -12,8 +12,8 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 
 ## global definition of done (dod)
 
-- [ ] Jede Runtime-Funktionalität ist auf eine MD-Spezifikation zurückführbar.
-- [ ] FE/BE-Verträge sind via API dokumentiert, testbar und versionierbar.
+- [x] Jede Runtime-Funktionalität ist auf eine MD-Spezifikation zurückführbar.
+- [x] FE/BE-Verträge sind via API dokumentiert, testbar und versionierbar.
 - [ ] Alle Form-Flows laufen per AJAX, inkl. Datei-Upload, Inline-Error + Error-Summary.
 - [ ] Secrets sind nicht im Frontend-Bundle/Repo-Leak enthalten.
 - [ ] Sandbox/Mock-Modus ermöglicht End-to-End-Demos ohne Live-Backend.
@@ -40,9 +40,9 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 
 ## task 4: frontend-anbindung users-flow
 
-- [ ] **subtask 4.1**: `UsersController.login` mit Formular-Submit + `XApi.request(...)` verbinden.
-- [ ] **subtask 4.2**: `UsersController.registration` mit Formular-Submit + `XApi.request(...)` verbinden.
-- [ ] **subtask 4.3**: UI-Feedback (loading/success/error) in Templates ergänzen.
+- [x] **subtask 4.1**: `UsersController.login` mit Formular-Submit + `XApi.request(...)` verbinden.
+- [x] **subtask 4.2**: `UsersController.registration` mit Formular-Submit + `XApi.request(...)` verbinden.
+- [x] **subtask 4.3**: UI-Feedback (loading/success/error) in Templates ergänzen.
 
 ## task 6: form-system auf ajax + datei-upload standardisieren
 
@@ -53,10 +53,10 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 
 ## task 7: updateprozess für x_-dateien verifizieren und härten
 
-- [ ] **subtask 7.1**: Regel festschreiben: `x_`-Dateien werden bei Framework-Update immer plain überschrieben.
-- [ ] **subtask 7.2**: `xtreme6_update.php` auf Vollständigkeit prüfen (rekursives Finden + Kopieren aller `x_`-Dateien).
-- [ ] **subtask 7.3**: Risikoanalyse dokumentieren: lokale Änderungen in `x_` gehen verloren (gewollt) + Gegenmaßnahmen via non-`x_` Overrides.
-- [ ] **subtask 7.4**: Optionalen Dry-Run/Report-Modus für Updateprozess spezifizieren.
+- [x] **subtask 7.1**: Regel festschreiben: `x_`-Dateien werden bei Framework-Update immer plain überschrieben.
+- [x] **subtask 7.2**: `xtreme6_update.php` auf Vollständigkeit prüfen (rekursives Finden + Kopieren aller `x_`-Dateien).
+- [x] **subtask 7.3**: Risikoanalyse dokumentieren: lokale Änderungen in `x_` gehen verloren (gewollt) + Gegenmaßnahmen via non-`x_` Overrides.
+- [x] **subtask 7.4**: Optionalen Dry-Run/Report-Modus für Updateprozess spezifizieren.
 
 ## task 8: translation/i18n finalisierung (runtime + seo)
 
@@ -74,9 +74,9 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 
 ## task 9: translation-system governance
 
-- [ ] **subtask 9.1**: Konvention für Translation-Dateien pro Sprache dokumentieren (`translations/<lang>/_default.js`, optionale modulare Dateien).
-- [ ] **subtask 9.2**: Pflicht-Keys definieren (Core-Menü, Captions, Formlabels) und Missing-Key-Report im Build ergänzen.
-- [ ] **subtask 9.3**: Prozess festschreiben: neue Route/View erfordert Translation-Keys in allen aktiven Sprachen.
+- [x] **subtask 9.1**: Konvention für Translation-Dateien pro Sprache dokumentieren (`translations/<lang>/_default.js`, optionale modulare Dateien).
+- [x] **subtask 9.2**: Pflicht-Keys definieren (Core-Menü, Captions, Formlabels) und Missing-Key-Report im Build ergänzen.
+- [x] **subtask 9.3**: Prozess festschreiben: neue Route/View erfordert Translation-Keys in allen aktiven Sprachen.
 
 ## task 10: md-first governance (ki-driven source of truth)
 
@@ -146,19 +146,219 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 
 ## task 15: framework-ui primitives governance
 
-- [ ] **subtask 15.1**: Verfügbare Framework-UI-Bausteine inventarisieren (Navigation, Breadcrumbs, Sidebar, Slideshow, etc.).
-- [ ] **subtask 15.2**: MD-API für UI-Baustein-Konfiguration definieren (welcher Baustein auf welcher Route mit welchen Daten).
-- [ ] **subtask 15.3**: Konsistenzregeln festlegen (Responsiveness, Accessibility, i18n, SEO-relevante Labels/Titles).
-- [ ] **subtask 15.4**: Priorisierte Lückenliste für fehlende oder unvollständige UI-Primitives erstellen.
+- [x] **subtask 15.1**: Verfügbare Framework-UI-Bausteine inventarisieren (Navigation, Breadcrumbs, Sidebar, Slideshow, etc.).
+- [x] **subtask 15.2**: MD-API für UI-Baustein-Konfiguration definieren (welcher Baustein auf welcher Route mit welchen Daten).
+- [x] **subtask 15.3**: Konsistenzregeln festlegen (Responsiveness, Accessibility, i18n, SEO-relevante Labels/Titles).
+- [x] **subtask 15.4**: Priorisierte Lückenliste für fehlende oder unvollständige UI-Primitives erstellen.
 
 ### acceptance criteria (task 15)
 
-- [ ] Alle vorhandenen UI-Primitives sind inventarisiert und MD-konfigurierbar beschrieben.
-- [ ] Breadcrumb/Navigation/Sidebar/Slideshow folgen einheitlichen i18n/a11y-Regeln.
-- [ ] Dokumentierte Lückenliste ist priorisiert und release-relevant bewertet.
+- [x] Alle vorhandenen UI-Primitives sind inventarisiert und MD-konfigurierbar beschrieben.
+- [x] Breadcrumb/Navigation/Sidebar/Slideshow folgen einheitlichen i18n/a11y-Regeln.
+- [x] Dokumentierte Lückenliste ist priorisiert und release-relevant bewertet.
 
 ## task 5: qualität & release-vorbereitung
 
-- [ ] **subtask 5.1**: Smoke-Tests für JSON und MySQL durchführen.
-- [ ] **subtask 5.2**: `currentstate.md` nach jedem Meilenstein aktualisieren.
-- [ ] **subtask 5.3**: Commit-/PR-Checkliste für reproduzierbare KI-Generierung dokumentieren.
+- [x] **subtask 5.1**: Smoke-Tests für JSON und MySQL durchführen.
+- [x] **subtask 5.2**: `currentstate.md` nach jedem Meilenstein aktualisieren.
+- [x] **subtask 5.3**: Commit-/PR-Checkliste für reproduzierbare KI-Generierung dokumentieren.
+
+## next roadmap: ki-driven framework hardening
+
+Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Framework. Grundregel für alle Tasks: **zuerst Markdown-Spezifikation, danach Runtime/Compiler/Tests ableiten**.
+
+## task 16: workflow/process md-source system
+
+- [x] **subtask 16.1**: Ordnerkonvention `docs/workflows/<workflow>.md` finalisieren.
+- [x] **subtask 16.2**: Pflichtschema für Workflows definieren: Ziel, Inputs, Schritte, Objekt/API-Aufrufe, Nebenwirkungen, Success-/Failure-Pfade.
+- [x] **subtask 16.3**: Build-Check ergänzen: referenzierte Workflows/Prozesse müssen als MD existieren.
+- [x] **subtask 16.4**: Beispielworkflow `users.registration.md` aus bestehendem Users-Flow ableiten.
+- [x] **subtask 16.5**: Prozess-zu-API/Object Traceability-Report erstellen.
+
+### acceptance criteria (task 16)
+
+- [x] Jeder Prozess/Workflow hat eine MD-Quelle vor Runtime-Änderungen.
+- [x] Workflow-MDs referenzieren konkrete API-Endpunkte und Objektmethoden.
+- [x] Build/QA meldet fehlende Workflow-MDs.
+
+## task 17: object generator aus md spezifizieren
+
+- [ ] **subtask 17.1**: Object-MD-Schema zu Properties, Methoden, Validierungen, Persistence und Tests maschinenlesbar machen.
+- [ ] **subtask 17.2**: Generator-Regeln dokumentieren: `objects/<object>/<object>.class.md` -> PHP/JS/Test-Artefakte.
+- [ ] **subtask 17.3**: Singular/Plural-Pair-Regel im Generator erzwingen (`x_user` + `x_users`).
+- [ ] **subtask 17.4**: Object-Runtime-Diffs als Report ausgeben, bevor Dateien überschrieben werden.
+- [ ] **subtask 17.5**: Beispielgenerierung für `x_user`/`x_users` als Referenz definieren.
+
+### acceptance criteria (task 17)
+
+- [ ] Neue Objekte entstehen nie ohne Singular/Plural-Paar.
+- [ ] Runtime-Klassen sind eindeutig auf Object-MDs zurückführbar.
+- [ ] Generator kann fehlende oder veraltete Artefakte reporten.
+
+## task 18: datenbank-schema compiler aus models/*.md
+
+- [ ] **subtask 18.1**: `models/*.md` in ein internes Schemaformat parsen (fields, type, required, default, unique, index).
+- [ ] **subtask 18.2**: DB-Validierungen aus Model-MD ableiten (format, range, enum, custom rules).
+- [ ] **subtask 18.3**: JSON-Engine Schema-Checks vor Insert/Update erzwingen.
+- [ ] **subtask 18.4**: MySQL-Engine Schema-Create/Alter-Plan aus Model-MD generieren.
+- [ ] **subtask 18.5**: Schema-Diff/Dry-Run für DB-Migrationen einführen.
+
+### acceptance criteria (task 18)
+
+- [ ] DB-Felder, Defaults, Indizes und Unique-Regeln kommen aus `models/*.md`.
+- [ ] JSON und MySQL validieren konsistent gegen dasselbe Model-MD.
+- [ ] Schema-Änderungen können vor Anwendung als Dry-Run geprüft werden.
+
+## task 19: db relationship engine aus md
+
+- [ ] **subtask 19.1**: Relationship-MD-Schema finalisieren: `1:1`, `1:n`, `n:m`, FK, on delete, on update.
+- [ ] **subtask 19.2**: Relationship-Validator für Model-MDs bauen.
+- [ ] **subtask 19.3**: MySQL-FK-Planung aus Beziehungen ableiten.
+- [ ] **subtask 19.4**: JSON-Engine Referential-Integrity-Checks definieren.
+- [ ] **subtask 19.5**: API/Object-Layer muss Beziehungen nachvollziehbar dokumentieren.
+
+### acceptance criteria (task 19)
+
+- [ ] Beziehungen sind in MD definiert, nicht implizit im Code.
+- [ ] Delete/Update Policies sind testbar.
+- [ ] JSON/MySQL verhalten sich bei Beziehungen konsistent oder dokumentieren bewusste Unterschiede.
+
+## task 20: api compiler und contract tests
+
+- [ ] **subtask 20.1**: API-MD-Schema für Contract-Version, Request, Response, Errors, Auth, Validation und Testability maschinenlesbar machen.
+- [ ] **subtask 20.2**: Contract-Test-Generator für alle `api/<dimension>/<dimension>.md` Dateien spezifizieren.
+- [ ] **subtask 20.3**: API-Response-Shape automatisch gegen `x_api_payload` validieren.
+- [ ] **subtask 20.4**: FE-Controller müssen nur dokumentierte Endpoints aus API-MDs verwenden.
+- [ ] **subtask 20.5**: Breaking-Change-Erkennung für API-Contract-Versionen planen.
+
+### acceptance criteria (task 20)
+
+- [ ] FE/BE-Verträge sind versioniert und testbar.
+- [ ] Undokumentierte API-Endpunkte oder FE-Aufrufe schlagen im Build/QA fehl.
+- [ ] Contract-Tests prüfen Success- und Failure-Pfade.
+
+## task 21: frontend-backend boundary enforcement
+
+- [ ] **subtask 21.1**: Regel dokumentieren: FE darf Backend nur via API erreichen, keine direkten PHP/DB-Abhängigkeiten.
+- [ ] **subtask 21.2**: Build-Check für verbotene Backend-Referenzen in `scripts/` und `templates/` ergänzen.
+- [ ] **subtask 21.3**: `XApi` als einzigen FE-API-Zugriffspfad festlegen.
+- [ ] **subtask 21.4**: Sandbox/Live-Modus in FE-Konfiguration eindeutig dokumentieren.
+- [ ] **subtask 21.5**: API-Base-URL/Dist-Routing für dev/prod standardisieren.
+
+### acceptance criteria (task 21)
+
+- [ ] Frontend-Code enthält keine direkten DB/PHP-Includes/Secrets.
+- [ ] Alle BE-Zugriffe laufen über `XApi`.
+- [ ] Build-Check findet Boundary-Verletzungen.
+
+## task 22: form component generator aus md
+
+- [ ] **subtask 22.1**: MD-Schema für Formular-Komponenten definieren: Input, Select, Upload, Checkbox, Date, Textarea, Hidden.
+- [ ] **subtask 22.2**: Standard-Markup mit Label, Help-Text, Error-Slot, ARIA und required-State spezifizieren.
+- [ ] **subtask 22.3**: Templates/Form-Partials aus Form-MDs generieren.
+- [ ] **subtask 22.4**: Translation-Keys für Labels/Help/Errors aus Form-MD ableiten.
+- [ ] **subtask 22.5**: Form-Komponenten-Katalog visuell/testbar dokumentieren.
+
+### acceptance criteria (task 22)
+
+- [ ] Formulare werden aus MD-Komponenten erzeugt oder eindeutig geführt.
+- [ ] Alle Formelemente haben einheitliches Error-/ARIA-Verhalten.
+- [ ] Neue Formfelder erzeugen automatisch benötigte Translation-Key-Anforderungen.
+
+## task 23: formajax upload pipeline finalisieren
+
+- [ ] **subtask 23.1**: Upload-MD-Schema definieren: erlaubte MIME-Typen, Größenlimits, Mehrfachupload, Ziel-API.
+- [ ] **subtask 23.2**: Clientseitige Vorvalidierung für Typ/Größe/Anzahl standardisieren.
+- [ ] **subtask 23.3**: Upload-Progress Events in `XApi.submitForm(...)` ergänzen.
+- [ ] **subtask 23.4**: Server-Contract für Upload-Responses und Field-Errors dokumentieren.
+- [ ] **subtask 23.5**: Sandbox-Upload-Mocks mit realistischen File-Metadaten erweitern.
+
+### acceptance criteria (task 23)
+
+- [ ] Datei-Uploads funktionieren ohne Sondercode im Feature-Controller.
+- [ ] Upload-Fehler erscheinen am Feld und in der globalen Fehlerliste.
+- [ ] Sandbox kann Upload-Success und Upload-Validation-Errors simulieren.
+
+## task 24: global form flow audit
+
+- [ ] **subtask 24.1**: Alle vorhandenen und geplanten Forms inventarisieren.
+- [ ] **subtask 24.2**: Prüfen, dass jedes Form über AJAX/FormAjax läuft.
+- [ ] **subtask 24.3**: Prüfen, dass jedes Form Inline-Errors und Error-Summary nutzt.
+- [ ] **subtask 24.4**: Prüfen, dass jedes Form Loading/Success/Error/Disabled-State nutzt.
+- [ ] **subtask 24.5**: Build-/QA-Report für nicht migrierte Forms ergänzen.
+
+### acceptance criteria (task 24)
+
+- [ ] Keine klassischen Full-Page-Form-Submits im Framework-Frontend.
+- [ ] Einheitliches Fehlerverhalten in allen Forms.
+- [ ] Form-Audit läuft reproduzierbar im Release-QA-Prozess.
+
+## task 25: framework navigation/breadcrumb/sidebar/slideshow runtime
+
+- [ ] **subtask 25.1**: Breadcrumb-Primitive implementieren und aus Route/MD-Captions ableiten.
+- [ ] **subtask 25.2**: Sidebar-Konfiguration route-level aus Markdown ermöglichen.
+- [ ] **subtask 25.3**: Navigation-Items aus `docs/routes.md` und UI-MD-Konfiguration generieren.
+- [ ] **subtask 25.4**: Slideshow-Primitive mit a11y, keyboard controls, i18n Labels und optionalen Links spezifizieren/implementieren.
+- [ ] **subtask 25.5**: Build-Check: UI-Primitive-Links müssen deklarierte Routen verwenden.
+
+### acceptance criteria (task 25)
+
+- [ ] Navigation, Breadcrumbs, Sidebars und Slideshows sind frameworkseitig bereitgestellt.
+- [ ] UI-Primitives sind MD-konfigurierbar und i18n/a11y-konform.
+- [ ] Feature-Code muss keine eigenen Basis-Primitives bauen.
+
+## task 26: credentials provider system
+
+- [ ] **subtask 26.1**: Secret-Provider-Interface spezifizieren: local file, env vars, future vault provider.
+- [ ] **subtask 26.2**: Projekt-Credentials für externe APIs strukturiert in `_secrets.json` dokumentieren.
+- [ ] **subtask 26.3**: Zugriff nur serverseitig über Helper erlauben, niemals direkt im FE.
+- [ ] **subtask 26.4**: Rotation/Environment-Konvention für dev/stage/prod erweitern.
+- [ ] **subtask 26.5**: Secret-Usage-Report für API-Integrationen ergänzen (ohne Werte auszugeben).
+
+### acceptance criteria (task 26)
+
+- [ ] Externe API-Credentials können sicher projektbezogen hinterlegt werden.
+- [ ] Frontend-Bundles enthalten keine Secret-Namen/Werte außer erlaubten Public Config Keys.
+- [ ] Release-QA scannt Secret-Leaks und dokumentiert Secret-Abhängigkeiten.
+
+## task 27: sandbox/mock scenario manager
+
+- [ ] **subtask 27.1**: Mock-Szenarien als MD/JSON-Konfiguration definieren: success, validation-error, auth-error, timeout, upload-error.
+- [ ] **subtask 27.2**: `XApi` Mock-Registry aus Szenario-Konfiguration laden.
+- [ ] **subtask 27.3**: Umschaltung per `X6_CONFIG.ApiMode` und optionalem Scenario-Namen ermöglichen.
+- [ ] **subtask 27.4**: Demo-Playbook für komplette FE-Flows ohne Live-Backend erstellen.
+- [ ] **subtask 27.5**: QA-Check für Mock-Abdeckung je API-Contract ergänzen.
+
+### acceptance criteria (task 27)
+
+- [ ] Jeder relevante API-Flow kann live und sandboxed demonstriert werden.
+- [ ] Mock-Szenarien sind versioniert und auf API-MDs zurückführbar.
+- [ ] FormAjax und Uploads nutzen dieselbe Mock-Infrastruktur.
+
+## task 28: ai generation workflow and checkpoints
+
+- [ ] **subtask 28.1**: AI-Arbeitsablauf dokumentieren: MD ändern -> generieren -> QA -> dist bauen -> tasks/currentstate aktualisieren.
+- [ ] **subtask 28.2**: Checkpoint-Regeln definieren: vor/nach Generatorläufen, vor Release-QA, vor Framework-Update.
+- [ ] **subtask 28.3**: Diff-/Report-Format für AI-generierte Änderungen standardisieren.
+- [ ] **subtask 28.4**: Verbot direkter Runtime-Änderungen ohne MD-Änderung in QA-Check aufnehmen.
+- [ ] **subtask 28.5**: Reproduzierbaren Manager-Report für erledigte Tasks erstellen.
+
+### acceptance criteria (task 28)
+
+- [ ] KI-generierte Änderungen sind reproduzierbar und nachvollziehbar.
+- [ ] Jeder Task hat MD-Quelle, QA-Ergebnis und Manager-Abnahme.
+- [ ] Runtime-only Änderungen werden im Review sichtbar.
+
+## task 29: release gate all dod automation
+
+- [ ] **subtask 29.1**: `compiler/release_gate.php` als Sammelcheck spezifizieren.
+- [ ] **subtask 29.2**: MD-first, API-contract, translation-governance, secret-scan, form-audit, route-link-audit zusammenführen.
+- [ ] **subtask 29.3**: JSON-Smoke und MySQL-Smoke/Skip in Release-Gate integrieren.
+- [ ] **subtask 29.4**: Exit-Codes und maschinenlesbaren Report definieren.
+- [ ] **subtask 29.5**: `current_tasks.md` globale DoD nur bei grünem Release-Gate vollständig abhaken.
+
+### acceptance criteria (task 29)
+
+- [ ] Ein einziger Release-Gate-Befehl prüft Framework-Finalität.
+- [ ] Fehlende MD-Quellen, API-Verträge, Form-Migrationen, Secrets und Mock-Lücken blockieren Release.
+- [ ] Report ist für KI/Manager lesbar.

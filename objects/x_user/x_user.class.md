@@ -34,6 +34,7 @@ Singular framework class `x_user`.
 - no static seed array with example data
 
 ## authentication extension contract
+- workflow: `users.registration`
 - login flow must be spec-driven here (input: username + password)
 - must define DB check behavior for credential match/mismatch
 - must define structured result payload for success/error

@@ -97,6 +97,8 @@ Runtime usage convention:
 
 ## local command examples
 
+All commands in this section are non-interactive. If reviewing git output around compiler runs, use `git --no-pager ...` as required by `agents.md` and `docs/release_qa.md`.
+
 Run single steps:
 
 - `php compiler\compile_objects.php`

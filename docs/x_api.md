@@ -52,6 +52,30 @@ Every API dimension must provide a markdown descriptor:
 - location: inside same dimension folder
 - purpose: describe endpoints and behavior contract of this dimension.
 
+Required API descriptor sections:
+
+- `## contract version`
+- `## endpoints`
+- `## request`
+- `## success response`
+- `## error responses`
+- `## auth requirements`
+- `## validation rules`
+- `## testability`
+
+Versioning rules:
+
+- Contract versions use a simple semantic string, for example `v1.0.0`.
+- Backward-compatible documentation/example additions may increment the patch version.
+- Request/response shape changes must increment the minor version.
+- Breaking endpoint or semantic behavior changes require a new major version and migration notes.
+
+Testability rules:
+
+- Each endpoint must document at least one success path and one error/method/validation path unless the endpoint is explicitly read-only with no input.
+- Test commands or smoke coverage must be referenced from the descriptor or `docs/release_qa.md`.
+- FE integrations must use the documented request body and standard response payload.
+
 Example:
 
 - `api/test/test.md`

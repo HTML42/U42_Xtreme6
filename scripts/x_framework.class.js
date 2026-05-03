@@ -291,8 +291,8 @@ class XFramework {
         translationMap: {
           sidebar_title: 'ui.sidebar.title',
           menu_home: 'menu.home',
-          menu_support: 'menu.support',
-          menu_contact: 'menu.contact'
+          menu_imprint: 'menu.imprint',
+          menu_privacy: 'menu.privacy'
         }
       },
       {

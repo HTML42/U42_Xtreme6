@@ -45,6 +45,15 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'ui.sidebar.title': 'Navigation',
   'ui.footer.text': 'Xtreme-Webframework Version 6',
 
+  'forms.callbacks.loading': 'Bitte warten...',
+  'forms.callbacks.login_success': 'Du bist erfolgreich angemeldet.',
+  'forms.callbacks.login_fail': 'Anmeldung fehlgeschlagen. Bitte prüfe deine Eingaben.',
+  'forms.callbacks.registration_success': 'Deine Registrierung war erfolgreich.',
+  'forms.callbacks.registration_fail': 'Registrierung fehlgeschlagen. Bitte prüfe deine Eingaben.',
+
+  'captions.index.imprint': 'Impressum',
+  'captions.index.privacy': 'Datenschutz',
+
   'ui.view.index.intro': 'Willkommen im Xtreme 6 Frontend mit JS-Templates.',
   'ui.view.imprint.intro': 'Hier findest du alle rechtlichen Informationen (Impressum).',
   'ui.view.privacy.intro': 'Hier findest du unsere Datenschutzinformationen.',

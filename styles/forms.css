@@ -1,0 +1,48 @@
+.x_form_status,
+.x_form_error_summary,
+.x_form_input_error {
+  margin-block: calc(var(--x-distance-normal, 20px) / 2);
+  font-size: var(--x-font-size-normal, 14px);
+}
+
+.x_form_status {
+  padding: calc(var(--x-distance-normal, 20px) / 2);
+  border: 1px solid var(--x-color-main-normal, #2C3E50);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.x_form_status[data-type="loading"] {
+  color: var(--x-color-main-normal, #2C3E50);
+}
+
+.x_form_status[data-type="success"] {
+  border-color: var(--x-color-secondary-normal, #2ECC71);
+  color: var(--x-color-secondary-dark, #1f9d57);
+}
+
+.x_form_status[data-type="error"],
+.x_form_error_summary,
+.x_form_input_error {
+  color: #b00020;
+}
+
+.x_form_error_summary {
+  padding: calc(var(--x-distance-normal, 20px) / 2);
+  border: 1px solid #b00020;
+  border-radius: 4px;
+  background: #fff5f7;
+}
+
+.x_form_error_summary ul {
+  margin: 0;
+  padding-left: var(--x-distance-normal, 20px);
+}
+
+.x_form_input_error {
+  margin-top: 4px;
+}
+
+form[data-state="loading"] {
+  opacity: 0.75;
+}

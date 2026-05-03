@@ -41,8 +41,13 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'forms.labels.name': 'Name',
   'forms.labels.submit': 'Absenden',
   'forms.please_choose': 'Bitte auswählen',
+  'forms.callbacks.loading': 'Bitte warten...',
   'forms.callbacks.success': 'Formular erfolgreich gesendet!',
   'forms.callbacks.fail': 'Formular konnte nicht gesendet werden.',
+  'forms.callbacks.login_success': 'Du bist erfolgreich angemeldet.',
+  'forms.callbacks.login_fail': 'Anmeldung fehlgeschlagen. Bitte prüfe deine Eingaben.',
+  'forms.callbacks.registration_success': 'Deine Registrierung war erfolgreich.',
+  'forms.callbacks.registration_fail': 'Registrierung fehlgeschlagen. Bitte prüfe deine Eingaben.',
 
   'words.welcome': 'Willkommen',
   'words.yes': 'Ja',
@@ -77,6 +82,8 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'words.history': 'Historie',
 
   'captions.index.index': 'Willkommen',
+  'captions.index.imprint': 'Impressum',
+  'captions.index.privacy': 'Datenschutz',
   'captions.users.login': 'Anmeldung',
   'captions.users.registration': 'Registrierung',
   'captions.users.profile': 'Benutzerprofil',
