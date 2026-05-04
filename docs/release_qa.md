@@ -23,6 +23,7 @@ php compiler/check_md_first.php
 php compiler/check_secret_leaks.php
 php compiler/report_secret_usage.php
 php compiler/report_sandbox_coverage.php
+php compiler/report_ai_generation.php
 php compiler/report_workflow_traceability.php
 php compiler/report_object_generation.php
 php compiler/report_model_schema.php
@@ -49,6 +50,7 @@ Database smoke behavior:
 
 - Markdown source-of-truth was updated before runtime artifacts.
 - Generated `dist/*` artifacts were rebuilt after runtime/source changes.
+- `php compiler/report_ai_generation.php` was reviewed for runtime-only risks and manager-readable task evidence.
 - `current_tasks.md` marks only verified tasks as done.
 - `currentstate.md` documents the current milestone and remaining risks.
 - `git --no-pager diff --stat` was reviewed for unexpected files.
@@ -63,6 +65,19 @@ Database smoke behavior:
 - Update the canonical markdown source for the touched domain only.
 - Avoid duplicate AI-process explanations; link to `agents.md`, `docs/md_first.md`, or the relevant `docs/x_*.md` file instead.
 - For cross-domain tasks, read only the routed canonical docs for the touched domains, then edit the concrete MD source-of-truth before runtime/generated files.
+
+## ai generation checkpoints
+
+AI-generated changes must be reproducible in this order:
+
+1. Markdown source changed or explicitly confirmed.
+2. Runtime/compiler changes derived from that source.
+3. Generated `dist/*` artifacts rebuilt.
+4. QA reports executed non-interactively.
+5. `current_tasks.md` and `currentstate.md` updated only after QA.
+6. Manager review uses `php compiler/report_ai_generation.php` and `git --no-pager diff --stat`.
+
+Runtime-only changes are acceptable only when the report shows an accompanying markdown/task/currentstate update or when the file is explicitly generated from a changed source.
 
 ## manager acceptance
 

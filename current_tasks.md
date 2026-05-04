@@ -7,9 +7,9 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 ## release-priorität (manager view)
 
 - **P0 (blocker für "framework final")**: task 29
-- **P1 (hoch / produktreif machen)**: task 28, task 30, task 31, task 32
+- **P1 (hoch / produktreif machen)**: task 30, task 31, task 32
 - **P2 (manager-/developer-experience)**: task 33, task 34, task 35
-- **abgeschlossen / baseline vorhanden**: task 1 bis task 27
+- **abgeschlossen / baseline vorhanden**: task 1 bis task 28
 
 ## global definition of done (dod)
 
@@ -338,17 +338,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 28: ai generation workflow and checkpoints
 
-- [ ] **subtask 28.1**: AI-Arbeitsablauf dokumentieren: MD ändern -> generieren -> QA -> dist bauen -> tasks/currentstate aktualisieren.
-- [ ] **subtask 28.2**: Checkpoint-Regeln definieren: vor/nach Generatorläufen, vor Release-QA, vor Framework-Update.
-- [ ] **subtask 28.3**: Diff-/Report-Format für AI-generierte Änderungen standardisieren.
-- [ ] **subtask 28.4**: Verbot direkter Runtime-Änderungen ohne MD-Änderung in QA-Check aufnehmen.
-- [ ] **subtask 28.5**: Reproduzierbaren Manager-Report für erledigte Tasks erstellen.
+- [x] **subtask 28.1**: AI-Arbeitsablauf dokumentieren: MD ändern -> generieren -> QA -> dist bauen -> tasks/currentstate aktualisieren.
+- [x] **subtask 28.2**: Checkpoint-Regeln definieren: vor/nach Generatorläufen, vor Release-QA, vor Framework-Update.
+- [x] **subtask 28.3**: Diff-/Report-Format für AI-generierte Änderungen standardisieren.
+- [x] **subtask 28.4**: Verbot direkter Runtime-Änderungen ohne MD-Änderung in QA-Check aufnehmen.
+- [x] **subtask 28.5**: Reproduzierbaren Manager-Report für erledigte Tasks erstellen.
 
 ### acceptance criteria (task 28)
 
-- [ ] KI-generierte Änderungen sind reproduzierbar und nachvollziehbar.
-- [ ] Jeder Task hat MD-Quelle, QA-Ergebnis und Manager-Abnahme.
-- [ ] Runtime-only Änderungen werden im Review sichtbar.
+- [x] KI-generierte Änderungen sind reproduzierbar und nachvollziehbar.
+- [x] Jeder Task hat MD-Quelle, QA-Ergebnis und Manager-Abnahme.
+- [x] Runtime-only Änderungen werden im Review sichtbar.
 
 ## task 29: release gate all dod automation
 
