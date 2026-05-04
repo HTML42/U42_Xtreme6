@@ -63,6 +63,11 @@ Required API descriptor sections:
 - `## validation rules`
 - `## testability`
 
+Recommended machine-readable endpoint lines:
+
+- `- METHOD /api/<dimension>/<endpoint> -> description`
+- Example: `- POST /api/users/login -> login with username and password`
+
 Versioning rules:
 
 - Contract versions use a simple semantic string, for example `v1.0.0`.
@@ -75,6 +80,16 @@ Testability rules:
 - Each endpoint must document at least one success path and one error/method/validation path unless the endpoint is explicitly read-only with no input.
 - Test commands or smoke coverage must be referenced from the descriptor or `docs/release_qa.md`.
 - FE integrations must use the documented request body and standard response payload.
+- FE controllers must only call endpoints documented in API markdown.
+- `php compiler/report_api_contracts.php` validates endpoint docs, PHP endpoint files, FE `XApi` calls, and standard response contract usage.
+
+Frontend/backend boundary:
+
+- Frontend code must reach backend behavior only through documented API endpoints and `XApi`/`XApi.submitForm(...)`.
+- Direct database access, PHP includes, backend file paths, or secrets in `scripts/` and `templates/` are forbidden.
+- Credentialed external services must be called through backend API endpoints; the frontend never receives private credentials.
+
+For sandbox/mock behavior, see `docs/sandbox.md`. For secrets, see `docs/secrets.md`.
 
 Example:
 
@@ -104,6 +119,7 @@ Helper functions:
 
 - `x_api_payload(...)`
 - `x_api_output(...)`
+- `x_api_validate_payload_shape(...)`
 
 Both are defined in `x/x_functions.php`.
 

@@ -6,9 +6,10 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 
 ## release-priorität (manager view)
 
-- **P0 (blocker für "framework final")**: task 10, task 11, task 12, task 13, task 14
-- **P1 (hoch)**: task 8, task 9, task 7
-- **P2 (feature-integration/qa)**: task 4, task 5
+- **P0 (blocker für "framework final")**: task 21, task 22, task 23, task 24, task 26, task 27, task 29
+- **P1 (hoch / produktreif machen)**: task 25, task 28, task 30, task 31, task 32
+- **P2 (manager-/developer-experience)**: task 33, task 34, task 35
+- **abgeschlossen / baseline vorhanden**: task 1 bis task 20
 
 ## global definition of done (dod)
 
@@ -225,17 +226,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 20: api compiler und contract tests
 
-- [ ] **subtask 20.1**: API-MD-Schema für Contract-Version, Request, Response, Errors, Auth, Validation und Testability maschinenlesbar machen.
-- [ ] **subtask 20.2**: Contract-Test-Generator für alle `api/<dimension>/<dimension>.md` Dateien spezifizieren.
-- [ ] **subtask 20.3**: API-Response-Shape automatisch gegen `x_api_payload` validieren.
-- [ ] **subtask 20.4**: FE-Controller müssen nur dokumentierte Endpoints aus API-MDs verwenden.
-- [ ] **subtask 20.5**: Breaking-Change-Erkennung für API-Contract-Versionen planen.
+- [x] **subtask 20.1**: API-MD-Schema für Contract-Version, Request, Response, Errors, Auth, Validation und Testability maschinenlesbar machen.
+- [x] **subtask 20.2**: Contract-Test-Generator für alle `api/<dimension>/<dimension>.md` Dateien spezifizieren.
+- [x] **subtask 20.3**: API-Response-Shape automatisch gegen `x_api_payload` validieren.
+- [x] **subtask 20.4**: FE-Controller müssen nur dokumentierte Endpoints aus API-MDs verwenden.
+- [x] **subtask 20.5**: Breaking-Change-Erkennung für API-Contract-Versionen planen.
 
 ### acceptance criteria (task 20)
 
-- [ ] FE/BE-Verträge sind versioniert und testbar.
-- [ ] Undokumentierte API-Endpunkte oder FE-Aufrufe schlagen im Build/QA fehl.
-- [ ] Contract-Tests prüfen Success- und Failure-Pfade.
+- [x] FE/BE-Verträge sind versioniert und testbar.
+- [x] Undokumentierte API-Endpunkte oder FE-Aufrufe schlagen im Build/QA fehl.
+- [x] Contract-Tests prüfen Success- und Failure-Pfade.
 
 ## task 21: frontend-backend boundary enforcement
 
@@ -362,3 +363,87 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 - [ ] Ein einziger Release-Gate-Befehl prüft Framework-Finalität.
 - [ ] Fehlende MD-Quellen, API-Verträge, Form-Migrationen, Secrets und Mock-Lücken blockieren Release.
 - [ ] Report ist für KI/Manager lesbar.
+
+## task 30: ai documentation routing cleanup
+
+- [ ] **subtask 30.1**: `agents.md` Routing-Tabelle so erweitern, dass Forms/FormAjax/Uploads, FE-BE-Boundary, UI-Primitives, Secrets, Sandbox und Release-QA eindeutig auf kanonische Docs zeigen.
+- [ ] **subtask 30.2**: Doppelte AI-Prozessbeschreibungen in Detaildocs reduzieren und stattdessen auf `agents.md`, `docs/md_first.md` und die jeweilige Fachdoc verlinken.
+- [ ] **subtask 30.3**: Non-interactive Terminal-Regel verbindlich in `agents.md` und `docs/release_qa.md` halten: niemals Befehle starten, die auf `q`/Pager warten; Git immer mit `git --no-pager ...`.
+- [ ] **subtask 30.4**: Dokumentations-Checkpoint für Tasks definieren: erst `agents.md`, dann die gerouteten Fachdocs, dann die konkrete MD-Source-of-Truth ändern.
+- [ ] **subtask 30.5**: Prüfen, ob neue AI-Dokumentationsdateien nötig sind; wenn nicht, bestehende Docs verknüpfen statt neue Prozessdocs anzulegen.
+
+### acceptance criteria (task 30)
+
+- [ ] Eine KI kann aus `agents.md` eindeutig ableiten, welche Fachdocs vor welchem Task gelesen werden müssen.
+- [ ] Es gibt keine widersprüchlichen AI-Workflow-Regeln in mehreren Dateien.
+- [ ] Non-interactive/`--no-pager` ist als harte Arbeitsregel dokumentiert.
+
+## task 31: formajax ux runtime primitives
+
+- [ ] **subtask 31.1**: Frameworkseitigen Error-Renderer definieren/implementieren: Feldfehler direkt am Input, Summary über Submit-Button, Fokus auf ersten Fehler.
+- [ ] **subtask 31.2**: Vorgefertigte Formelemente als zentrale Runtime-/Template-Primitives dokumentieren: Input, Select, Textarea, Checkbox, Radio, Upload, Hidden, Date.
+- [ ] **subtask 31.3**: Einheitliche Field-Naming-Konvention für API-Errors festlegen, damit Backend-Validierungen automatisch den richtigen Inputs zugeordnet werden.
+- [ ] **subtask 31.4**: Form-State-Komponenten ergänzen: loading, success, error, disabled, retry, upload-progress.
+- [ ] **subtask 31.5**: Accessibility-Verhalten standardisieren: `aria-invalid`, `aria-describedby`, Live-Region für Summary, Tastaturfokus.
+
+### acceptance criteria (task 31)
+
+- [ ] Feature-Controller müssen keine eigene Error-DOM-Logik mehr schreiben.
+- [ ] Backend-Validation-Errors erscheinen automatisch am passenden Formelement und in der Summary.
+- [ ] Upload-, Login- und Registration-Forms nutzen denselben FormAjax-UX-Standard.
+
+## task 32: external api integration blueprint
+
+- [ ] **subtask 32.1**: MD-Schema für externe API-Integrationen definieren: Service-Name, Zweck, Backend-Proxy-Endpoint, benötigte Secrets, Rate-Limits, Fehlerfälle.
+- [ ] **subtask 32.2**: Backend-only Proxy-Pattern dokumentieren: FE ruft Xtreme6-API auf, Xtreme6-Backend ruft externe API mit Secrets auf.
+- [ ] **subtask 32.3**: Secret-Abhängigkeiten ohne Werte reporten: welcher API-Endpoint benötigt welchen Secret-Key-Namen.
+- [ ] **subtask 32.4**: Sandbox-Mocks für externe APIs aus derselben Integrations-MD ableiten.
+- [ ] **subtask 32.5**: Failure-Strategie festlegen: fehlende Credentials, externe Timeouts, ungültige Responses, Rate-Limit.
+
+### acceptance criteria (task 32)
+
+- [ ] Externe API-Anbindungen sind MD-first, sicher und FE/BE-getrennt beschrieben.
+- [ ] Secrets verlassen nie das Backend und erscheinen nie im Frontend-Bundle.
+- [ ] Jede externe Integration hat Live- und Sandbox-Pfade.
+
+## task 33: route-level ui composition features
+
+- [ ] **subtask 33.1**: Route-level UI-Konfiguration in `docs/routes.md` finalisieren: header, footer, sidebar, breadcrumb, slideshow, layout variant.
+- [ ] **subtask 33.2**: Compiler-/QA-Check ergänzen, der UI-Konfigurationen gegen vorhandene Templates, Translation-Keys und Routen validiert.
+- [ ] **subtask 33.3**: Breadcrumb-Daten aus Route-Hierarchie, Captions und Params ableiten.
+- [ ] **subtask 33.4**: Sidebar-Gruppen und Navigation-Items aus Route-MD statt Template-Hardcoding generieren.
+- [ ] **subtask 33.5**: Slideshow-Konfiguration inklusive Bilder, Alt-Text, Caption-Key, Zielroute und Keyboard-Control definieren.
+
+### acceptance criteria (task 33)
+
+- [ ] Navigation, Breadcrumbs, Sidebar und Slideshow werden pro Route deklarativ gesteuert.
+- [ ] Alle sichtbaren UI-Texte sind i18n-pflichtig.
+- [ ] Undeklarierte Links oder fehlende UI-Translations blockieren QA.
+
+## task 34: md traceability dashboard/report
+
+- [ ] **subtask 34.1**: Manager-Report definieren, der Features von Markdown-Quelle bis Runtime-Artefakt und QA-Check verfolgt.
+- [ ] **subtask 34.2**: Reports für Objects, Models, API, Workflows, Routes, Forms, UI-Primitives, Secrets und Sandbox zusammenführen.
+- [ ] **subtask 34.3**: Status je Feature anzeigen: specified, generated, implemented, tested, release-ready.
+- [ ] **subtask 34.4**: Offene Lücken automatisch in `current_tasks.md` oder einen Report zurückführen.
+- [ ] **subtask 34.5**: Report-Ausgabe menschenlesbar und maschinenlesbar planen.
+
+### acceptance criteria (task 34)
+
+- [ ] Project Manager sehen pro Feature, welche MD-Quelle, Runtime-Dateien und Checks dazugehören.
+- [ ] Runtime-only Änderungen sind sichtbar und gelten als Risiko.
+- [ ] Release-Entscheidungen basieren auf nachvollziehbaren Reports.
+
+## task 35: framework final qa playbooks
+
+- [ ] **subtask 35.1**: Playbook für neuen Domain-Feature-Flow erstellen: Object-Pair, Model, API, Workflow, Route, Form, Translation, QA.
+- [ ] **subtask 35.2**: Playbook für credentialed external API feature erstellen: Secrets, Backend-Proxy, FE-XApi, Sandbox, Leak-Check.
+- [ ] **subtask 35.3**: Playbook für UI-Feature erstellen: Route-UI-Konfiguration, Navigation/Breadcrumb/Sidebar/Slideshow, i18n/a11y.
+- [ ] **subtask 35.4**: Playbook für Form/Upload-Feature erstellen: Form-MD, API-Contract, Upload-Regeln, Error-Mapping, Sandbox-Mocks.
+- [ ] **subtask 35.5**: Alle Playbooks auf non-interactive QA-Kommandos und `--no-pager` Git-Nutzung prüfen.
+
+### acceptance criteria (task 35)
+
+- [ ] Wiederkehrende Framework-Features können von KI und Entwicklern reproduzierbar umgesetzt werden.
+- [ ] Jedes Playbook startet bei Markdown und endet mit Release-QA.
+- [ ] Kein Playbook enthält interaktive Terminalbefehle oder Pager-Kommandos.

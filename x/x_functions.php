@@ -202,3 +202,30 @@ if (!function_exists('x_api_output')) {
         exit;
     }
 }
+
+if (!function_exists('x_api_validate_payload_shape')) {
+    /**
+     * Validates standard API payload shape for contract tests.
+     */
+    function x_api_validate_payload_shape(array $payload): array
+    {
+        $errors = [];
+        foreach (['success', 'status', 'response', 'errors'] as $key) {
+            if (!array_key_exists($key, $payload)) {
+                $errors[$key] = 'missing key';
+            }
+        }
+
+        if (array_key_exists('success', $payload) && !is_bool($payload['success'])) {
+            $errors['success'] = 'must be bool';
+        }
+        if (array_key_exists('status', $payload) && !is_int($payload['status'])) {
+            $errors['status'] = 'must be int';
+        }
+        if (array_key_exists('errors', $payload) && !is_array($payload['errors'])) {
+            $errors['errors'] = 'must be array';
+        }
+
+        return $errors;
+    }
+}

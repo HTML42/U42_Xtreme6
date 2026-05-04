@@ -4,6 +4,8 @@
 
 Projekt-Credentials, API-Keys und Secrets dürfen niemals im Frontend-Bundle oder im Repository landen.
 
+Diese Datei ist die kanonische Quelle für Secrets/Credentials. API-, Sandbox- oder Framework-Dokumente sollen hierher verlinken statt Secret-Regeln zu duplizieren.
+
 ## files
 
 - `_secrets.json`: lokale, environment-spezifische Secrets-Datei (gitignored)
@@ -14,6 +16,8 @@ Projekt-Credentials, API-Keys und Secrets dürfen niemals im Frontend-Bundle ode
 - Secrets werden ausschließlich serverseitig gelesen.
 - Frontend erhält niemals Secret-Werte via `window.X6_CONFIG` oder API-Responses.
 - API-Endpunkte dürfen Secrets nur für Backend-zu-Backend-Kommunikation verwenden.
+- Externe APIs werden über Backend-Proxy-Endpunkte angebunden; das Frontend ruft nur die Xtreme6-API via `XApi` auf.
+- Sandbox-/Mock-Szenarien dürfen Secret-Abhängigkeiten simulieren, aber keine echten Secret-Werte enthalten.
 
 ## structure
 

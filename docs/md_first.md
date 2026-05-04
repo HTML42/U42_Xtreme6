@@ -52,6 +52,23 @@ Dokumentation soll nicht mehrfach ausgeschrieben werden: Wenn eine Regel bereits
   - `templates/view.<controller>.<view>.js`
   - benötigte Translation-Keys
 
+### forms/formajax/uploads
+
+- Quelle: Form-/Workflow-/Controller-Markdown passend zum Feature, plus API-Contract in `api/<dimension>/<dimension>.md`
+- Abgeleitet/geführt:
+  - Formular-Markup/Templates
+  - `XApi.submitForm(...)` Nutzung
+  - Upload-Regeln und Progress-Verhalten
+  - Inline-Errors am Input und Error-Summary vor Submit
+  - Translation-Keys für Labels, Help-Texte und Fehler
+
+### frontend/backend boundary
+
+- Quelle: API-Markdown und Controller-Markdown
+- Regel:
+  - Frontend erreicht Backend ausschließlich via dokumentierte API-Endpunkte und `XApi`.
+  - Keine direkten DB-/PHP-/Secret-Abhängigkeiten in `scripts/` oder `templates/`.
+
 ### project governance documents
 
 - Quelle/Steuerung:
@@ -134,3 +151,5 @@ Ein Build-/QA-Check muss fehlschlagen, wenn:
 - ein `workflow: <name>` Verweis keine Datei `docs/workflows/<name>.md` hat
 - ein Workflow-MD nicht alle Pflichtsektionen enthält
 - ein verpflichtendes Governance-Dokument fehlt
+- ein Frontend-Artefakt direkte Backend-/DB-/Secret-Zugriffe enthält statt `XApi` zu verwenden
+- ein Formular keine dokumentierte FormAjax-/API-Quelle für Submit, Uploads und Error-Mapping hat

@@ -61,3 +61,4 @@
 - Object-Generator-Governance ist aktiv: Object-MDs enthalten Generator-Schema/Properties/Methods/Validation/Persistence/Tests, `compiler/check_md_first.php` erzwingt Singular/Plural-Paare, und `compiler/report_object_generation.php` reportet Artefakt-Readiness vor Generatorläufen.
 - Model-Schema-Governance ist aktiv: `XDB` validiert Insert/Update zentral gegen `models/*.md`; JSON und MySQL nutzen dieselben Model-Regeln, und `compiler/report_model_schema.php` gibt JSON-/MySQL-Dry-Run-Pläne aus.
 - Relationship-Governance ist aktiv: `models/*.md` definiert Beziehungen oder explizit `none`; `compiler/report_model_relationships.php` validiert Relations, plant MySQL-FKs und beschreibt JSON-Referential-Integrity-Checks non-destruktiv.
+- API-Contract-Governance ist aktiv: `compiler/report_api_contracts.php` validiert API-MD-Endpunkte gegen PHP-Dateien, `x_api_output` usage, FE-Controller-Aufrufe und `x_api_payload` Shape.

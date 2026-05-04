@@ -4,6 +4,13 @@
 
 Der Sandbox-Modus ermöglicht Frontend- und Form-AJAX-Flows ohne echtes Backend.
 
+Kanonische Verbindungen:
+
+- API-Verträge stehen in `api/<dimension>/<dimension>.md` und `docs/x_api.md`.
+- Form-/Upload-Fehler müssen denselben Response- und Field-Error-Contract nutzen wie Live-APIs.
+- Secrets bleiben backend-only; Sandbox-Mocks dürfen keine echten Secret-Werte enthalten (`docs/secrets.md`).
+- AI-/Developer-Workflow startet bei `agents.md` und `docs/md_first.md` statt bei Runtime-Mocks.
+
 ## config
 
 ```json

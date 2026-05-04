@@ -39,6 +39,8 @@ Use this map to avoid scattered or duplicated AI documentation. Keep detailed ru
 | api/backend contract | `docs/x_api.md` | `docs/md_first.md`, matching `api/<dimension>/<dimension>.md` |
 | routes/controllers/templates | `docs/routes.md` | `docs/md_first.md`, `scripts/controllers/<controller>.controller.md` |
 | database/model work | `docs/x_models.md` | matching `models/<table>.md` |
+| forms/formajax/uploads | `docs/md_first.md` | `docs/x_api.md`, `docs/sandbox.md`, controller/form markdown, translations |
+| frontend/backend boundary | `docs/x_api.md` | `docs/md_first.md`, `scripts/x_api.class.js`, API markdown |
 | styles/ui css | `docs/styles.md` | `docs/x_styles.md` |
 | ui primitives/navigation/sidebar/breadcrumb | `docs/ui_primitives.md` | `docs/routes.md`, translations |
 | secrets/security config | `docs/secrets.md` | `docs/security_auth.md`, `compiler/check_secret_leaks.php` |
@@ -85,8 +87,8 @@ when building features, always use this sequence:
 - `docs/x_styles.md`: framework style-token and AI-driven style workflow.
 - `docs/styles.md`: project style instruction source for AI-driven css generation.
 - `docs/project.md`: intentionally empty in this framework repository.
-- `docs/md_first.md`: source-of-truth mapping and build-gate expectations.
-- `docs/release_qa.md`: non-interactive QA/checkpoint commands and release checklist.
+- `docs/md_first.md`: source-of-truth mapping and build-gate expectations; link here instead of duplicating MD-first rules.
+- `docs/release_qa.md`: non-interactive QA/checkpoint commands and release checklist; all git diff/log/show usage must use `git --no-pager ...`.
 
 ## documentation layout
 

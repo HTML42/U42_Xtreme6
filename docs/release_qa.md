@@ -11,6 +11,8 @@ All QA commands must be non-interactive. Do not run commands that can open a pag
 - use `git --no-pager ...` for git diff/log/show commands.
 - do not use plain `git diff`, `git log`, or `git show` in automated/checkpoint workflows.
 - if another tool can page or prompt, disable the pager/prompt before running it.
+- AI agents must remember this as a hard rule for every task, not only release tasks.
+- Prefer report/smoke commands that print once and exit; never start a command that requires manual `q`, confirmation, or interactive input.
 
 ## required smoke tests
 
@@ -23,6 +25,7 @@ php compiler/report_workflow_traceability.php
 php compiler/report_object_generation.php
 php compiler/report_model_schema.php
 php compiler/report_model_relationships.php
+php compiler/report_api_contracts.php
 php compiler/compile_objects.php
 php compiler/compile_scripts.php
 php compiler/compile_styles.php
@@ -53,6 +56,7 @@ Database smoke behavior:
 - Start from `agents.md` and follow its task documentation routing table.
 - Update the canonical markdown source for the touched domain only.
 - Avoid duplicate AI-process explanations; link to `agents.md`, `docs/md_first.md`, or the relevant `docs/x_*.md` file instead.
+- For cross-domain tasks, read only the routed canonical docs for the touched domains, then edit the concrete MD source-of-truth before runtime/generated files.
 
 ## manager acceptance
 
