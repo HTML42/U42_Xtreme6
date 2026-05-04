@@ -282,17 +282,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 24: global form flow audit
 
-- [ ] **subtask 24.1**: Alle vorhandenen und geplanten Forms inventarisieren.
-- [ ] **subtask 24.2**: Prüfen, dass jedes Form über AJAX/FormAjax läuft.
-- [ ] **subtask 24.3**: Prüfen, dass jedes Form Inline-Errors und Error-Summary nutzt.
-- [ ] **subtask 24.4**: Prüfen, dass jedes Form Loading/Success/Error/Disabled-State nutzt.
-- [ ] **subtask 24.5**: Build-/QA-Report für nicht migrierte Forms ergänzen.
+- [x] **subtask 24.1**: Alle vorhandenen und geplanten Forms inventarisieren.
+- [x] **subtask 24.2**: Prüfen, dass jedes Form über AJAX/FormAjax läuft.
+- [x] **subtask 24.3**: Prüfen, dass jedes Form Inline-Errors und Error-Summary nutzt.
+- [x] **subtask 24.4**: Prüfen, dass jedes Form Loading/Success/Error/Disabled-State nutzt.
+- [x] **subtask 24.5**: Build-/QA-Report für nicht migrierte Forms ergänzen.
 
 ### acceptance criteria (task 24)
 
-- [ ] Keine klassischen Full-Page-Form-Submits im Framework-Frontend.
-- [ ] Einheitliches Fehlerverhalten in allen Forms.
-- [ ] Form-Audit läuft reproduzierbar im Release-QA-Prozess.
+- [x] Keine klassischen Full-Page-Form-Submits im Framework-Frontend.
+- [x] Einheitliches Fehlerverhalten in allen Forms.
+- [x] Form-Audit läuft reproduzierbar im Release-QA-Prozess.
 
 ## task 25: framework navigation/breadcrumb/sidebar/slideshow runtime
 

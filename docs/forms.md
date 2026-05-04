@@ -95,3 +95,5 @@ Each field requires these translation keys unless explicitly documented otherwis
 - API/backend error keys documented in the API markdown
 
 `php compiler/report_form_components.php` reports missing sections, unsupported components, missing templates and missing translation keys.
+
+`php compiler/report_form_flows.php` audits runtime forms against `docs/forms/*.md` and verifies that each non-reference runtime form is bound to FormAjax via controller code.
