@@ -18,6 +18,16 @@ All QA commands must be non-interactive. Do not run commands that can open a pag
 
 Run before a release/PR:
 
+Single release gate:
+
+```cmd
+php compiler/release_gate.php
+```
+
+The gate writes `dist/release_gate_report.json` and exits non-zero when a blocking check fails. MySQL smoke without local `_db.json` is treated as documented environment-only skip. The JSON report sanitizes secret-like key names in embedded command output so the post-build secret scan can validate the generated report itself.
+
+Individual checks included in the gate:
+
 ```cmd
 php compiler/check_md_first.php
 php compiler/check_secret_leaks.php

@@ -14,6 +14,7 @@ The framework uses small compiler steps in `compiler/` and writes runtime artifa
 
 Compiler files:
 
+- `compiler/release_gate.php`
 - `compiler/compile_objects.php`
 - `compiler/compile_scripts.php`
 - `compiler/compile_styles.php`
@@ -29,6 +30,12 @@ Run compilers in this order:
 4. `compile_production.php`
 
 Reason: the final production compiler expects object/script/style artifacts to already exist in `dist/`.
+
+For full release validation, run:
+
+- `php compiler\release_gate.php`
+
+The release gate executes documentation/contract/security/form/ui reports, compiler steps, post-build secret scan and database smoke in a fixed non-interactive order. It writes `dist/release_gate_report.json` with machine-readable results.
 
 ## compiler responsibilities
 

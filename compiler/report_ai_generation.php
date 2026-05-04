@@ -109,16 +109,16 @@ function classifyFiles(array $files): array
             $groups['generated'][] = $file;
             continue;
         }
+        if (in_array($file, ['current_tasks.md', 'currentstate.md', 'agents.md', 'config.json'], true)) {
+            $groups['governance'][] = $file;
+            continue;
+        }
         if (str_ends_with($file, '.md') || str_starts_with($file, 'docs/') || str_starts_with($file, 'api/') && str_ends_with($file, '.md') || str_starts_with($file, 'objects/') && str_ends_with($file, '.md') || str_starts_with($file, 'models/') && str_ends_with($file, '.md')) {
             $groups['markdown'][] = $file;
             continue;
         }
         if (str_starts_with($file, 'compiler/')) {
             $groups['compiler'][] = $file;
-            continue;
-        }
-        if (in_array($file, ['current_tasks.md', 'currentstate.md', 'agents.md', 'config.json'], true)) {
-            $groups['governance'][] = $file;
             continue;
         }
         if (preg_match('/\.(php|js|css)$/i', $file) === 1 || str_starts_with($file, 'scripts/') || str_starts_with($file, 'templates/') || str_starts_with($file, 'styles/') || str_starts_with($file, 'x/')) {
@@ -134,6 +134,7 @@ function classifyFiles(array $files): array
 function requiredQaCommands(): array
 {
     return [
+        'php compiler/release_gate.php',
         'php compiler/check_md_first.php',
         'php compiler/check_secret_leaks.php',
         'php compiler/report_secret_usage.php',

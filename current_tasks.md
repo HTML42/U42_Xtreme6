@@ -6,18 +6,18 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 
 ## release-priorität (manager view)
 
-- **P0 (blocker für "framework final")**: task 29
+- **P0 (blocker für "framework final")**: keine
 - **P1 (hoch / produktreif machen)**: task 30, task 31, task 32
 - **P2 (manager-/developer-experience)**: task 33, task 34, task 35
-- **abgeschlossen / baseline vorhanden**: task 1 bis task 28
+- **abgeschlossen / baseline vorhanden**: task 1 bis task 29
 
 ## global definition of done (dod)
 
 - [x] Jede Runtime-Funktionalität ist auf eine MD-Spezifikation zurückführbar.
 - [x] FE/BE-Verträge sind via API dokumentiert, testbar und versionierbar.
 - [ ] Alle Form-Flows laufen per AJAX, inkl. Datei-Upload, Inline-Error + Error-Summary.
-- [ ] Secrets sind nicht im Frontend-Bundle/Repo-Leak enthalten.
-- [ ] Sandbox/Mock-Modus ermöglicht End-to-End-Demos ohne Live-Backend.
+- [x] Secrets sind nicht im Frontend-Bundle/Repo-Leak enthalten.
+- [x] Sandbox/Mock-Modus ermöglicht End-to-End-Demos ohne Live-Backend.
 - [ ] i18n unterstützt Sprachwechsel, Direkteinstieg und SEO-Head/alternate sauber.
 
 ## task 1: datenbankabstraktion stabilisieren
@@ -352,17 +352,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 29: release gate all dod automation
 
-- [ ] **subtask 29.1**: `compiler/release_gate.php` als Sammelcheck spezifizieren.
-- [ ] **subtask 29.2**: MD-first, API-contract, translation-governance, secret-scan, form-audit, route-link-audit zusammenführen.
-- [ ] **subtask 29.3**: JSON-Smoke und MySQL-Smoke/Skip in Release-Gate integrieren.
-- [ ] **subtask 29.4**: Exit-Codes und maschinenlesbaren Report definieren.
-- [ ] **subtask 29.5**: `current_tasks.md` globale DoD nur bei grünem Release-Gate vollständig abhaken.
+- [x] **subtask 29.1**: `compiler/release_gate.php` als Sammelcheck spezifizieren.
+- [x] **subtask 29.2**: MD-first, API-contract, translation-governance, secret-scan, form-audit, route-link-audit zusammenführen.
+- [x] **subtask 29.3**: JSON-Smoke und MySQL-Smoke/Skip in Release-Gate integrieren.
+- [x] **subtask 29.4**: Exit-Codes und maschinenlesbaren Report definieren.
+- [x] **subtask 29.5**: `current_tasks.md` globale DoD nur bei grünem Release-Gate vollständig abhaken.
 
 ### acceptance criteria (task 29)
 
-- [ ] Ein einziger Release-Gate-Befehl prüft Framework-Finalität.
-- [ ] Fehlende MD-Quellen, API-Verträge, Form-Migrationen, Secrets und Mock-Lücken blockieren Release.
-- [ ] Report ist für KI/Manager lesbar.
+- [x] Ein einziger Release-Gate-Befehl prüft Framework-Finalität.
+- [x] Fehlende MD-Quellen, API-Verträge, Form-Migrationen, Secrets und Mock-Lücken blockieren Release.
+- [x] Report ist für KI/Manager lesbar.
 
 ## task 30: ai documentation routing cleanup
 
