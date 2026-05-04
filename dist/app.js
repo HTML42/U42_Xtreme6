@@ -110,6 +110,14 @@ clearOnSuccess: true,
 clearPasswordFields: true
 });
 }
+logout(route) {
+this.route = route;
+if (window.X6 && window.X6.framework) {
+window.X6.framework.setCurrentUser({ id: 0, login: false });
+window.X6.framework.renderConfiguredShellParts();
+}
+this.renderUserView('view.users.logout', route);
+}
 t(key, fallback = '') {
 if (window.XTranslation && typeof window.XTranslation.t === 'function') {
 const translated = window.XTranslation.t(key);
@@ -278,9 +286,26 @@ XUser.clear_cache();
 window.User = User;
 class XApi {
 static _MOCKS = [];
+static _SCENARIOS = null;
+static _SCENARIO_NAME = null;
 static getApiMode() {
 const config = window.X6_CONFIG && typeof window.X6_CONFIG === 'object' ? window.X6_CONFIG : {};
 return String(config.ApiMode || 'live').toLowerCase() === 'sandbox' ? 'sandbox' : 'live';
+}
+static getScenarioName() {
+const config = window.X6_CONFIG && typeof window.X6_CONFIG === 'object' ? window.X6_CONFIG : {};
+return XApi.normalizeScenarioName(XApi._SCENARIO_NAME || config.ApiScenario || 'success');
+}
+static normalizeScenarioName(name = '') {
+const normalized = String(name || '').trim().toLowerCase();
+return normalized || 'success';
+}
+static setScenario(name = 'success') {
+XApi._SCENARIO_NAME = XApi.normalizeScenarioName(name);
+if (XApi._SCENARIOS) {
+XApi.clearMocks();
+XApi.registerScenarioMocks(XApi._SCENARIO_NAME);
+}
 }
 static isSandbox() {
 return XApi.getApiMode() === 'sandbox';
@@ -291,6 +316,41 @@ path: path instanceof RegExp ? path : XApi.normalizePath(path),
 handlerOrPayload,
 delay: Number(options.delay || 0),
 method: options.method ? String(options.method).toUpperCase() : null
+});
+}
+static loadMockScenarios(config = {}) {
+if (!config || typeof config !== 'object') {
+return;
+}
+XApi._SCENARIOS = config;
+XApi.clearMocks();
+const scenarioName = XApi.normalizeScenarioName(
+XApi.getScenarioName() || config.defaultScenario || 'success'
+);
+XApi.registerScenarioMocks(scenarioName);
+}
+static registerScenarioMocks(name = 'success') {
+if (!XApi._SCENARIOS || typeof XApi._SCENARIOS !== 'object') {
+return;
+}
+const scenarios = XApi._SCENARIOS.scenarios || {};
+const scenarioName = XApi.normalizeScenarioName(name);
+const fallbackName = XApi.normalizeScenarioName(XApi._SCENARIOS.defaultScenario || 'success');
+const scenario = scenarios[scenarioName] || scenarios[fallbackName];
+if (!scenario || typeof scenario !== 'object') {
+return;
+}
+XApi._SCENARIO_NAME = scenarios[scenarioName] ? scenarioName : fallbackName;
+XApi.clearMocks();
+Object.entries(scenario.endpoints || {}).forEach(([endpointKey, definition]) => {
+const match = endpointKey.match(/^(GET|POST|PUT|PATCH|DELETE)\s+(.+)$/i);
+if (!match || !definition || typeof definition !== 'object') {
+return;
+}
+XApi.registerMock(match[2], definition.payload || {}, {
+method: match[1].toUpperCase(),
+delay: Number(definition.delay || 0)
+});
 });
 }
 static clearMocks() {
@@ -397,6 +457,43 @@ result[key] = value;
 }
 return result;
 }
+static getUploadFiles(formData) {
+if (!XApi.isFormData(formData)) {
+return [];
+}
+return Array.from(formData.entries())
+.filter(([, value]) => typeof File !== 'undefined' && value instanceof File && value.name !== '')
+.map(([field, file]) => ({ field, file }));
+}
+static validateUploadFiles(files = [], rules = {}) {
+const errors = {};
+const maxFiles = Number(rules.maxFiles || rules.max_files || 0);
+const maxSize = Number(rules.maxSize || rules.max_size || 0);
+const allowedTypes = Array.isArray(rules.allowedTypes || rules.allowed_types)
+? (rules.allowedTypes || rules.allowed_types).map((type) => String(type).toLowerCase())
+: [];
+if (maxFiles > 0 && files.length > maxFiles) {
+errors.upload = `too many files (max ${maxFiles})`;
+}
+files.forEach(({ field, file }) => {
+const fieldErrors = [];
+if (maxSize > 0 && file.size > maxSize) {
+fieldErrors.push(`file too large (max ${maxSize} bytes)`);
+}
+if (allowedTypes.length > 0 && !allowedTypes.includes(String(file.type || '').toLowerCase())) {
+fieldErrors.push(`file type not allowed (${file.type || 'unknown'})`);
+}
+if (fieldErrors.length > 0) {
+errors[field] = fieldErrors;
+}
+});
+return errors;
+}
+static notifyUploadProgress(callback, progress) {
+if (typeof callback === 'function') {
+callback(progress);
+}
+}
 static getErrorMessages(errors) {
 const normalized = XApi.normalizeErrors(errors);
 if (Array.isArray(normalized)) {
@@ -487,6 +584,9 @@ const headers = Object.assign({}, options.headers || {});
 const queryString = XApi.toQueryString(options.query || {});
 const endpoint = `/api/${XApi.normalizePath(path)}${queryString}`;
 if (XApi.isSandbox()) {
+if (XApi._SCENARIOS && XApi._MOCKS.length === 0) {
+XApi.registerScenarioMocks(XApi.getScenarioName());
+}
 const mock = XApi.findMock(path, method);
 return XApi.runMock(mock, {
 path: XApi.normalizePath(path),
@@ -557,9 +657,32 @@ XApi.clearFormErrors(formElement);
 XApi.setFormState(formElement, 'loading');
 const method = String(options.method || formElement.method || 'POST').toUpperCase();
 const formData = new FormData(formElement);
-const hasFiles = Array.from(formData.values()).some((value) => {
-return typeof File !== 'undefined' && value instanceof File;
+const uploadFiles = XApi.getUploadFiles(formData);
+const hasFiles = uploadFiles.length > 0;
+if (hasFiles) {
+const uploadErrors = XApi.validateUploadFiles(uploadFiles, options.upload || {});
+if (Object.keys(uploadErrors).length > 0) {
+XApi.setFormState(formElement, 'error');
+XApi.renderFormErrors(formElement, uploadErrors);
+return XApi.normalizePayload({
+success: false,
+status: 422,
+response: null,
+errors: uploadErrors
 });
+}
+XApi.notifyUploadProgress(options.onUploadProgress, {
+loaded: 0,
+total: uploadFiles.reduce((sum, item) => sum + item.file.size, 0),
+percent: 0,
+files: uploadFiles.map((item) => ({
+field: item.field,
+name: item.file.name,
+size: item.file.size,
+type: item.file.type
+}))
+});
+}
 const useMultipart = options.multipart === true || hasFiles;
 const body = useMultipart ? formData : XApi.formDataToObject(formData);
 const result = await XApi.request(path, {
@@ -569,6 +692,14 @@ query: options.query || {},
 body
 });
 XApi.setFormState(formElement, result.success ? 'success' : 'error');
+if (hasFiles) {
+XApi.notifyUploadProgress(options.onUploadProgress, {
+loaded: uploadFiles.reduce((sum, item) => sum + item.file.size, 0),
+total: uploadFiles.reduce((sum, item) => sum + item.file.size, 0),
+percent: 100,
+done: true
+});
+}
 if (!result.success) {
 XApi.renderFormErrors(formElement, result.errors);
 }
@@ -576,6 +707,112 @@ return result;
 }
 }
 window.XApi = XApi;
+(function () {
+const scenarios = {
+version: 'v1.0.0',
+defaultScenario: 'success',
+coverage: {
+requiredScenarioTypes: ['success', 'validation-error', 'auth-error', 'timeout', 'upload-error']
+},
+scenarios: {
+success: {
+type: 'success',
+description: 'Successful users and upload demo flow without live backend.',
+endpoints: {
+'GET users/index': {
+payload: {
+success: true,
+status: 200,
+response: [{ id: 1, username: 'demo', email: 'demo@example.com', hash: 'SANDBOX1' }],
+errors: {}
+}
+},
+'GET test/foo': {
+payload: { success: true, status: 200, response: 'foo', errors: {} }
+},
+'GET test/bar': {
+payload: { success: true, status: 200, response: 'bar', errors: {} }
+},
+'POST users/login': {
+delay: 150,
+payload: {
+success: true,
+status: 200,
+response: { id: 1, username: 'demo', email: 'demo@example.com', hash: 'SANDBOX1', lastlogin_date: 1777834000 },
+errors: {}
+}
+},
+'POST users/registration': {
+delay: 150,
+payload: {
+success: true,
+status: 200,
+response: { id: 2, username: 'demo', email: 'demo@example.com', hash: 'SANDBOX2' },
+errors: {}
+}
+},
+'POST test/upload': {
+delay: 200,
+payload: {
+success: true,
+status: 200,
+response: { files: [{ field: 'attachment', name: 'sandbox-demo.pdf', size: 12800, type: 'application/pdf' }] },
+errors: {}
+}
+}
+}
+},
+'validation-error': {
+type: 'validation-error',
+description: 'Form validation errors for login and registration.',
+endpoints: {
+'POST users/login': {
+payload: { success: false, status: 422, response: null, errors: { username: 'username is required', password: 'password is required' } }
+},
+'POST users/registration': {
+payload: { success: false, status: 422, response: null, errors: { email: 'email already exists', password2: 'passwords do not match' } }
+}
+}
+},
+'auth-error': {
+type: 'auth-error',
+description: 'Invalid login credentials demo.',
+endpoints: {
+'POST users/login': {
+payload: { success: false, status: 401, response: null, errors: { credentials: 'invalid login' } }
+}
+}
+},
+timeout: {
+type: 'timeout',
+description: 'Artificial timeout/delay scenario for loading and retry UX.',
+endpoints: {
+'GET users/index': {
+delay: 1200,
+payload: { success: false, status: 504, response: null, errors: { timeout: 'sandbox timeout' } }
+},
+'POST users/login': {
+delay: 1200,
+payload: { success: false, status: 504, response: null, errors: { timeout: 'sandbox timeout' } }
+}
+}
+},
+'upload-error': {
+type: 'upload-error',
+description: 'Upload validation error with field mapping.',
+endpoints: {
+'POST test/upload': {
+payload: { success: false, status: 422, response: null, errors: { attachment: 'file type not allowed' } }
+}
+}
+}
+}
+};
+window.X6_SANDBOX_SCENARIOS = scenarios;
+if (window.XApi && typeof window.XApi.loadMockScenarios === 'function') {
+window.XApi.loadMockScenarios(scenarios);
+}
+}());
 class XFramework {
 static sleep(delayMs) {
 return new Promise((resolve) => {
@@ -763,6 +1000,8 @@ document.body.replaceChildren(nextRoot);
 const root = this.ensureAppRoot();
 root.innerHTML = [
 '<header id="page_header"></header>',
+'<nav id="page_breadcrumb" aria-label="Breadcrumb"></nav>',
+'<section id="page_slideshow" aria-label="Slideshow" hidden></section>',
 '<main id="page_main">',
 '<article id="page_article"></article>',
 '<aside id="page_aside"></aside>',
@@ -880,6 +1119,7 @@ target.outerHTML = markup;
 }
 renderRoute(route) {
 this.currentRoute = route;
+this.renderRouteUiPrimitives(route);
 this.renderRouteTemplate(route);
 const controllerClassName = `${this.capitalize(route.controller)}Controller`;
 const controllerClass = window[controllerClassName];
@@ -895,6 +1135,63 @@ console.warn(`View method not found: ${route.view} in ${controllerClassName}`);
 return;
 }
 controller[viewMethod](route);
+}
+getRouteUiConfig(route) {
+const key = `${route.controller}/${route.view}`;
+const configs = {
+'index/index': { sidebar: true, breadcrumb: false, slideshow: 'home' },
+'index/imprint': { sidebar: true, breadcrumb: true, slideshow: null },
+'index/privacy': { sidebar: true, breadcrumb: true, slideshow: null },
+'users/login': { sidebar: false, breadcrumb: true, slideshow: null },
+'users/registration': { sidebar: false, breadcrumb: true, slideshow: null },
+'users/logout': { sidebar: false, breadcrumb: true, slideshow: null }
+};
+return configs[key] || { sidebar: false, breadcrumb: true, slideshow: null };
+}
+renderRouteUiPrimitives(route) {
+const config = this.getRouteUiConfig(route);
+if (window.X6 && window.X6.options) {
+window.X6.options.sidebar = config.sidebar === true;
+}
+this.renderConfiguredShellParts();
+this.renderBreadcrumb(route, config);
+this.renderSlideshow(route, config);
+}
+renderBreadcrumb(route, config) {
+const target = document.getElementById('page_breadcrumb');
+if (!target) {
+return;
+}
+if (config.breadcrumb !== true) {
+target.innerHTML = '';
+target.setAttribute('hidden', 'hidden');
+return;
+}
+target.removeAttribute('hidden');
+target.outerHTML = XTemplate.render('breadcrumb', {
+aria_label: XTranslation.t('ui.breadcrumb.aria_label'),
+home: XTranslation.t('menu.home'),
+current: XTranslation.t(`captions.${route.controller}.${route.view}`)
+});
+}
+renderSlideshow(route, config) {
+const target = document.getElementById('page_slideshow');
+if (!target) {
+return;
+}
+if (!config.slideshow) {
+target.innerHTML = '';
+target.setAttribute('hidden', 'hidden');
+return;
+}
+target.removeAttribute('hidden');
+target.outerHTML = XTemplate.render('slideshow', {
+aria_label: XTranslation.t('ui.slideshow.aria_label'),
+title: XTranslation.t('ui.slideshow.home.title'),
+caption: XTranslation.t('ui.slideshow.home.caption'),
+cta: XTranslation.t('ui.slideshow.home.cta'),
+target_route: '#!/users/registration'
+});
 }
 renderRouteTemplate(route) {
 const article = document.getElementById('page_article');
@@ -1222,12 +1519,23 @@ window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 window.TEMPLATES['body'] = `
 <div id="App">
 <header id="page_header"></header>
+<nav id="page_breadcrumb" aria-label="Breadcrumb"></nav>
+<section id="page_slideshow" aria-label="Slideshow" hidden></section>
 <main id="page_main">
 <article id="page_article"></article>
 <aside id="page_aside"></aside>
 </main>
 <footer id="page_footer"></footer>
 </div>
+`.trim();
+window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
+window.TEMPLATES['breadcrumb'] = `
+<nav id="page_breadcrumb" class="breadcrumb" aria-label="{{aria_label}}">
+<ol class="clean_list breadcrumb_list">
+<li><a href="#!/index/index">{{home}}</a></li>
+<li aria-current="page">{{current}}</li>
+</ol>
+</nav>
 `.trim();
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 window.TEMPLATES['footer'] = `
@@ -1298,6 +1606,16 @@ window.TEMPLATES['sidebar'] = `
 </section>
 `.trim();
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
+window.TEMPLATES['slideshow'] = `
+<section id="page_slideshow" class="slideshow" aria-label="{{aria_label}}">
+<article class="slideshow_slide">
+<h2>{{title}}</h2>
+<p>{{caption}}</p>
+<a href="{{target_route}}">{{cta}}</a>
+</article>
+</section>
+`.trim();
+window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 window.TEMPLATES['view.index.imprint'] = `
 <section class="view view_index_imprint">
 <h1>{{caption}}</h1>
@@ -1324,6 +1642,13 @@ window.TEMPLATES['view.users.login'] = `
 <h1>{{caption}}</h1>
 <p>{{intro}}</p>
 {{FormLogin}}
+</section>
+`.trim();
+window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
+window.TEMPLATES['view.users.logout'] = `
+<section class="view view_users_logout">
+<h1>{{caption}}</h1>
+<p>{{intro}}</p>
 </section>
 `.trim();
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
@@ -1428,6 +1753,7 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
 'captions.index.privacy': 'Datenschutz',
 'captions.users.login': 'Anmeldung',
 'captions.users.registration': 'Registrierung',
+'captions.users.logout': 'Abmeldung',
 'captions.users.profile': 'Benutzerprofil',
 'captions.users.email_confirmation': 'E-Mail bestätigen',
 'captions.admin.overview': 'Admin-Übersicht',
@@ -1494,18 +1820,27 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
 'errors.email_confirmation.user_deleted': 'Dieses Konto kann nicht aktiviert werden.',
 'errors.email_confirmation.failed': 'E-Mail-Bestätigung fehlgeschlagen.',
 'ui.sidebar.title': 'Navigation',
+'ui.breadcrumb.aria_label': 'Breadcrumb',
+'ui.slideshow.aria_label': 'Slideshow',
+'ui.slideshow.home.title': 'Willkommen bei Xtreme6',
+'ui.slideshow.home.caption': 'Das KI-getriebene Framework mit MD-first Workflow.',
+'ui.slideshow.home.cta': 'Jetzt starten',
 'ui.footer.text': 'Xtreme-Webframework Version 6',
 'forms.callbacks.loading': 'Bitte warten...',
 'forms.callbacks.login_success': 'Du bist erfolgreich angemeldet.',
 'forms.callbacks.login_fail': 'Anmeldung fehlgeschlagen. Bitte prüfe deine Eingaben.',
 'forms.callbacks.registration_success': 'Deine Registrierung war erfolgreich.',
 'forms.callbacks.registration_fail': 'Registrierung fehlgeschlagen. Bitte prüfe deine Eingaben.',
+'forms.labels.registration': 'Registrieren',
+'forms.labels.attachment': 'Datei',
+'forms.labels.upload': 'Hochladen',
 'captions.index.imprint': 'Impressum',
 'captions.index.privacy': 'Datenschutz',
 'ui.view.index.intro': 'Willkommen im Xtreme 6 Frontend mit JS-Templates.',
 'ui.view.imprint.intro': 'Hier findest du alle rechtlichen Informationen (Impressum).',
 'ui.view.privacy.intro': 'Hier findest du unsere Datenschutzinformationen.',
 'ui.view.login.intro': 'Melde dich an, um deine Pläne, Einzahlungen und Auszahlungen zu verwalten.',
-'ui.view.registration.intro': 'Bitte fülle alle Felder aus, um dein Konto zu erstellen.'
+'ui.view.registration.intro': 'Bitte fülle alle Felder aus, um dein Konto zu erstellen.',
+'ui.view.logout.intro': 'Du wurdest abgemeldet.'
 });
 Object.assign(window.TRANSLATIONS, window.TRANSLATIONS_BY_LANG.de);

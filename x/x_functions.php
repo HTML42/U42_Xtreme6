@@ -67,12 +67,11 @@ if (!function_exists('x_user_load')) {
     }
 }
 
-if (!function_exists('x_secrets_load')) {
+if (!function_exists('x_config_load')) {
     /**
-     * Loads environment-local secrets from _secrets.json.
-     * Secrets must never be exposed to frontend runtime config.
+     * Loads project config without exposing private environment files.
      */
-    function x_secrets_load(): array
+    function x_config_load(): array
     {
         static $cache = null;
 
@@ -80,7 +79,7 @@ if (!function_exists('x_secrets_load')) {
             return $cache;
         }
 
-        $path = dirname(__DIR__) . DIRECTORY_SEPARATOR . '_secrets.json';
+        $path = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config.json';
         if (!is_file($path)) {
             $cache = [];
             return $cache;
@@ -92,9 +91,96 @@ if (!function_exists('x_secrets_load')) {
     }
 }
 
+if (!function_exists('x_secrets_load')) {
+    /**
+     * Loads environment-local secret provider configuration from _secrets.json.
+     * Secrets must never be exposed to frontend runtime config.
+     */
+    function x_secrets_load(?string $provider = null): array
+    {
+        static $cache = [];
+
+        $providerName = strtolower((string) ($provider ?? 'local_file'));
+        if (isset($cache[$providerName])) {
+            return $cache[$providerName];
+        }
+
+        if ($providerName === 'env') {
+            $cache[$providerName] = [
+                'provider' => [
+                    'default' => 'env',
+                    'environment' => strtolower((string) (x_config_load()['Environment'] ?? getenv('APP_ENV') ?: 'dev')),
+                ],
+                'services' => [],
+            ];
+            return $cache[$providerName];
+        }
+
+        $path = dirname(__DIR__) . DIRECTORY_SEPARATOR . '_secrets.json';
+        if (!is_file($path)) {
+            $cache[$providerName] = [];
+            return $cache[$providerName];
+        }
+
+        $decoded = json_decode((string) file_get_contents($path), true);
+        $cache[$providerName] = is_array($decoded) ? $decoded : [];
+        return $cache[$providerName];
+    }
+}
+
+if (!function_exists('x_secret_provider_name')) {
+    /**
+     * Resolves the configured provider name, optionally for a service.
+     */
+    function x_secret_provider_name(array $secrets = [], ?string $service = null): string
+    {
+        $provider = $secrets['provider']['default'] ?? $secrets['provider']['type'] ?? 'local_file';
+
+        if ($service !== null && isset($secrets['services'][$service]['provider'])) {
+            $serviceProvider = $secrets['services'][$service]['provider'];
+            $provider = is_array($serviceProvider) ? ($serviceProvider['type'] ?? $provider) : $serviceProvider;
+        }
+
+        $provider = strtolower((string) $provider);
+        return in_array($provider, ['local_file', 'env', 'vault'], true) ? $provider : 'local_file';
+    }
+}
+
+if (!function_exists('x_secret_env_name')) {
+    /**
+     * Resolves an environment-variable mapping for a secret dot-path.
+     */
+    function x_secret_env_name(string $path, array $secrets = []): ?string
+    {
+        $path = trim($path);
+        if ($path === '') {
+            return null;
+        }
+
+        if (isset($secrets['env'][$path]) && is_string($secrets['env'][$path])) {
+            return $secrets['env'][$path];
+        }
+
+        $segments = explode('.', $path);
+        if (($segments[0] ?? '') === 'services' && isset($segments[1])) {
+            $service = $segments[1];
+            $serviceConfig = $secrets['services'][$service] ?? [];
+            $relativePath = implode('.', array_slice($segments, 2));
+            if (isset($serviceConfig['env'][$relativePath]) && is_string($serviceConfig['env'][$relativePath])) {
+                return $serviceConfig['env'][$relativePath];
+            }
+            if (isset($serviceConfig['env'][$path]) && is_string($serviceConfig['env'][$path])) {
+                return $serviceConfig['env'][$path];
+            }
+        }
+
+        return null;
+    }
+}
+
 if (!function_exists('x_secret_get')) {
     /**
-     * Reads a dot-path value from _secrets.json without exposing the full store.
+     * Reads a dot-path secret value through the configured provider without exposing the full store.
      */
     function x_secret_get(string $path, $default = null)
     {
@@ -104,8 +190,33 @@ if (!function_exists('x_secret_get')) {
         }
 
         $current = x_secrets_load();
+        $service = (($segments[0] ?? '') === 'services' && isset($segments[1])) ? $segments[1] : null;
+        $provider = x_secret_provider_name($current, $service);
+
+        $envName = x_secret_env_name(implode('.', $segments), $current);
+        if ($envName !== null) {
+            $envValue = getenv($envName);
+            if ($envValue !== false && $envValue !== '') {
+                return $envValue;
+            }
+        }
+
+        if ($provider === 'env') {
+            $derivedEnvName = 'X6_' . strtoupper(preg_replace('/[^a-z0-9]+/i', '_', implode('.', $segments)) ?? '');
+            $envValue = getenv($derivedEnvName);
+            return ($envValue !== false && $envValue !== '') ? $envValue : $default;
+        }
+
+        if ($provider === 'vault') {
+            return $default;
+        }
+
         foreach ($segments as $segment) {
             if (!is_array($current) || !array_key_exists($segment, $current)) {
+                if (($segments[0] ?? '') === 'services' && isset($segments[1], $segments[2]) && count($segments) === 3) {
+                    return x_secret_get('services.' . $segments[1] . '.credentials.' . $segments[2], $default);
+                }
+
                 return $default;
             }
 
@@ -113,6 +224,63 @@ if (!function_exists('x_secret_get')) {
         }
 
         return $current;
+    }
+}
+
+if (!function_exists('x_secret_service_report')) {
+    /**
+     * Builds a value-free report of configured secret dependencies for QA/manager review.
+     */
+    function x_secret_service_report(?array $secrets = null): array
+    {
+        $secrets = $secrets ?? x_secrets_load();
+        $services = [];
+
+        foreach (($secrets['services'] ?? []) as $serviceName => $serviceConfig) {
+            if (!is_array($serviceConfig)) {
+                continue;
+            }
+
+            $credentialKeys = [];
+            if (is_array($serviceConfig['credentials'] ?? null)) {
+                $credentialKeys = array_keys($serviceConfig['credentials']);
+            }
+
+            $requiredSecrets = [];
+            if (is_array($serviceConfig['required_secrets'] ?? null)) {
+                foreach ($serviceConfig['required_secrets'] as $alias => $secretPath) {
+                    $requiredSecrets[(string) $alias] = (string) $secretPath;
+                }
+            } elseif (is_array($serviceConfig['required'] ?? null)) {
+                foreach ($serviceConfig['required'] as $secretPath) {
+                    $requiredSecrets[(string) $secretPath] = (string) $secretPath;
+                }
+            }
+
+            $envMappings = [];
+            if (is_array($serviceConfig['env'] ?? null)) {
+                foreach ($serviceConfig['env'] as $secretPath => $envName) {
+                    $envMappings[(string) $secretPath] = (string) $envName;
+                }
+            }
+
+            $services[(string) $serviceName] = [
+                'purpose' => (string) ($serviceConfig['purpose'] ?? ''),
+                'provider' => x_secret_provider_name($secrets, (string) $serviceName),
+                'base_url_configured' => isset($serviceConfig['base_url']) && $serviceConfig['base_url'] !== '',
+                'credential_keys' => $credentialKeys,
+                'required_secrets' => $requiredSecrets,
+                'env_mappings' => $envMappings,
+            ];
+        }
+
+        return [
+            'provider' => [
+                'default' => x_secret_provider_name($secrets),
+                'environment' => (string) ($secrets['provider']['environment'] ?? 'dev'),
+            ],
+            'services' => $services,
+        ];
     }
 }
 

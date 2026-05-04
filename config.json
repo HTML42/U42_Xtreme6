@@ -2,6 +2,7 @@
   "Database": "JSON",
   "DatabaseSelectCacheTtl": 60,
   "ApiMode": "live",
+  "ApiScenario": "success",
   "Language": "de",
   "FallbackLanguage": "de",
   "AvailableLanguages": ["de"]

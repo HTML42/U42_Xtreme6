@@ -15,7 +15,8 @@ Kanonische Verbindungen:
 
 ```json
 {
-  "ApiMode": "live"
+  "ApiMode": "live",
+  "ApiScenario": "success"
 }
 ```
 
@@ -23,6 +24,32 @@ Erlaubte Werte:
 
 - `live`: echte API-Requests
 - `sandbox`: `XApi` verwendet registrierte Mocks
+
+`ApiScenario` wählt im Sandbox-Modus ein versioniertes Szenario aus `docs/sandbox_scenarios.json`. Wenn kein Szenario gesetzt ist, nutzt `XApi` `success`.
+
+## scenario source of truth
+
+Mock-Szenarien werden zuerst in `docs/sandbox_scenarios.json` definiert und danach in Runtime-Mocks geladen.
+
+Pflichtstruktur:
+
+- `version`: Contract-Version der Scenario-Datei.
+- `defaultScenario`: Fallback-Szenario.
+- `scenarios.<name>.description`: menschenlesbarer Zweck.
+- `scenarios.<name>.endpoints.<METHOD> <path>`: Payload und optional Delay je Endpoint.
+- `coverage.requiredScenarioTypes`: Mindesttypen für Release-QA (`success`, `validation-error`, `auth-error`, `timeout`, `upload-error`).
+
+Endpoint-Pfade verwenden denselben relativen Pfad wie `XApi.request(...)`, z. B. `users/login`.
+
+## load scenarios
+
+`XApi.loadMockScenarios(config)` akzeptiert die JSON-Struktur aus `docs/sandbox_scenarios.json` oder eine daraus generierte Runtime-Konfiguration. Das aktuell aktive Szenario kommt aus:
+
+1. `window.X6_CONFIG.ApiScenario`
+2. `config.defaultScenario`
+3. `success`
+
+Manuelle Umschaltung ist per `XApi.setScenario('validation-error')` möglich.
 
 ## register mock
 
@@ -89,3 +116,14 @@ Validation-Error-Mocks müssen Field-Errors mit dem Upload-Feldnamen liefern, z.
 - missing mock (`404`)
 - upload validation error (`422` with field errors)
 - artificial delay via `options.delay`
+
+## demo playbook
+
+1. In `config.json` setzen: `"ApiMode": "sandbox"` und optional `"ApiScenario": "success"`.
+2. App bauen: `php compiler/compile_scripts.php && php compiler/compile_production.php`.
+3. Flow `success`: Login/Registration/Upload liefern erfolgreiche Mock-Payloads.
+4. Flow `validation-error`: FormAjax zeigt Field-Errors und Summary ohne Live-Backend.
+5. Flow `auth-error`: Login liefert `401` mit `credentials`-Error.
+6. Flow `timeout`: Mocks liefern `504` nach Delay und testen Loading/Error-State.
+7. Flow `upload-error`: Upload-Mock liefert Field-Error am Upload-Feld.
+8. QA: `php compiler/report_sandbox_coverage.php` muss die Szenario- und Endpoint-Abdeckung bestätigen.

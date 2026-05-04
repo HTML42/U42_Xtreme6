@@ -17,9 +17,8 @@
 
 ### frontend: fehlt noch
 
-- breadcrumb primitive ist dokumentiert, aber noch nicht implementiert.
 - route-level ui config ist dokumentiert, aber noch nicht compiler-erzwungen.
-- slideshow primitive ist dokumentierte P2-Lücke.
+- erweiterte route-level ui composition features bleiben P2/P3-Ausbau (Task 33), die Basis-Primitives sind vorhanden.
 
 ### backend: fertig
 
@@ -67,3 +66,5 @@
 - Upload-Pipeline-Governance ist aktiv: `XApi.submitForm(...)` unterstützt Upload-Prevalidation für Anzahl/Größe/MIME, Progress-Callbacks und standardisiertes Field-Error-Mapping; `docs/forms/examples.upload.md` dokumentiert Upload-MD-Regeln und Sandbox-Mocks liefern realistische File-Metadaten.
 - Globaler Form-Flow-Audit ist aktiv: `compiler/report_form_flows.php` inventarisiert Runtime-Forms, gleicht sie mit `docs/forms/*.md` ab und prüft FormAjax-Bindings, Error-Status-Regionen und Verbot klassischer `action`/Native-Submits.
 - UI-Primitive-Runtime ist aktiv: Breadcrumb (`templates/breadcrumb.js`) und Slideshow (`templates/slideshow.js`) werden route-level durch `XFramework.getRouteUiConfig(...)` gesteuert; `compiler/report_ui_primitives.php` validiert primitive Templates, Route-UI-Konfiguration und Template-Links gegen `docs/routes.md`.
+- Credentials-Provider-System ist aktiv: `docs/secrets.md` spezifiziert `local_file`, `env` und future `vault`, `_secrets.example.json` dokumentiert strukturierte externe Service-Credentials, `x_secret_get(...)` kapselt serverseitigen Zugriff, `compiler/check_secret_leaks.php` prüft Frontend-/Dist-Artefakte auf Secret-Leaks und `compiler/report_secret_usage.php` reportet Secret-Abhängigkeiten ohne Werte.
+- Sandbox-Szenario-System ist aktiv: `docs/sandbox_scenarios.json` definiert versionierte Mock-Szenarien (`success`, `validation-error`, `auth-error`, `timeout`, `upload-error`), `XApi.loadMockScenarios(...)` lädt die Scenario-Registry per `ApiScenario`, und `compiler/report_sandbox_coverage.php` validiert Szenario-Typen sowie API-Endpoint-Abdeckung.

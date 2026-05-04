@@ -13,6 +13,9 @@ import('../scripts/user.class.js');
 /* SOURCE: scripts\x_api.class.js */
 import('../scripts/x_api.class.js');
 
+/* SOURCE: scripts\x_api_mocks.js */
+import('../scripts/x_api_mocks.js');
+
 /* SOURCE: scripts\x_framework.class.js */
 import('../scripts/x_framework.class.js');
 

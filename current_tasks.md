@@ -6,10 +6,10 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 
 ## release-priorität (manager view)
 
-- **P0 (blocker für "framework final")**: task 21, task 22, task 23, task 24, task 26, task 27, task 29
-- **P1 (hoch / produktreif machen)**: task 25, task 28, task 30, task 31, task 32
+- **P0 (blocker für "framework final")**: task 29
+- **P1 (hoch / produktreif machen)**: task 28, task 30, task 31, task 32
 - **P2 (manager-/developer-experience)**: task 33, task 34, task 35
-- **abgeschlossen / baseline vorhanden**: task 1 bis task 20
+- **abgeschlossen / baseline vorhanden**: task 1 bis task 27
 
 ## global definition of done (dod)
 
@@ -310,31 +310,31 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 26: credentials provider system
 
-- [ ] **subtask 26.1**: Secret-Provider-Interface spezifizieren: local file, env vars, future vault provider.
-- [ ] **subtask 26.2**: Projekt-Credentials für externe APIs strukturiert in `_secrets.json` dokumentieren.
-- [ ] **subtask 26.3**: Zugriff nur serverseitig über Helper erlauben, niemals direkt im FE.
-- [ ] **subtask 26.4**: Rotation/Environment-Konvention für dev/stage/prod erweitern.
-- [ ] **subtask 26.5**: Secret-Usage-Report für API-Integrationen ergänzen (ohne Werte auszugeben).
+- [x] **subtask 26.1**: Secret-Provider-Interface spezifizieren: local file, env vars, future vault provider.
+- [x] **subtask 26.2**: Projekt-Credentials für externe APIs strukturiert in `_secrets.json` dokumentieren.
+- [x] **subtask 26.3**: Zugriff nur serverseitig über Helper erlauben, niemals direkt im FE.
+- [x] **subtask 26.4**: Rotation/Environment-Konvention für dev/stage/prod erweitern.
+- [x] **subtask 26.5**: Secret-Usage-Report für API-Integrationen ergänzen (ohne Werte auszugeben).
 
 ### acceptance criteria (task 26)
 
-- [ ] Externe API-Credentials können sicher projektbezogen hinterlegt werden.
-- [ ] Frontend-Bundles enthalten keine Secret-Namen/Werte außer erlaubten Public Config Keys.
-- [ ] Release-QA scannt Secret-Leaks und dokumentiert Secret-Abhängigkeiten.
+- [x] Externe API-Credentials können sicher projektbezogen hinterlegt werden.
+- [x] Frontend-Bundles enthalten keine Secret-Namen/Werte außer erlaubten Public Config Keys.
+- [x] Release-QA scannt Secret-Leaks und dokumentiert Secret-Abhängigkeiten.
 
 ## task 27: sandbox/mock scenario manager
 
-- [ ] **subtask 27.1**: Mock-Szenarien als MD/JSON-Konfiguration definieren: success, validation-error, auth-error, timeout, upload-error.
-- [ ] **subtask 27.2**: `XApi` Mock-Registry aus Szenario-Konfiguration laden.
-- [ ] **subtask 27.3**: Umschaltung per `X6_CONFIG.ApiMode` und optionalem Scenario-Namen ermöglichen.
-- [ ] **subtask 27.4**: Demo-Playbook für komplette FE-Flows ohne Live-Backend erstellen.
-- [ ] **subtask 27.5**: QA-Check für Mock-Abdeckung je API-Contract ergänzen.
+- [x] **subtask 27.1**: Mock-Szenarien als MD/JSON-Konfiguration definieren: success, validation-error, auth-error, timeout, upload-error.
+- [x] **subtask 27.2**: `XApi` Mock-Registry aus Szenario-Konfiguration laden.
+- [x] **subtask 27.3**: Umschaltung per `X6_CONFIG.ApiMode` und optionalem Scenario-Namen ermöglichen.
+- [x] **subtask 27.4**: Demo-Playbook für komplette FE-Flows ohne Live-Backend erstellen.
+- [x] **subtask 27.5**: QA-Check für Mock-Abdeckung je API-Contract ergänzen.
 
 ### acceptance criteria (task 27)
 
-- [ ] Jeder relevante API-Flow kann live und sandboxed demonstriert werden.
-- [ ] Mock-Szenarien sind versioniert und auf API-MDs zurückführbar.
-- [ ] FormAjax und Uploads nutzen dieselbe Mock-Infrastruktur.
+- [x] Jeder relevante API-Flow kann live und sandboxed demonstriert werden.
+- [x] Mock-Szenarien sind versioniert und auf API-MDs zurückführbar.
+- [x] FormAjax und Uploads nutzen dieselbe Mock-Infrastruktur.
 
 ## task 28: ai generation workflow and checkpoints
 

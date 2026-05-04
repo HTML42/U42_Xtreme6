@@ -1,9 +1,29 @@
 class XApi {
   static _MOCKS = [];
+  static _SCENARIOS = null;
+  static _SCENARIO_NAME = null;
 
   static getApiMode() {
     const config = window.X6_CONFIG && typeof window.X6_CONFIG === 'object' ? window.X6_CONFIG : {};
     return String(config.ApiMode || 'live').toLowerCase() === 'sandbox' ? 'sandbox' : 'live';
+  }
+
+  static getScenarioName() {
+    const config = window.X6_CONFIG && typeof window.X6_CONFIG === 'object' ? window.X6_CONFIG : {};
+    return XApi.normalizeScenarioName(XApi._SCENARIO_NAME || config.ApiScenario || 'success');
+  }
+
+  static normalizeScenarioName(name = '') {
+    const normalized = String(name || '').trim().toLowerCase();
+    return normalized || 'success';
+  }
+
+  static setScenario(name = 'success') {
+    XApi._SCENARIO_NAME = XApi.normalizeScenarioName(name);
+    if (XApi._SCENARIOS) {
+      XApi.clearMocks();
+      XApi.registerScenarioMocks(XApi._SCENARIO_NAME);
+    }
   }
 
   static isSandbox() {
@@ -16,6 +36,48 @@ class XApi {
       handlerOrPayload,
       delay: Number(options.delay || 0),
       method: options.method ? String(options.method).toUpperCase() : null
+    });
+  }
+
+  static loadMockScenarios(config = {}) {
+    if (!config || typeof config !== 'object') {
+      return;
+    }
+
+    XApi._SCENARIOS = config;
+    XApi.clearMocks();
+
+    const scenarioName = XApi.normalizeScenarioName(
+      XApi.getScenarioName() || config.defaultScenario || 'success'
+    );
+    XApi.registerScenarioMocks(scenarioName);
+  }
+
+  static registerScenarioMocks(name = 'success') {
+    if (!XApi._SCENARIOS || typeof XApi._SCENARIOS !== 'object') {
+      return;
+    }
+
+    const scenarios = XApi._SCENARIOS.scenarios || {};
+    const scenarioName = XApi.normalizeScenarioName(name);
+    const fallbackName = XApi.normalizeScenarioName(XApi._SCENARIOS.defaultScenario || 'success');
+    const scenario = scenarios[scenarioName] || scenarios[fallbackName];
+    if (!scenario || typeof scenario !== 'object') {
+      return;
+    }
+
+    XApi._SCENARIO_NAME = scenarios[scenarioName] ? scenarioName : fallbackName;
+    XApi.clearMocks();
+    Object.entries(scenario.endpoints || {}).forEach(([endpointKey, definition]) => {
+      const match = endpointKey.match(/^(GET|POST|PUT|PATCH|DELETE)\s+(.+)$/i);
+      if (!match || !definition || typeof definition !== 'object') {
+        return;
+      }
+
+      XApi.registerMock(match[2], definition.payload || {}, {
+        method: match[1].toUpperCase(),
+        delay: Number(definition.delay || 0)
+      });
     });
   }
 
@@ -307,6 +369,10 @@ class XApi {
     const endpoint = `/api/${XApi.normalizePath(path)}${queryString}`;
 
     if (XApi.isSandbox()) {
+      if (XApi._SCENARIOS && XApi._MOCKS.length === 0) {
+        XApi.registerScenarioMocks(XApi.getScenarioName());
+      }
+
       const mock = XApi.findMock(path, method);
       return XApi.runMock(mock, {
         path: XApi.normalizePath(path),

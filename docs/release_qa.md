@@ -21,6 +21,8 @@ Run before a release/PR:
 ```cmd
 php compiler/check_md_first.php
 php compiler/check_secret_leaks.php
+php compiler/report_secret_usage.php
+php compiler/report_sandbox_coverage.php
 php compiler/report_workflow_traceability.php
 php compiler/report_object_generation.php
 php compiler/report_model_schema.php

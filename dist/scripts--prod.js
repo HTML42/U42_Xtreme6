@@ -286,10 +286,30 @@ window.User = User;
 /* SOURCE: scripts\x_api.class.js */
 class XApi {
   static _MOCKS = [];
+  static _SCENARIOS = null;
+  static _SCENARIO_NAME = null;
 
   static getApiMode() {
     const config = window.X6_CONFIG && typeof window.X6_CONFIG === 'object' ? window.X6_CONFIG : {};
     return String(config.ApiMode || 'live').toLowerCase() === 'sandbox' ? 'sandbox' : 'live';
+  }
+
+  static getScenarioName() {
+    const config = window.X6_CONFIG && typeof window.X6_CONFIG === 'object' ? window.X6_CONFIG : {};
+    return XApi.normalizeScenarioName(XApi._SCENARIO_NAME || config.ApiScenario || 'success');
+  }
+
+  static normalizeScenarioName(name = '') {
+    const normalized = String(name || '').trim().toLowerCase();
+    return normalized || 'success';
+  }
+
+  static setScenario(name = 'success') {
+    XApi._SCENARIO_NAME = XApi.normalizeScenarioName(name);
+    if (XApi._SCENARIOS) {
+      XApi.clearMocks();
+      XApi.registerScenarioMocks(XApi._SCENARIO_NAME);
+    }
   }
 
   static isSandbox() {
@@ -302,6 +322,48 @@ class XApi {
       handlerOrPayload,
       delay: Number(options.delay || 0),
       method: options.method ? String(options.method).toUpperCase() : null
+    });
+  }
+
+  static loadMockScenarios(config = {}) {
+    if (!config || typeof config !== 'object') {
+      return;
+    }
+
+    XApi._SCENARIOS = config;
+    XApi.clearMocks();
+
+    const scenarioName = XApi.normalizeScenarioName(
+      XApi.getScenarioName() || config.defaultScenario || 'success'
+    );
+    XApi.registerScenarioMocks(scenarioName);
+  }
+
+  static registerScenarioMocks(name = 'success') {
+    if (!XApi._SCENARIOS || typeof XApi._SCENARIOS !== 'object') {
+      return;
+    }
+
+    const scenarios = XApi._SCENARIOS.scenarios || {};
+    const scenarioName = XApi.normalizeScenarioName(name);
+    const fallbackName = XApi.normalizeScenarioName(XApi._SCENARIOS.defaultScenario || 'success');
+    const scenario = scenarios[scenarioName] || scenarios[fallbackName];
+    if (!scenario || typeof scenario !== 'object') {
+      return;
+    }
+
+    XApi._SCENARIO_NAME = scenarios[scenarioName] ? scenarioName : fallbackName;
+    XApi.clearMocks();
+    Object.entries(scenario.endpoints || {}).forEach(([endpointKey, definition]) => {
+      const match = endpointKey.match(/^(GET|POST|PUT|PATCH|DELETE)\s+(.+)$/i);
+      if (!match || !definition || typeof definition !== 'object') {
+        return;
+      }
+
+      XApi.registerMock(match[2], definition.payload || {}, {
+        method: match[1].toUpperCase(),
+        delay: Number(definition.delay || 0)
+      });
     });
   }
 
@@ -593,6 +655,10 @@ class XApi {
     const endpoint = `/api/${XApi.normalizePath(path)}${queryString}`;
 
     if (XApi.isSandbox()) {
+      if (XApi._SCENARIOS && XApi._MOCKS.length === 0) {
+        XApi.registerScenarioMocks(XApi.getScenarioName());
+      }
+
       const mock = XApi.findMock(path, method);
       return XApi.runMock(mock, {
         path: XApi.normalizePath(path),
@@ -731,6 +797,115 @@ class XApi {
 }
 
 window.XApi = XApi;
+
+/* SOURCE: scripts\x_api_mocks.js */
+(function () {
+  const scenarios = {
+    version: 'v1.0.0',
+    defaultScenario: 'success',
+    coverage: {
+      requiredScenarioTypes: ['success', 'validation-error', 'auth-error', 'timeout', 'upload-error']
+    },
+    scenarios: {
+      success: {
+        type: 'success',
+        description: 'Successful users and upload demo flow without live backend.',
+        endpoints: {
+          'GET users/index': {
+            payload: {
+              success: true,
+              status: 200,
+              response: [{ id: 1, username: 'demo', email: 'demo@example.com', hash: 'SANDBOX1' }],
+              errors: {}
+            }
+          },
+          'GET test/foo': {
+            payload: { success: true, status: 200, response: 'foo', errors: {} }
+          },
+          'GET test/bar': {
+            payload: { success: true, status: 200, response: 'bar', errors: {} }
+          },
+          'POST users/login': {
+            delay: 150,
+            payload: {
+              success: true,
+              status: 200,
+              response: { id: 1, username: 'demo', email: 'demo@example.com', hash: 'SANDBOX1', lastlogin_date: 1777834000 },
+              errors: {}
+            }
+          },
+          'POST users/registration': {
+            delay: 150,
+            payload: {
+              success: true,
+              status: 200,
+              response: { id: 2, username: 'demo', email: 'demo@example.com', hash: 'SANDBOX2' },
+              errors: {}
+            }
+          },
+          'POST test/upload': {
+            delay: 200,
+            payload: {
+              success: true,
+              status: 200,
+              response: { files: [{ field: 'attachment', name: 'sandbox-demo.pdf', size: 12800, type: 'application/pdf' }] },
+              errors: {}
+            }
+          }
+        }
+      },
+      'validation-error': {
+        type: 'validation-error',
+        description: 'Form validation errors for login and registration.',
+        endpoints: {
+          'POST users/login': {
+            payload: { success: false, status: 422, response: null, errors: { username: 'username is required', password: 'password is required' } }
+          },
+          'POST users/registration': {
+            payload: { success: false, status: 422, response: null, errors: { email: 'email already exists', password2: 'passwords do not match' } }
+          }
+        }
+      },
+      'auth-error': {
+        type: 'auth-error',
+        description: 'Invalid login credentials demo.',
+        endpoints: {
+          'POST users/login': {
+            payload: { success: false, status: 401, response: null, errors: { credentials: 'invalid login' } }
+          }
+        }
+      },
+      timeout: {
+        type: 'timeout',
+        description: 'Artificial timeout/delay scenario for loading and retry UX.',
+        endpoints: {
+          'GET users/index': {
+            delay: 1200,
+            payload: { success: false, status: 504, response: null, errors: { timeout: 'sandbox timeout' } }
+          },
+          'POST users/login': {
+            delay: 1200,
+            payload: { success: false, status: 504, response: null, errors: { timeout: 'sandbox timeout' } }
+          }
+        }
+      },
+      'upload-error': {
+        type: 'upload-error',
+        description: 'Upload validation error with field mapping.',
+        endpoints: {
+          'POST test/upload': {
+            payload: { success: false, status: 422, response: null, errors: { attachment: 'file type not allowed' } }
+          }
+        }
+      }
+    }
+  };
+
+  window.X6_SANDBOX_SCENARIOS = scenarios;
+  if (window.XApi && typeof window.XApi.loadMockScenarios === 'function') {
+    window.XApi.loadMockScenarios(scenarios);
+  }
+}());
 
 /* SOURCE: scripts\x_framework.class.js */
 class XFramework {
