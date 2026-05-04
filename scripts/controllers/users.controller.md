@@ -31,3 +31,10 @@ Controller specification for `users.controller.js`.
 - error message: use `forms.callbacks.registration_fail`; fallback to generic fail text if translation is missing
 - side effects: initialize registration form interactions if form exists; on success clear all submitted fields, especially passwords
 - failure behavior: keep entered non-password values, clear password fields, and render inline/global errors via `XApi`
+
+### logout
+- purpose: clear frontend login state and render logout confirmation
+- template: `view.users.logout`
+- data needs: translated caption + intro
+- side effects: call `window.X6.framework.setCurrentUser({ id: 0, login: false })`, update body login state, re-render shell navigation
+- failure behavior: no backend dependency in current baseline; if future backend logout exists, it must be specified in API markdown first

@@ -4,12 +4,26 @@ window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 window.TEMPLATES['body'] = `
 <div id="App">
   <header id="page_header"></header>
+  <nav id="page_breadcrumb" aria-label="Breadcrumb"></nav>
+  <section id="page_slideshow" aria-label="Slideshow" hidden></section>
   <main id="page_main">
     <article id="page_article"></article>
     <aside id="page_aside"></aside>
   </main>
   <footer id="page_footer"></footer>
 </div>
+`.trim();
+
+/* SOURCE: templates\breadcrumb.js */
+window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
+
+window.TEMPLATES['breadcrumb'] = `
+<nav id="page_breadcrumb" class="breadcrumb" aria-label="{{aria_label}}">
+  <ol class="clean_list breadcrumb_list">
+    <li><a href="#!/index/index">{{home}}</a></li>
+    <li aria-current="page">{{current}}</li>
+  </ol>
+</nav>
 `.trim();
 
 /* SOURCE: templates\footer.js */
@@ -99,6 +113,19 @@ window.TEMPLATES['sidebar'] = `
 </section>
 `.trim();
 
+/* SOURCE: templates\slideshow.js */
+window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
+
+window.TEMPLATES['slideshow'] = `
+<section id="page_slideshow" class="slideshow" aria-label="{{aria_label}}">
+  <article class="slideshow_slide">
+    <h2>{{title}}</h2>
+    <p>{{caption}}</p>
+    <a href="{{target_route}}">{{cta}}</a>
+  </article>
+</section>
+`.trim();
+
 /* SOURCE: templates\view.index.imprint.js */
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
@@ -137,6 +164,16 @@ window.TEMPLATES['view.users.login'] = `
   <h1>{{caption}}</h1>
   <p>{{intro}}</p>
   {{FormLogin}}
+</section>
+`.trim();
+
+/* SOURCE: templates\view.users.logout.js */
+window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
+
+window.TEMPLATES['view.users.logout'] = `
+<section class="view view_users_logout">
+  <h1>{{caption}}</h1>
+  <p>{{intro}}</p>
 </section>
 `.trim();
 

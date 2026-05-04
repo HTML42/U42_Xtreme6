@@ -242,6 +242,8 @@ class XFramework {
       const root = this.ensureAppRoot();
       root.innerHTML = [
         '<header id="page_header"></header>',
+        '<nav id="page_breadcrumb" aria-label="Breadcrumb"></nav>',
+        '<section id="page_slideshow" aria-label="Slideshow" hidden></section>',
         '<main id="page_main">',
         '<article id="page_article"></article>',
         '<aside id="page_aside"></aside>',
@@ -386,6 +388,7 @@ class XFramework {
   renderRoute(route) {
     this.currentRoute = route;
 
+    this.renderRouteUiPrimitives(route);
     this.renderRouteTemplate(route);
 
     const controllerClassName = `${this.capitalize(route.controller)}Controller`;
@@ -407,6 +410,73 @@ class XFramework {
     }
 
     controller[viewMethod](route);
+  }
+
+  getRouteUiConfig(route) {
+    const key = `${route.controller}/${route.view}`;
+    const configs = {
+      'index/index': { sidebar: true, breadcrumb: false, slideshow: 'home' },
+      'index/imprint': { sidebar: true, breadcrumb: true, slideshow: null },
+      'index/privacy': { sidebar: true, breadcrumb: true, slideshow: null },
+      'users/login': { sidebar: false, breadcrumb: true, slideshow: null },
+      'users/registration': { sidebar: false, breadcrumb: true, slideshow: null },
+      'users/logout': { sidebar: false, breadcrumb: true, slideshow: null }
+    };
+
+    return configs[key] || { sidebar: false, breadcrumb: true, slideshow: null };
+  }
+
+  renderRouteUiPrimitives(route) {
+    const config = this.getRouteUiConfig(route);
+    if (window.X6 && window.X6.options) {
+      window.X6.options.sidebar = config.sidebar === true;
+    }
+
+    this.renderConfiguredShellParts();
+    this.renderBreadcrumb(route, config);
+    this.renderSlideshow(route, config);
+  }
+
+  renderBreadcrumb(route, config) {
+    const target = document.getElementById('page_breadcrumb');
+    if (!target) {
+      return;
+    }
+
+    if (config.breadcrumb !== true) {
+      target.innerHTML = '';
+      target.setAttribute('hidden', 'hidden');
+      return;
+    }
+
+    target.removeAttribute('hidden');
+    target.outerHTML = XTemplate.render('breadcrumb', {
+      aria_label: XTranslation.t('ui.breadcrumb.aria_label'),
+      home: XTranslation.t('menu.home'),
+      current: XTranslation.t(`captions.${route.controller}.${route.view}`)
+    });
+  }
+
+  renderSlideshow(route, config) {
+    const target = document.getElementById('page_slideshow');
+    if (!target) {
+      return;
+    }
+
+    if (!config.slideshow) {
+      target.innerHTML = '';
+      target.setAttribute('hidden', 'hidden');
+      return;
+    }
+
+    target.removeAttribute('hidden');
+    target.outerHTML = XTemplate.render('slideshow', {
+      aria_label: XTranslation.t('ui.slideshow.aria_label'),
+      title: XTranslation.t('ui.slideshow.home.title'),
+      caption: XTranslation.t('ui.slideshow.home.caption'),
+      cta: XTranslation.t('ui.slideshow.home.cta'),
+      target_route: '#!/users/registration'
+    });
   }
 
   renderRouteTemplate(route) {

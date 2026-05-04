@@ -43,6 +43,11 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'errors.email_confirmation.failed': 'E-Mail-Bestätigung fehlgeschlagen.',
 
   'ui.sidebar.title': 'Navigation',
+  'ui.breadcrumb.aria_label': 'Breadcrumb',
+  'ui.slideshow.aria_label': 'Slideshow',
+  'ui.slideshow.home.title': 'Willkommen bei Xtreme6',
+  'ui.slideshow.home.caption': 'Das KI-getriebene Framework mit MD-first Workflow.',
+  'ui.slideshow.home.cta': 'Jetzt starten',
   'ui.footer.text': 'Xtreme-Webframework Version 6',
 
   'forms.callbacks.loading': 'Bitte warten...',
@@ -61,7 +66,8 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'ui.view.imprint.intro': 'Hier findest du alle rechtlichen Informationen (Impressum).',
   'ui.view.privacy.intro': 'Hier findest du unsere Datenschutzinformationen.',
   'ui.view.login.intro': 'Melde dich an, um deine Pläne, Einzahlungen und Auszahlungen zu verwalten.',
-  'ui.view.registration.intro': 'Bitte fülle alle Felder aus, um dein Konto zu erstellen.'
+  'ui.view.registration.intro': 'Bitte fülle alle Felder aus, um dein Konto zu erstellen.',
+  'ui.view.logout.intro': 'Du wurdest abgemeldet.'
 });
 
 Object.assign(window.TRANSLATIONS, window.TRANSLATIONS_BY_LANG.de);

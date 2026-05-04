@@ -1,6 +1,9 @@
 /* SOURCE: templates\body.js */
 import('../templates/body.js');
 
+/* SOURCE: templates\breadcrumb.js */
+import('../templates/breadcrumb.js');
+
 /* SOURCE: templates\footer.js */
 import('../templates/footer.js');
 
@@ -13,6 +16,9 @@ import('../templates/header.js');
 /* SOURCE: templates\sidebar.js */
 import('../templates/sidebar.js');
 
+/* SOURCE: templates\slideshow.js */
+import('../templates/slideshow.js');
+
 /* SOURCE: templates\view.index.imprint.js */
 import('../templates/view.index.imprint.js');
 
@@ -24,6 +30,9 @@ import('../templates/view.index.privacy.js');
 
 /* SOURCE: templates\view.users.login.js */
 import('../templates/view.users.login.js');
+
+/* SOURCE: templates\view.users.logout.js */
+import('../templates/view.users.logout.js');
 
 /* SOURCE: templates\view.users.registration.js */
 import('../templates/view.users.registration.js');

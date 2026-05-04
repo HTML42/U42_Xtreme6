@@ -86,6 +86,7 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'captions.index.privacy': 'Datenschutz',
   'captions.users.login': 'Anmeldung',
   'captions.users.registration': 'Registrierung',
+  'captions.users.logout': 'Abmeldung',
   'captions.users.profile': 'Benutzerprofil',
   'captions.users.email_confirmation': 'E-Mail bestätigen',
   'captions.admin.overview': 'Admin-Übersicht',

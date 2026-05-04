@@ -43,26 +43,61 @@ routes:
     controller: "index"
     view: "index"
     purpose: "Startseite / Landing"
+    ui:
+      header: true
+      sidebar: true
+      breadcrumb: false
+      slideshow: home
 
   - route: "#!/index/imprint"
     controller: "index"
     view: "imprint"
     purpose: "Impressum"
+    ui:
+      header: true
+      sidebar: true
+      breadcrumb: true
+      slideshow: null
 
   - route: "#!/index/privacy"
     controller: "index"
     view: "privacy"
     purpose: "Datenschutz"
+    ui:
+      header: true
+      sidebar: true
+      breadcrumb: true
+      slideshow: null
 
   - route: "#!/users/login"
     controller: "users"
     view: "login"
     purpose: "Benutzer-Login"
+    ui:
+      header: true
+      sidebar: false
+      breadcrumb: true
+      slideshow: null
 
   - route: "#!/users/registration"
     controller: "users"
     view: "registration"
     purpose: "Benutzer-Registrierung"
+    ui:
+      header: true
+      sidebar: false
+      breadcrumb: true
+      slideshow: null
+
+  - route: "#!/users/logout"
+    controller: "users"
+    view: "logout"
+    purpose: "Benutzer-Logout"
+    ui:
+      header: true
+      sidebar: false
+      breadcrumb: true
+      slideshow: null
 ```
 
 ## login/registration behavior note

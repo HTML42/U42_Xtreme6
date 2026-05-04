@@ -29,6 +29,7 @@ php compiler/report_api_contracts.php
 php compiler/check_frontend_boundary.php
 php compiler/report_form_components.php
 php compiler/report_form_flows.php
+php compiler/report_ui_primitives.php
 php compiler/compile_objects.php
 php compiler/compile_scripts.php
 php compiler/compile_styles.php

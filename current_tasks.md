@@ -296,17 +296,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 25: framework navigation/breadcrumb/sidebar/slideshow runtime
 
-- [ ] **subtask 25.1**: Breadcrumb-Primitive implementieren und aus Route/MD-Captions ableiten.
-- [ ] **subtask 25.2**: Sidebar-Konfiguration route-level aus Markdown ermöglichen.
-- [ ] **subtask 25.3**: Navigation-Items aus `docs/routes.md` und UI-MD-Konfiguration generieren.
-- [ ] **subtask 25.4**: Slideshow-Primitive mit a11y, keyboard controls, i18n Labels und optionalen Links spezifizieren/implementieren.
-- [ ] **subtask 25.5**: Build-Check: UI-Primitive-Links müssen deklarierte Routen verwenden.
+- [x] **subtask 25.1**: Breadcrumb-Primitive implementieren und aus Route/MD-Captions ableiten.
+- [x] **subtask 25.2**: Sidebar-Konfiguration route-level aus Markdown ermöglichen.
+- [x] **subtask 25.3**: Navigation-Items aus `docs/routes.md` und UI-MD-Konfiguration generieren.
+- [x] **subtask 25.4**: Slideshow-Primitive mit a11y, keyboard controls, i18n Labels und optionalen Links spezifizieren/implementieren.
+- [x] **subtask 25.5**: Build-Check: UI-Primitive-Links müssen deklarierte Routen verwenden.
 
 ### acceptance criteria (task 25)
 
-- [ ] Navigation, Breadcrumbs, Sidebars und Slideshows sind frameworkseitig bereitgestellt.
-- [ ] UI-Primitives sind MD-konfigurierbar und i18n/a11y-konform.
-- [ ] Feature-Code muss keine eigenen Basis-Primitives bauen.
+- [x] Navigation, Breadcrumbs, Sidebars und Slideshows sind frameworkseitig bereitgestellt.
+- [x] UI-Primitives sind MD-konfigurierbar und i18n/a11y-konform.
+- [x] Feature-Code muss keine eigenen Basis-Primitives bauen.
 
 ## task 26: credentials provider system
 

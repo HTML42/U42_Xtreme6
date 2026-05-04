@@ -20,8 +20,8 @@ It complements:
 | mobile navigation | `templates/header.js` | available | same items as header navigation | separate top/bottom nav regions with `aria-label` |
 | sidebar navigation | `templates/sidebar.js` | available | declared routes in `docs/routes.md` | title from `ui.sidebar.title`, links use `menu.*` keys |
 | footer | `templates/footer.js` | available | global shell | text from `ui.footer.text` |
-| breadcrumb | none | missing | should derive from current route and route captions | required before content-heavy nested routes |
-| slideshow | none | missing | should be route-configured with image/title/alt data | requires keyboard controls and translated labels |
+| breadcrumb | `templates/breadcrumb.js` | available | derives from current route and route captions | `aria-label`, `aria-current`, translated current label |
+| slideshow | `templates/slideshow.js` | available | route-configured home slideshow | translated title/caption/cta and declared target route |
 
 ## md-api for primitive configuration
 
@@ -54,7 +54,6 @@ Rules:
 
 ## prioritized gaps
 
-1. **Breadcrumb primitive (P1)**: missing; needed for nested/detail routes and SEO/a11y orientation.
-2. **Route-level UI config schema (P1)**: documented above but not yet compiler-enforced.
-3. **Slideshow primitive (P2)**: missing; only needed when content routes require carousel/hero behavior.
-4. **Automated route-link validator (P2)**: build check should verify template `href="#!/..."` links against `docs/routes.md`.
+1. **Route-level UI config parser (P1)**: runtime currently mirrors `docs/routes.md` config in `XFramework.getRouteUiConfig(...)`; future compiler should generate this map from markdown.
+2. **Slideshow multi-slide data source (P2)**: baseline primitive exists; future work can add multiple slides/images from markdown.
+3. **Automated route-link validator (P2)**: `php compiler/report_ui_primitives.php` verifies template links against declared routes.

@@ -38,6 +38,16 @@ class UsersController {
     });
   }
 
+  logout(route) {
+    this.route = route;
+    if (window.X6 && window.X6.framework) {
+      window.X6.framework.setCurrentUser({ id: 0, login: false });
+      window.X6.framework.renderConfiguredShellParts();
+    }
+
+    this.renderUserView('view.users.logout', route);
+  }
+
   t(key, fallback = '') {
     if (window.XTranslation && typeof window.XTranslation.t === 'function') {
       const translated = window.XTranslation.t(key);
