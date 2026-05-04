@@ -36,6 +36,8 @@ if (!is_dir($formsDir)) {
         $template = parseInlineValue($content, 'template');
         if ($template === null) {
             $errors[] = $relative . ': missing template mapping';
+        } elseif ($template === 'reference-only') {
+            echo '- template: reference-only' . "\n";
         } else {
             echo '- template: ' . $template . "\n";
             if (!templateExists($root, $template)) {
@@ -58,6 +60,14 @@ if (!is_dir($formsDir)) {
             }
         }
         echo '- fields: ' . count($componentMatches[1]) . "\n";
+
+        if (in_array('upload', array_map('strtolower', $componentMatches[1]), true)) {
+            foreach (['accept', 'max size', 'max files'] as $uploadKey) {
+                if (parseInlineValue($content, $uploadKey) === null) {
+                    $errors[] = $relative . ': upload field missing ' . $uploadKey;
+                }
+            }
+        }
 
         preg_match_all('/`(forms\.[a-z0-9_.-]+)`/i', $content, $translationMatches);
         foreach (array_unique($translationMatches[1]) as $translationKey) {

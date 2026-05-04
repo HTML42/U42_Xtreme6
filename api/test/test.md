@@ -15,6 +15,7 @@ Each API dimension must provide one `<dimension>.md` file that describes the dim
 
 - `GET /api/test/foo` -> outputs its endpoint name as response payload: `"foo"`
 - `GET /api/test/bar` -> outputs its endpoint name as response payload: `"bar"`
+- `POST /api/test/upload` -> echoes uploaded file metadata for FormAjax upload testing
 
 ### foo (`api/test/foo.php`)
 - outputs its endpoint name as response payload: `"foo"`
@@ -30,6 +31,9 @@ Each API dimension must provide one `<dimension>.md` file that describes the dim
 - `GET /api/test/bar`
   - body: none
   - query/path params: ignored
+- `POST /api/test/upload`
+  - body: multipart form data
+  - fields: arbitrary file fields
 
 ## success response
 
@@ -55,9 +59,30 @@ Each API dimension must provide one `<dimension>.md` file that describes the dim
 }
 ```
 
+`POST /api/test/upload`:
+
+```json
+{
+  "success": true,
+  "status": 200,
+  "response": {
+    "files": [
+      {
+        "field": "attachment",
+        "name": "demo.pdf",
+        "size": 12345,
+        "type": "application/pdf"
+      }
+    ]
+  },
+  "errors": []
+}
+```
+
 ## error responses
 
-- no endpoint-specific error responses; framework routing errors are handled by `dist/api.php`.
+- `POST /api/test/upload` returns logical `405` for wrong methods.
+- Other framework routing errors are handled by `dist/api.php`.
 
 ## auth requirements
 
@@ -65,7 +90,8 @@ Each API dimension must provide one `<dimension>.md` file that describes the dim
 
 ## validation rules
 
-- no input validation; request body is ignored.
+- `foo`/`bar`: no input validation; request body is ignored.
+- `upload`: accepts multipart file fields and reports metadata only; no files are persisted.
 
 ## testability
 

@@ -51,6 +51,8 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'forms.callbacks.registration_success': 'Deine Registrierung war erfolgreich.',
   'forms.callbacks.registration_fail': 'Registrierung fehlgeschlagen. Bitte prüfe deine Eingaben.',
   'forms.labels.registration': 'Registrieren',
+  'forms.labels.attachment': 'Datei',
+  'forms.labels.upload': 'Hochladen',
 
   'captions.index.imprint': 'Impressum',
   'captions.index.privacy': 'Datenschutz',

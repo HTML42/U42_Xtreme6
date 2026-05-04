@@ -60,6 +60,8 @@ Optional keys:
 - `options`: for select/radio
 - `accept`: for uploads
 - `multiple`: `yes|no` for uploads
+- `max size`: maximum upload size in bytes
+- `max files`: maximum number of files for an upload field
 
 ## standard rendering rules
 
@@ -74,6 +76,15 @@ Optional keys:
 - `XApi.renderFormErrors(...)` renders field errors directly after the matching input.
 - `XApi.renderFormErrors(...)` also renders a summary before the submit button.
 - On failure, password-like fields are cleared while non-sensitive values remain.
+
+## upload rules
+
+- Upload fields use `component: upload`.
+- Allowed MIME types are declared with `accept` in the form MD.
+- File size and count are declared with `max size` and `max files`.
+- Client-side checks in `XApi.submitForm(...)` are only prevalidation; backend validation remains authoritative.
+- Upload progress is reported through `onUploadProgress` callbacks with `loaded`, `total`, `percent`, and file metadata.
+- Upload API responses must use the standard API payload and field errors keyed by upload field name.
 
 ## translation derivation
 

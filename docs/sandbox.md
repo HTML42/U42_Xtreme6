@@ -61,6 +61,25 @@ XApi.registerMock('users/registration', async ({ body }) => {
 
 `XApi.submitForm(...)` übergibt bei Uploads `FormData` als `body` an den Mock-Handler. Dadurch können Upload-Responses ohne Server simuliert werden.
 
+Upload-Mock-Handler sollen realistische Metadaten zurückgeben:
+
+```js
+XApi.registerMock('test/upload', async ({ body }) => {
+  const files = Array.from(body.entries())
+    .filter(([, value]) => value instanceof File)
+    .map(([field, file]) => ({ field, name: file.name, size: file.size, type: file.type }));
+
+  return {
+    success: true,
+    status: 200,
+    response: { files },
+    errors: {}
+  };
+}, { method: 'POST', delay: 300 });
+```
+
+Validation-Error-Mocks müssen Field-Errors mit dem Upload-Feldnamen liefern, z. B. `{ attachment: 'file type not allowed' }`.
+
 ## standard scenarios
 
 - success response
@@ -68,4 +87,5 @@ XApi.registerMock('users/registration', async ({ body }) => {
 - auth error (`401`)
 - rate limit (`429`)
 - missing mock (`404`)
+- upload validation error (`422` with field errors)
 - artificial delay via `options.delay`

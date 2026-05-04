@@ -426,6 +426,52 @@ class XApi {
     return result;
   }
 
+  static getUploadFiles(formData) {
+    if (!XApi.isFormData(formData)) {
+      return [];
+    }
+
+    return Array.from(formData.entries())
+      .filter(([, value]) => typeof File !== 'undefined' && value instanceof File && value.name !== '')
+      .map(([field, file]) => ({ field, file }));
+  }
+
+  static validateUploadFiles(files = [], rules = {}) {
+    const errors = {};
+    const maxFiles = Number(rules.maxFiles || rules.max_files || 0);
+    const maxSize = Number(rules.maxSize || rules.max_size || 0);
+    const allowedTypes = Array.isArray(rules.allowedTypes || rules.allowed_types)
+      ? (rules.allowedTypes || rules.allowed_types).map((type) => String(type).toLowerCase())
+      : [];
+
+    if (maxFiles > 0 && files.length > maxFiles) {
+      errors.upload = `too many files (max ${maxFiles})`;
+    }
+
+    files.forEach(({ field, file }) => {
+      const fieldErrors = [];
+      if (maxSize > 0 && file.size > maxSize) {
+        fieldErrors.push(`file too large (max ${maxSize} bytes)`);
+      }
+
+      if (allowedTypes.length > 0 && !allowedTypes.includes(String(file.type || '').toLowerCase())) {
+        fieldErrors.push(`file type not allowed (${file.type || 'unknown'})`);
+      }
+
+      if (fieldErrors.length > 0) {
+        errors[field] = fieldErrors;
+      }
+    });
+
+    return errors;
+  }
+
+  static notifyUploadProgress(callback, progress) {
+    if (typeof callback === 'function') {
+      callback(progress);
+    }
+  }
+
   static getErrorMessages(errors) {
     const normalized = XApi.normalizeErrors(errors);
 
@@ -617,9 +663,34 @@ class XApi {
 
     const method = String(options.method || formElement.method || 'POST').toUpperCase();
     const formData = new FormData(formElement);
-    const hasFiles = Array.from(formData.values()).some((value) => {
-      return typeof File !== 'undefined' && value instanceof File;
-    });
+    const uploadFiles = XApi.getUploadFiles(formData);
+    const hasFiles = uploadFiles.length > 0;
+
+    if (hasFiles) {
+      const uploadErrors = XApi.validateUploadFiles(uploadFiles, options.upload || {});
+      if (Object.keys(uploadErrors).length > 0) {
+        XApi.setFormState(formElement, 'error');
+        XApi.renderFormErrors(formElement, uploadErrors);
+        return XApi.normalizePayload({
+          success: false,
+          status: 422,
+          response: null,
+          errors: uploadErrors
+        });
+      }
+
+      XApi.notifyUploadProgress(options.onUploadProgress, {
+        loaded: 0,
+        total: uploadFiles.reduce((sum, item) => sum + item.file.size, 0),
+        percent: 0,
+        files: uploadFiles.map((item) => ({
+          field: item.field,
+          name: item.file.name,
+          size: item.file.size,
+          type: item.file.type
+        }))
+      });
+    }
 
     const useMultipart = options.multipart === true || hasFiles;
     const body = useMultipart ? formData : XApi.formDataToObject(formData);
@@ -632,6 +703,15 @@ class XApi {
     });
 
     XApi.setFormState(formElement, result.success ? 'success' : 'error');
+    if (hasFiles) {
+      XApi.notifyUploadProgress(options.onUploadProgress, {
+        loaded: uploadFiles.reduce((sum, item) => sum + item.file.size, 0),
+        total: uploadFiles.reduce((sum, item) => sum + item.file.size, 0),
+        percent: 100,
+        done: true
+      });
+    }
+
     if (!result.success) {
       XApi.renderFormErrors(formElement, result.errors);
     }

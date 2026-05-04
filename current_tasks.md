@@ -268,17 +268,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 23: formajax upload pipeline finalisieren
 
-- [ ] **subtask 23.1**: Upload-MD-Schema definieren: erlaubte MIME-Typen, Größenlimits, Mehrfachupload, Ziel-API.
-- [ ] **subtask 23.2**: Clientseitige Vorvalidierung für Typ/Größe/Anzahl standardisieren.
-- [ ] **subtask 23.3**: Upload-Progress Events in `XApi.submitForm(...)` ergänzen.
-- [ ] **subtask 23.4**: Server-Contract für Upload-Responses und Field-Errors dokumentieren.
-- [ ] **subtask 23.5**: Sandbox-Upload-Mocks mit realistischen File-Metadaten erweitern.
+- [x] **subtask 23.1**: Upload-MD-Schema definieren: erlaubte MIME-Typen, Größenlimits, Mehrfachupload, Ziel-API.
+- [x] **subtask 23.2**: Clientseitige Vorvalidierung für Typ/Größe/Anzahl standardisieren.
+- [x] **subtask 23.3**: Upload-Progress Events in `XApi.submitForm(...)` ergänzen.
+- [x] **subtask 23.4**: Server-Contract für Upload-Responses und Field-Errors dokumentieren.
+- [x] **subtask 23.5**: Sandbox-Upload-Mocks mit realistischen File-Metadaten erweitern.
 
 ### acceptance criteria (task 23)
 
-- [ ] Datei-Uploads funktionieren ohne Sondercode im Feature-Controller.
-- [ ] Upload-Fehler erscheinen am Feld und in der globalen Fehlerliste.
-- [ ] Sandbox kann Upload-Success und Upload-Validation-Errors simulieren.
+- [x] Datei-Uploads funktionieren ohne Sondercode im Feature-Controller.
+- [x] Upload-Fehler erscheinen am Feld und in der globalen Fehlerliste.
+- [x] Sandbox kann Upload-Success und Upload-Validation-Errors simulieren.
 
 ## task 24: global form flow audit
 
