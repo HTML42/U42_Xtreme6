@@ -72,11 +72,20 @@ echo "\nAPI contract validation passed.\n";
 function parseDocumentedEndpoints(string $content): array
 {
     $endpoints = [];
-    preg_match_all('/-\s*(GET|POST|PUT|PATCH|DELETE)\s+(\/api\/[a-z0-9_-]+\/[a-z0-9_-]+)/i', $content, $matches, PREG_SET_ORDER);
+    $seen = [];
+    preg_match_all('/-\s*`?(GET|POST|PUT|PATCH|DELETE)\s+(\/api\/[a-z0-9_-]+\/[a-z0-9_-]+)`?/i', $content, $matches, PREG_SET_ORDER);
     foreach ($matches as $match) {
+        $method = strtoupper($match[1]);
+        $path = strtolower($match[2]);
+        $key = $method . ' ' . $path;
+        if (isset($seen[$key])) {
+            continue;
+        }
+        $seen[$key] = true;
+
         $endpoints[] = [
-            'method' => strtoupper($match[1]),
-            'path' => strtolower($match[2]),
+            'method' => $method,
+            'path' => $path,
         ];
     }
     return $endpoints;

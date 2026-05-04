@@ -62,3 +62,4 @@
 - Model-Schema-Governance ist aktiv: `XDB` validiert Insert/Update zentral gegen `models/*.md`; JSON und MySQL nutzen dieselben Model-Regeln, und `compiler/report_model_schema.php` gibt JSON-/MySQL-Dry-Run-Pläne aus.
 - Relationship-Governance ist aktiv: `models/*.md` definiert Beziehungen oder explizit `none`; `compiler/report_model_relationships.php` validiert Relations, plant MySQL-FKs und beschreibt JSON-Referential-Integrity-Checks non-destruktiv.
 - API-Contract-Governance ist aktiv: `compiler/report_api_contracts.php` validiert API-MD-Endpunkte gegen PHP-Dateien, `x_api_output` usage, FE-Controller-Aufrufe und `x_api_payload` Shape.
+- FE/BE-Boundary-Governance ist aktiv: `compiler/check_frontend_boundary.php` verhindert direkte Backend-/DB-/Secret-/PHP-Zugriffe in `scripts/` und `templates/`; nur `scripts/x_api.class.js` darf `/api/...` via `fetch(...)` kapseln.

@@ -13,6 +13,9 @@ Each API dimension must provide one `<dimension>.md` file that describes the dim
 
 ## endpoints
 
+- `GET /api/test/foo` -> outputs its endpoint name as response payload: `"foo"`
+- `GET /api/test/bar` -> outputs its endpoint name as response payload: `"bar"`
+
 ### foo (`api/test/foo.php`)
 - outputs its endpoint name as response payload: `"foo"`
 

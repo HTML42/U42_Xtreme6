@@ -240,17 +240,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 21: frontend-backend boundary enforcement
 
-- [ ] **subtask 21.1**: Regel dokumentieren: FE darf Backend nur via API erreichen, keine direkten PHP/DB-Abhängigkeiten.
-- [ ] **subtask 21.2**: Build-Check für verbotene Backend-Referenzen in `scripts/` und `templates/` ergänzen.
-- [ ] **subtask 21.3**: `XApi` als einzigen FE-API-Zugriffspfad festlegen.
-- [ ] **subtask 21.4**: Sandbox/Live-Modus in FE-Konfiguration eindeutig dokumentieren.
-- [ ] **subtask 21.5**: API-Base-URL/Dist-Routing für dev/prod standardisieren.
+- [x] **subtask 21.1**: Regel dokumentieren: FE darf Backend nur via API erreichen, keine direkten PHP/DB-Abhängigkeiten.
+- [x] **subtask 21.2**: Build-Check für verbotene Backend-Referenzen in `scripts/` und `templates/` ergänzen.
+- [x] **subtask 21.3**: `XApi` als einzigen FE-API-Zugriffspfad festlegen.
+- [x] **subtask 21.4**: Sandbox/Live-Modus in FE-Konfiguration eindeutig dokumentieren.
+- [x] **subtask 21.5**: API-Base-URL/Dist-Routing für dev/prod standardisieren.
 
 ### acceptance criteria (task 21)
 
-- [ ] Frontend-Code enthält keine direkten DB/PHP-Includes/Secrets.
-- [ ] Alle BE-Zugriffe laufen über `XApi`.
-- [ ] Build-Check findet Boundary-Verletzungen.
+- [x] Frontend-Code enthält keine direkten DB/PHP-Includes/Secrets.
+- [x] Alle BE-Zugriffe laufen über `XApi`.
+- [x] Build-Check findet Boundary-Verletzungen.
 
 ## task 22: form component generator aus md
 
