@@ -254,17 +254,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 22: form component generator aus md
 
-- [ ] **subtask 22.1**: MD-Schema für Formular-Komponenten definieren: Input, Select, Upload, Checkbox, Date, Textarea, Hidden.
-- [ ] **subtask 22.2**: Standard-Markup mit Label, Help-Text, Error-Slot, ARIA und required-State spezifizieren.
-- [ ] **subtask 22.3**: Templates/Form-Partials aus Form-MDs generieren.
-- [ ] **subtask 22.4**: Translation-Keys für Labels/Help/Errors aus Form-MD ableiten.
-- [ ] **subtask 22.5**: Form-Komponenten-Katalog visuell/testbar dokumentieren.
+- [x] **subtask 22.1**: MD-Schema für Formular-Komponenten definieren: Input, Select, Upload, Checkbox, Date, Textarea, Hidden.
+- [x] **subtask 22.2**: Standard-Markup mit Label, Help-Text, Error-Slot, ARIA und required-State spezifizieren.
+- [x] **subtask 22.3**: Templates/Form-Partials aus Form-MDs generieren.
+- [x] **subtask 22.4**: Translation-Keys für Labels/Help/Errors aus Form-MD ableiten.
+- [x] **subtask 22.5**: Form-Komponenten-Katalog visuell/testbar dokumentieren.
 
 ### acceptance criteria (task 22)
 
-- [ ] Formulare werden aus MD-Komponenten erzeugt oder eindeutig geführt.
-- [ ] Alle Formelemente haben einheitliches Error-/ARIA-Verhalten.
-- [ ] Neue Formfelder erzeugen automatisch benötigte Translation-Key-Anforderungen.
+- [x] Formulare werden aus MD-Komponenten erzeugt oder eindeutig geführt.
+- [x] Alle Formelemente haben einheitliches Error-/ARIA-Verhalten.
+- [x] Neue Formfelder erzeugen automatisch benötigte Translation-Key-Anforderungen.
 
 ## task 23: formajax upload pipeline finalisieren
 

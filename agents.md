@@ -39,7 +39,7 @@ Use this map to avoid scattered or duplicated AI documentation. Keep detailed ru
 | api/backend contract | `docs/x_api.md` | `docs/md_first.md`, matching `api/<dimension>/<dimension>.md` |
 | routes/controllers/templates | `docs/routes.md` | `docs/md_first.md`, `scripts/controllers/<controller>.controller.md` |
 | database/model work | `docs/x_models.md` | matching `models/<table>.md` |
-| forms/formajax/uploads | `docs/md_first.md` | `docs/x_api.md`, `docs/sandbox.md`, controller/form markdown, translations |
+| forms/formajax/uploads | `docs/forms.md` | `docs/md_first.md`, `docs/x_api.md`, `docs/sandbox.md`, matching `docs/forms/<form>.md`, translations |
 | frontend/backend boundary | `docs/x_api.md` | `docs/md_first.md`, `scripts/x_api.class.js`, API markdown |
 | styles/ui css | `docs/styles.md` | `docs/x_styles.md` |
 | ui primitives/navigation/sidebar/breadcrumb | `docs/ui_primitives.md` | `docs/routes.md`, translations |
