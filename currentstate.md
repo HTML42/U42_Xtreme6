@@ -109,3 +109,10 @@
 - QA: `php compiler/report_traceability_dashboard.php` und `php compiler/check_secret_leaks.php` sind grün; der Report zeigt 18 release-ready Features.
 - QA-Fund/Fix: Die erste Route-Auswertung zählte `ui_navigation`-Routen doppelt; Fix begrenzt die Erkennung auf den `routes:`-Block und dedupliziert Routen. Eine zu breite Secret-Leak-Ausnahme für `traceability_dashboard.json` wurde entfernt.
 - Manager: Task 34 ist erledigt; nächster P2-Task ist Task 35 `framework final qa playbooks`.
+
+## milestone 2026-05-05: task 35.1 domain feature playbook complete
+
+- Developer: `docs/release_qa.md` enthält jetzt das Playbook `new domain feature flow` für neue first-party Domain-Features von Scope-/Reuse-Entscheidung über Object-Pair, Model, API, Workflow, Route, Form und Translations bis zu Runtime-Ableitung und Release-QA.
+- QA: `php compiler/check_md_first.php`, `php compiler/report_ai_generation.php` und `php compiler/release_gate.php` sind grün; das Release-Gate lief mit 21/21 bestandenen Checks.
+- QA-Fund/Fix: Die erste Playbook-Formulierung mit `Workflow:` wurde vom MD-first Workflow-Referenzparser als konkreter Workflow-Name interpretiert; die Zeile wurde parser-sicher zu `Workflow markdown:` umformuliert.
+- Manager: Task 35.1 ist erledigt; nächster offener P2-Task ist Task 35.2 `credentialed external API feature playbook`.
