@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../x/x_functions.php';
+
 $root = dirname(__DIR__);
 $distDir = $root . DIRECTORY_SEPARATOR . 'dist';
 $translationsDir = $root . DIRECTORY_SEPARATOR . 'translations';
@@ -80,16 +82,13 @@ function compile_js_bundle(string $root, string $sourceDir, string $outputBase, 
  */
 function load_available_languages(string $root): array
 {
-    $configPath = $root . DIRECTORY_SEPARATOR . 'config.json';
     $languages = ['de'];
+    $decoded = x_config_load();
 
-    if (is_file($configPath)) {
-        $decoded = json_decode((string) file_get_contents($configPath), true);
-        if (is_array($decoded) && is_array($decoded['AvailableLanguages'] ?? null)) {
-            $languages = $decoded['AvailableLanguages'];
-        } elseif (is_array($decoded) && isset($decoded['Language'])) {
-            $languages = [(string) $decoded['Language']];
-        }
+    if (is_array($decoded['AvailableLanguages'] ?? null)) {
+        $languages = $decoded['AvailableLanguages'];
+    } elseif (isset($decoded['Language'])) {
+        $languages = [(string) $decoded['Language']];
     }
 
     $normalized = [];

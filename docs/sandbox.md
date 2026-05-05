@@ -154,7 +154,7 @@ Example proxy mock payload:
 
 ## demo playbook
 
-1. In `config.json` setzen: `"ApiMode": "sandbox"` und optional `"ApiScenario": "success"`.
+1. Lokal `_config.example.json` nach `_config.json` kopieren und dort `"ApiMode": "sandbox"` sowie optional `"ApiScenario": "success"` setzen.
 2. App bauen: `php compiler/compile_scripts.php && php compiler/compile_production.php`.
 3. Flow `success`: Login/Registration/Upload liefern erfolgreiche Mock-Payloads.
 4. Flow `validation-error`: FormAjax zeigt Field-Errors und Summary ohne Live-Backend.

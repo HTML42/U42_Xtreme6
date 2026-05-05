@@ -43,6 +43,8 @@ Runtime files can still exist in the repository, but they are treated as generat
 - `docs/` — framework documentation
 - `styles/` — CSS source files
 - `docs/styles.md` — project style instructions
+- `_config.example.json` — committed project config template and safe defaults
+- `_config.json` — environment-local project config override (ignored in git)
 - `_db.json` — environment-local database config (ignored in git, required for mysql engine)
 - `_db.example.json` — committed template for creating environment-specific `_db.json`
 - `_secrets.json` — environment-local credentials/secrets file (ignored in git, backend-only)
@@ -200,7 +202,7 @@ Translations are JavaScript-based and grouped by locale folder under `translatio
 
 Translation file convention:
 
-- Every configured language from `config.json` key `AvailableLanguages` must have a directory `translations/<lang>/`.
+- Every configured language from project config key `AvailableLanguages` must have a directory `translations/<lang>/`.
 - Each language directory must contain `translations/<lang>/_default.js` as the baseline language file.
 - Optional modular files such as `translations/<lang>/common.js` may extend or override keys for that language.
 - Translation filenames must be lowercase.
@@ -223,7 +225,7 @@ Translation governance build check:
 i18n runtime behavior:
 
 - language codes are normalized lowercase (`de`, `en`, ...).
-- `config.json` can define `Language`, `FallbackLanguage`, and `AvailableLanguages`.
+- project config can define `Language`, `FallbackLanguage`, and `AvailableLanguages`.
 - runtime language priority is URL `?lang=xx` > localStorage (`x6.language`) > config language.
 - `XLanguage.setCurrentLanguage(...)` updates `<html lang>`, persists the choice, and emits `x6:language`.
 - `XFramework` listens to `x6:language`, re-renders shell UI primitives and the current route without a full page reload, so header, sidebar, breadcrumb, slideshow and view text reflect the active language.
@@ -329,8 +331,8 @@ A final compiler is available at `compiler/compile_production.php`.
 Production is intended to run with `dist/` as the webroot/document root.
 
 - `dist/` must be directly served by the web server.
-- project root files such as `config.json` must remain outside of the public webroot.
-- runtime config values needed by frontend code are injected server-side (for example in `app.php`) instead of being fetched from `config.json` in the browser.
+- project root files such as `_config.json` and `_config.example.json` must remain outside of the public webroot.
+- runtime config values needed by frontend code are injected server-side (for example in `app.php`) instead of being fetched from `_config.json` in the browser.
 
 ## include/require boundaries
 
@@ -437,13 +439,13 @@ Database access must go through `XDB` as the main abstraction.
 
 Engine selection:
 
-- `config.json` key: `Database`
+- project config key: `Database`
 - allowed values: `JSON`, `MYSQL` (case-insensitive)
 - invalid values raise a runtime error.
 
 Select cache behavior (`XDB`):
 
-- `config.json` key: `DatabaseSelectCacheTtl`
+- project config key: `DatabaseSelectCacheTtl`
 - value is interpreted as seconds (minimum `1`)
 - default is `60` if not set
 - cache keys are parameter-based (`table + where + engine`)

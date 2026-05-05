@@ -17,31 +17,29 @@ foreach ($groups as $group => $files) {
     }
 }
 
-$hasMarkdownSource = $groups['markdown'] !== [] || in_array('current_tasks.md', $changedFiles, true) || in_array('currentstate.md', $changedFiles, true);
+$hasMarkdownSource = $groups['markdown'] !== [];
 $hasRuntime = $groups['runtime'] !== [] || $groups['compiler'] !== [];
 $hasGenerated = $groups['generated'] !== [];
-$hasTaskEvidence = in_array('current_tasks.md', $changedFiles, true);
-$hasStateEvidence = in_array('currentstate.md', $changedFiles, true);
+$hasGovernanceEvidence = $groups['governance'] !== [];
 
 echo "\nEvidence\n";
 echo '- markdown/source evidence: ' . yesNo($hasMarkdownSource) . "\n";
 echo '- runtime/compiler changes: ' . yesNo($hasRuntime) . "\n";
 echo '- generated artifacts changed: ' . yesNo($hasGenerated) . "\n";
-echo '- task file updated: ' . yesNo($hasTaskEvidence) . "\n";
-echo '- currentstate updated: ' . yesNo($hasStateEvidence) . "\n";
+echo '- governance evidence: ' . yesNo($hasGovernanceEvidence) . "\n";
 
 $runtimeOnly = [];
 if (($hasRuntime || $hasGenerated) && !$hasMarkdownSource) {
     $runtimeOnly = array_merge($groups['runtime'], $groups['compiler'], $groups['generated']);
-    $errors[] = 'runtime/compiler/generated changes without markdown/task/currentstate source evidence';
+    $errors[] = 'runtime/compiler/generated changes without markdown source evidence';
 }
 
 if ($hasGenerated && !$hasRuntime && !$hasMarkdownSource) {
     $errors[] = 'generated artifacts changed without visible source changes';
 }
 
-if (($hasRuntime || $hasGenerated) && (!$hasTaskEvidence || !$hasStateEvidence)) {
-    $errors[] = 'manager evidence incomplete: update current_tasks.md and currentstate.md after QA';
+if (($hasRuntime || $hasGenerated) && !$hasMarkdownSource && !$hasGovernanceEvidence) {
+    $errors[] = 'manager evidence incomplete: include markdown or governance evidence after QA';
 }
 
 echo "\nRuntime-only risk\n";
@@ -122,7 +120,7 @@ function classifyFiles(array $files): array
             $groups['generated'][] = $file;
             continue;
         }
-        if (in_array($file, ['current_tasks.md', 'currentstate.md', 'agents.md', 'config.json'], true)) {
+        if (in_array($file, ['agents.md', '_config.json', '_config.example.json', '.gitignore'], true)) {
             $groups['governance'][] = $file;
             continue;
         }

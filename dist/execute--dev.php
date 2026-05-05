@@ -4,17 +4,21 @@ $x6_public_config = [];
 $x6_language = 'de';
 $x6_available_languages = ['de'];
 $x6_alternate_links = '';
-$config_path = dirname(__DIR__) . '/config.json';
-if (is_file($config_path)) {
+$config_paths = [dirname(__DIR__) . '/_config.json', dirname(__DIR__) . '/_config.example.json'];
+foreach ($config_paths as $config_path) {
+    if (!is_file($config_path)) {
+        continue;
+    }
     $decoded = json_decode((string) file_get_contents($config_path), true);
     if (is_array($decoded)) {
-        foreach (['Language', 'FallbackLanguage', 'AvailableLanguages', 'ApiMode'] as $public_key) {
+        foreach (['Language', 'FallbackLanguage', 'AvailableLanguages', 'ApiMode', 'ApiScenario'] as $public_key) {
             if (isset($decoded[$public_key])) {
                 $x6_public_config[$public_key] = $decoded[$public_key];
             }
         }
         $x6_language = strtolower((string) ($decoded['Language'] ?? 'de'));
         $x6_available_languages = is_array($decoded['AvailableLanguages'] ?? null) ? $decoded['AvailableLanguages'] : [$x6_language];
+        break;
     }
 }
 $x6_base_url = strtok((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ($_SERVER['REQUEST_URI'] ?? '/'), '?');

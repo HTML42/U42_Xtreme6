@@ -126,7 +126,7 @@ Credentialed external APIs must follow the backend-only proxy blueprint in `docs
 
 - `_secrets.json` is gitignored.
 - Build/QA must scan generated `dist/*` files for obvious secret names/values before release.
-- `window.X6_CONFIG` may expose only public config keys documented in compiler output (`Language`, `FallbackLanguage`, `AvailableLanguages`, `ApiMode`).
+- `window.X6_CONFIG` may expose only public config keys documented in compiler output (`Language`, `FallbackLanguage`, `AvailableLanguages`, `ApiMode`, `ApiScenario`).
 - Private service names, credential key names and values must not be emitted into frontend bundles unless they are explicitly documented as public non-secret config.
 - `compiler/check_secret_leaks.php` checks `dist/*` for forbidden secret patterns and configured secret values without printing those values.
 - `compiler/report_secret_usage.php` documents which services require which secret paths/providers without printing values.

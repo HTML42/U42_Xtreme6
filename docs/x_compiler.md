@@ -133,7 +133,7 @@ Typical runnable endpoints:
 
 ## database config notes for environments
 
-- `config.json` controls the database engine via `Database` (`JSON` or `MYSQL`).
+- project config controls the database engine via `Database` (`JSON` or `MYSQL`); `_config.json` is environment-local and falls back to committed `_config.example.json`.
 - for `JSON`, runtime uses local JSON-table storage under `_db/`.
 - for `MYSQL`, runtime requires a root-level `_db.json` file (ignored by git).
 - each environment must create its own `_db.json` from `_db.example.json` and adjust credentials.

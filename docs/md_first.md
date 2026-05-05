@@ -157,7 +157,7 @@ Ein Build-/QA-Check muss fehlschlagen, wenn:
 - ein Frontend-Artefakt direkte Backend-/DB-/Secret-Zugriffe enthält statt `XApi` zu verwenden
 - ein Formular keine dokumentierte FormAjax-/API-Quelle für Submit, Uploads und Error-Mapping hat
 - ein Form-MD Pflichtsektionen, unterstützte Komponenten, Template-Mapping oder benötigte Translation-Keys vermissen lässt
-- ein AI-generierter Task Runtime-/Dist-Artefakte ändert, ohne dass eine passende Markdown-Quelle, QA-Report und Manager-Abnahme im Diff sichtbar sind
+- ein AI-generierter Task Runtime-/Dist-Artefakte ändert, ohne dass passende Markdown-/Governance-Quelle, QA-Report und Manager-Abnahme im Diff oder Commit sichtbar sind
 
 ## ai generation workflow
 
@@ -168,7 +168,7 @@ Standardablauf für AI-/Developer-Tasks:
 3. Runtime/Compiler ableiten und nur danach `dist/*` neu bauen.
 4. QA-Reports aus `docs/release_qa.md` non-interaktiv ausführen.
 5. `php compiler/report_ai_generation.php` ausführen und Runtime-only Risiken prüfen.
-6. `current_tasks.md` und `currentstate.md` erst nach grüner QA aktualisieren.
+6. Manager-Evidence über Markdown-/Governance-Diff, Release-Gate-Report und Commit-Message nachvollziehbar halten.
 7. Review mit `git --no-pager diff --stat` und bei Bedarf `git --no-pager diff -- <path>` abschließen.
 
 Checkpoint-Regeln:

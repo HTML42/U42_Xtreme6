@@ -8,7 +8,6 @@ require_once __DIR__ . '/../x/x_db.class.php';
 
 $root = dirname(__DIR__);
 $objectsRuntime = $root . DIRECTORY_SEPARATOR . 'dist' . DIRECTORY_SEPARATOR . 'objects--prod.php';
-$configPath = $root . DIRECTORY_SEPARATOR . 'config.json';
 $dbConfigPath = $root . DIRECTORY_SEPARATOR . '_db.json';
 
 if (!is_file($objectsRuntime)) {
@@ -18,7 +17,7 @@ if (!is_file($objectsRuntime)) {
 
 require_once $objectsRuntime;
 
-$config = is_file($configPath) ? (json_decode((string) file_get_contents($configPath), true) ?: []) : [];
+$config = x_config_load();
 $engine = strtolower((string) ($config['Database'] ?? 'json'));
 
 echo "[smoke_database] engine={$engine}\n";

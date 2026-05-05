@@ -89,7 +89,7 @@ Frontend/backend boundary:
 - `scripts/x_api.class.js` is the only frontend source file allowed to call `fetch(...)` or build `/api/...` URLs directly.
 - Direct database access, PHP includes, backend file paths, or secrets in `scripts/` and `templates/` are forbidden.
 - Credentialed external services must be called through backend API endpoints; the frontend never receives private credentials.
-- API mode is configured via `config.json` key `ApiMode` and exposed to runtime as `window.X6_CONFIG.ApiMode` with values `live` or `sandbox`.
+- API mode is configured via project config key `ApiMode` (`_config.json` with `_config.example.json` fallback) and exposed to runtime as `window.X6_CONFIG.ApiMode` with values `live` or `sandbox`.
 - API base routing is standardized as `/api/<dimension>/<endpoint>` in frontend code; production deployments must serve/rewrite this to the `dist/api.php` router.
 - `php compiler/check_frontend_boundary.php` validates these frontend/backend boundary rules non-destructively.
 

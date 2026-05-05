@@ -62,8 +62,7 @@ Database smoke behavior:
 - Markdown source-of-truth was updated before runtime artifacts.
 - Generated `dist/*` artifacts were rebuilt after runtime/source changes.
 - `php compiler/report_ai_generation.php` was reviewed for runtime-only risks and manager-readable task evidence.
-- `current_tasks.md` marks only verified tasks as done.
-- `currentstate.md` documents the current milestone and remaining risks.
+- Markdown/governance diffs and commit messages document verified scope, QA evidence and remaining risks.
 - `git --no-pager diff --stat` was reviewed for unexpected files.
 - any detailed diff review used `git --no-pager diff ...` and did not open an interactive pager.
 - No secrets are present in source or generated bundles.
@@ -88,7 +87,7 @@ Release QA verifies that workflow through:
 - `php compiler/release_gate.php`
 - `git --no-pager diff --stat`
 
-Runtime-only changes are acceptable only when the report shows accompanying markdown/task/currentstate evidence or when the file is explicitly generated from a changed source.
+Runtime-only changes are acceptable only when the report shows accompanying markdown/governance evidence or when the file is explicitly generated from a changed source.
 
 ## framework final qa playbooks
 
@@ -145,7 +144,7 @@ Use this playbook when adding a new first-party domain concept such as products,
    - Use only non-interactive Git review commands such as `git --no-pager diff --stat` and `git --no-pager diff -- <path>`.
 6. **Manager acceptance**
    - Mark the task done only after implementation, QA review, QA fixes and passing checks.
-   - Update `current_tasks.md` and `currentstate.md` with the domain feature, QA evidence, remaining risks and manager decision.
+   - Capture the domain feature, QA evidence, remaining risks and manager decision in the relevant Markdown/governance diff and commit message.
 
 ### credentialed external api feature
 
@@ -183,7 +182,7 @@ Use this playbook when a feature needs a private external API key, token or cred
    - Review diffs with `git --no-pager diff --stat` and targeted `git --no-pager diff -- <path>` only.
 6. **Manager acceptance**
    - Accept the task only when secret usage is value-free, the frontend/backend boundary is clean, sandbox coverage exists, leak checks pass and the release gate is green.
-   - Update `current_tasks.md` and `currentstate.md` with the proxy endpoint, secret dependencies, QA evidence and any environment-only skips.
+   - Capture the proxy endpoint, secret dependencies, QA evidence and any environment-only skips in the relevant Markdown/governance diff and commit message.
 
 ### ui feature flow
 
@@ -218,7 +217,7 @@ Use this playbook when adding or changing route-level UI behavior such as naviga
    - Review diffs with `git --no-pager diff --stat` and targeted `git --no-pager diff -- <path>` only.
 6. **Manager acceptance**
    - Accept the task only when routes are declared, UI config validates, links target declared routes, translations exist, a11y expectations are documented or implemented and the release gate is green.
-   - Update `current_tasks.md` and `currentstate.md` with the changed UI primitive or route composition, QA evidence and remaining UI/a11y risks.
+   - Capture the changed UI primitive or route composition, QA evidence and remaining UI/a11y risks in the relevant Markdown/governance diff and commit message.
 
 ### form/upload feature flow
 
@@ -261,7 +260,7 @@ Use this playbook when adding or changing submitted forms, FormAjax behavior, up
    - Use only non-interactive Git review commands; never use plain `git diff`, `git log` or `git show`.
 6. **Manager acceptance**
    - Accept the task only when Form-MD, API contract, upload rules, error mapping, translations and sandbox mocks are traceable and all targeted checks plus the release gate pass.
-   - Update `current_tasks.md` and `currentstate.md` with the form/upload feature, QA evidence, QA findings/fixes and any remaining environment-only skips.
+   - Capture the form/upload feature, QA evidence, QA findings/fixes and any remaining environment-only skips in the relevant Markdown/governance diff and commit message.
 
 ## manager acceptance
 

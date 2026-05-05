@@ -1,4 +1,5 @@
 {
+  "Environment": "dev",
   "Database": "JSON",
   "DatabaseSelectCacheTtl": 60,
   "ApiMode": "live",

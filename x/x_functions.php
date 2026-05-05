@@ -69,7 +69,7 @@ if (!function_exists('x_user_load')) {
 
 if (!function_exists('x_config_load')) {
     /**
-     * Loads project config without exposing private environment files.
+     * Loads environment-local project config with committed example fallback.
      */
     function x_config_load(): array
     {
@@ -79,14 +79,23 @@ if (!function_exists('x_config_load')) {
             return $cache;
         }
 
-        $path = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config.json';
-        if (!is_file($path)) {
-            $cache = [];
+        $root = dirname(__DIR__);
+        $paths = [
+            $root . DIRECTORY_SEPARATOR . '_config.json',
+            $root . DIRECTORY_SEPARATOR . '_config.example.json',
+        ];
+
+        foreach ($paths as $path) {
+            if (!is_file($path)) {
+                continue;
+            }
+
+            $decoded = json_decode((string) file_get_contents($path), true);
+            $cache = is_array($decoded) ? $decoded : [];
             return $cache;
         }
 
-        $decoded = json_decode((string) file_get_contents($path), true);
-        $cache = is_array($decoded) ? $decoded : [];
+        $cache = [];
         return $cache;
     }
 }

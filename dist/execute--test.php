@@ -4,11 +4,19 @@ require_once __DIR__ . '/objects--prod.php';
 require_once __DIR__ . '/objects.test.php';
 
 $x6_public_config = [];
-$config_path = dirname(__DIR__) . '/config.json';
-if (is_file($config_path)) {
+$config_paths = [dirname(__DIR__) . '/_config.json', dirname(__DIR__) . '/_config.example.json'];
+foreach ($config_paths as $config_path) {
+    if (!is_file($config_path)) {
+        continue;
+    }
     $decoded = json_decode((string) file_get_contents($config_path), true);
-    if (is_array($decoded) && isset($decoded['Language'])) {
-        $x6_public_config['Language'] = $decoded['Language'];
+    if (is_array($decoded)) {
+        foreach (['Language', 'FallbackLanguage', 'AvailableLanguages', 'ApiMode', 'ApiScenario'] as $public_key) {
+            if (isset($decoded[$public_key])) {
+                $x6_public_config[$public_key] = $decoded[$public_key];
+            }
+        }
+        break;
     }
 }
 

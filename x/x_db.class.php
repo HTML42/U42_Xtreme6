@@ -32,10 +32,7 @@ class XDB
         $this->ensureDbDirectories();
         $this->models = $this->loadModels();
 
-        $configPath = $this->root . DIRECTORY_SEPARATOR . 'config.json';
-        $config = is_file($configPath)
-            ? (json_decode((string) file_get_contents($configPath), true) ?: [])
-            : [];
+        $config = function_exists('x_config_load') ? x_config_load() : [];
 
         $engine = strtolower((string) ($config['Database'] ?? 'json'));
         $this->selectCacheTtl = max(1, (int) ($config['DatabaseSelectCacheTtl'] ?? 60));
@@ -70,7 +67,7 @@ class XDB
             return;
         }
 
-        throw new RuntimeException('Unsupported Database engine in config.json. Allowed: "json" or "mysql".');
+        throw new RuntimeException('Unsupported Database engine in config. Allowed: "json" or "mysql".');
     }
 
     public static function instance(): self
