@@ -116,3 +116,10 @@
 - QA: `php compiler/check_md_first.php`, `php compiler/report_ai_generation.php` und `php compiler/release_gate.php` sind grün; das Release-Gate lief mit 21/21 bestandenen Checks.
 - QA-Fund/Fix: Die erste Playbook-Formulierung mit `Workflow:` wurde vom MD-first Workflow-Referenzparser als konkreter Workflow-Name interpretiert; die Zeile wurde parser-sicher zu `Workflow markdown:` umformuliert.
 - Manager: Task 35.1 ist erledigt; nächster offener P2-Task ist Task 35.2 `credentialed external API feature playbook`.
+
+## milestone 2026-05-05: task 35.2 credentialed external api playbook complete
+
+- Developer: `docs/release_qa.md` enthält jetzt das Playbook `credentialed external api feature` für private externe API-Integrationen mit MD-first API-Vertrag, wertfreier Secret-Struktur, Backend-Proxy, FE-`XApi`-Boundary, Sandbox-Mocks und Leak-Checks.
+- QA: `php compiler/check_md_first.php`, `php compiler/report_secret_usage.php`, `php compiler/check_secret_leaks.php`, `php compiler/report_sandbox_coverage.php`, `php compiler/report_api_contracts.php`, `php compiler/check_frontend_boundary.php`, `php compiler/report_ai_generation.php` und `php compiler/release_gate.php` sind grün; das Release-Gate lief mit 21/21 bestandenen Checks.
+- QA-Fund/Fix: Die erste gezielte QA-Liste enthielt zwar Secret-/Sandbox-/Boundary-Checks, aber nicht explizit `php compiler/check_md_first.php`; der MD-first Check wurde als erster Zielcheck ergänzt.
+- Manager: Task 35.2 ist erledigt; nächster offener P2-Task ist Task 35.3 `UI-Feature playbook`.

@@ -137,6 +137,44 @@ Use this playbook when adding a new first-party domain concept such as products,
    - Mark the task done only after implementation, QA review, QA fixes and passing checks.
    - Update `current_tasks.md` and `currentstate.md` with the domain feature, QA evidence, remaining risks and manager decision.
 
+### credentialed external api feature
+
+Use this playbook when a feature needs a private external API key, token or credential. The frontend must never call the upstream service directly and must never receive private credential names or values.
+
+1. **Scope and security decision**
+   - Read `agents.md`, `docs/x_api.md`, `docs/secrets.md`, `docs/sandbox.md`, `docs/md_first.md` and this release QA checklist before editing runtime files.
+   - Confirm that the integration is truly credentialed. Public, browser-safe APIs may use public configuration only when explicitly documented as non-secret.
+   - Choose a lowercase service identifier and a documented Xtreme6 backend proxy endpoint such as `/api/integrations/example_lookup`.
+2. **Markdown and value-free configuration first**
+   - API contract: document the proxy endpoint in the matching `api/<dimension>/<dimension>.md` with contract version, request mapping, sanitized response mapping, auth requirements, validation rules, error responses and testability.
+   - External integration schema: include service purpose, backend proxy endpoint, upstream name or base URL, required secret paths, rate limits, failure strategy, sandbox scenarios and testability according to `docs/x_api.md`.
+   - Secret structure: update `_secrets.example.json` and `docs/secrets.md` with placeholder credentials, `required_secrets`, env mappings, proxy endpoints, rotation notes, rate limits and failure classes; never add real values.
+   - Sandbox source: update `docs/sandbox_scenarios.json` or the relevant sandbox documentation so mocks simulate the Xtreme6 proxy endpoint, not the upstream URL.
+3. **Backend proxy implementation**
+   - Implement the API endpoint only after the Markdown contract exists.
+   - Resolve private credentials server-side through `x_secret_get(...)` or the documented provider helper.
+   - Validate frontend input before calling upstream; reject missing or invalid input with standard field/global errors.
+   - Map upstream responses to sanitized business data and the standard `x_api_payload(...)` / `x_api_output(...)` shape.
+   - Convert missing credentials, timeouts, invalid upstream responses, upstream auth failures and rate limits to controlled API payloads without stack traces, raw upstream dumps, Authorization headers or secret paths in frontend-visible responses.
+4. **Frontend and sandbox integration**
+   - Frontend code calls only `XApi.request(...)` or `XApi.submitForm(...)` against the documented Xtreme6 proxy endpoint.
+   - Do not add direct `fetch(...)`, upstream URLs, backend file paths, credential names or secret-like values to `scripts/` or `templates/`.
+   - Sandbox mocks must cover success plus credential/config error, timeout, invalid upstream response and rate limit when the live proxy is implemented.
+5. **Non-interactive QA**
+   - Run targeted checks before the release gate:
+     - `php compiler/check_md_first.php`
+     - `php compiler/report_secret_usage.php`
+     - `php compiler/check_secret_leaks.php`
+     - `php compiler/report_sandbox_coverage.php`
+     - `php compiler/report_api_contracts.php`
+     - `php compiler/check_frontend_boundary.php`
+     - `php compiler/report_ai_generation.php`
+     - `php compiler/release_gate.php`
+   - Review diffs with `git --no-pager diff --stat` and targeted `git --no-pager diff -- <path>` only.
+6. **Manager acceptance**
+   - Accept the task only when secret usage is value-free, the frontend/backend boundary is clean, sandbox coverage exists, leak checks pass and the release gate is green.
+   - Update `current_tasks.md` and `currentstate.md` with the proxy endpoint, secret dependencies, QA evidence and any environment-only skips.
+
 ## manager acceptance
 
 A task can be marked done only after:
