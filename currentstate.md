@@ -137,3 +137,10 @@
 - QA: `php compiler/check_md_first.php`, `php compiler/report_form_components.php`, `php compiler/report_form_flows.php`, `php compiler/report_api_contracts.php`, `php compiler/report_sandbox_coverage.php`, `php compiler/check_frontend_boundary.php`, `php compiler/report_ai_generation.php`, `php compiler/compile_scripts.php`, `php compiler/compile_production.php` und `php compiler/release_gate.php` sind grün; das Release-Gate lief mit 21/21 bestandenen Checks.
 - QA-Fund/Fix: Die erste QA zeigte fehlende Task-/State-Evidence im AI-Generation-Report; `current_tasks.md` und `currentstate.md` wurden mit Manager-Evidence aktualisiert.
 - Manager: Task 35.4 ist erledigt; nächster offener P2-Task ist Task 35.5 `Playbooks auf non-interactive QA-Kommandos und --no-pager Git-Nutzung prüfen`.
+
+## milestone 2026-05-05: task 35.5 playbook command safety audit complete
+
+- Developer: `docs/release_qa.md` enthält jetzt eine `playbook command safety baseline`, die für alle Framework-Final-QA-Playbooks non-interactive QA-Kommandos, `git --no-pager`-Review, Verbot von plain `git diff`/`git log`/`git show` und pagerfreie Report-/Compiler-Kommandos festschreibt.
+- QA: Alle vorhandenen Playbooks (`new domain feature flow`, `credentialed external api feature`, `ui feature flow`, `form/upload feature flow`) wurden gegen plain Git-/Pager-Kommandos geprüft; erlaubte Treffer sind nur Verbotsformulierungen oder `git --no-pager ...` Beispiele.
+- QA-Fund/Fix: Der Audit war in den Einzelplaybooks zwar praktisch erfüllt, aber nicht als gemeinsame Baseline dokumentiert; die Baseline wurde ergänzt, damit Task 35.5 reproduzierbar prüfbar bleibt.
+- Manager: Task 35.5 und damit Task 35 sind erledigt; alle Framework-Final-QA-Playbooks starten bei Markdown, enden mit Release-QA und enthalten keine interaktiven Terminal-/Pager-Kommandos.

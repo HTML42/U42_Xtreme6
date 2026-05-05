@@ -8,8 +8,8 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 
 - **P0 (blocker für "framework final")**: keine
 - **P1 (hoch / produktreif machen)**: keine
-- **P2 (manager-/developer-experience)**: task 35
-- **abgeschlossen / baseline vorhanden**: task 1 bis task 34
+- **P2 (manager-/developer-experience)**: keine
+- **abgeschlossen / baseline vorhanden**: task 1 bis task 35
 
 ## global definition of done (dod)
 
@@ -440,10 +440,10 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 - [x] **subtask 35.2**: Playbook für credentialed external API feature erstellen: Secrets, Backend-Proxy, FE-XApi, Sandbox, Leak-Check.
 - [x] **subtask 35.3**: Playbook für UI-Feature erstellen: Route-UI-Konfiguration, Navigation/Breadcrumb/Sidebar/Slideshow, i18n/a11y.
 - [x] **subtask 35.4**: Playbook für Form/Upload-Feature erstellen: Form-MD, API-Contract, Upload-Regeln, Error-Mapping, Sandbox-Mocks.
-- [ ] **subtask 35.5**: Alle Playbooks auf non-interactive QA-Kommandos und `--no-pager` Git-Nutzung prüfen.
+- [x] **subtask 35.5**: Alle Playbooks auf non-interactive QA-Kommandos und `--no-pager` Git-Nutzung prüfen.
 
 ### acceptance criteria (task 35)
 
-- [ ] Wiederkehrende Framework-Features können von KI und Entwicklern reproduzierbar umgesetzt werden.
-- [ ] Jedes Playbook startet bei Markdown und endet mit Release-QA.
-- [ ] Kein Playbook enthält interaktive Terminalbefehle oder Pager-Kommandos.
+- [x] Wiederkehrende Framework-Features können von KI und Entwicklern reproduzierbar umgesetzt werden.
+- [x] Jedes Playbook startet bei Markdown und endet mit Release-QA.
+- [x] Kein Playbook enthält interaktive Terminalbefehle oder Pager-Kommandos.

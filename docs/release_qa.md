@@ -94,6 +94,16 @@ Runtime-only changes are acceptable only when the report shows accompanying mark
 
 These playbooks are manager-readable checklists for recurring framework work. They do not replace the canonical source documents; they route developers and AI agents to the right Markdown source first, then to runtime generation and release QA.
 
+### playbook command safety baseline
+
+All framework final QA playbooks in this section must keep these command-safety rules:
+
+- Every QA command must be non-interactive and terminate without prompts, confirmations or pager navigation.
+- Git review examples must use `git --no-pager diff --stat` or targeted `git --no-pager diff -- <path>`.
+- Playbooks must not contain plain `git diff`, `git log` or `git show` commands.
+- If a task needs history review, use `git --no-pager log --oneline -n <count>`.
+- Generated reports and compiler commands must print once and exit; avoid tools that wait for `q` or open a pager.
+
 ### new domain feature flow
 
 Use this playbook when adding a new first-party domain concept such as products, orders, profiles or projects.
