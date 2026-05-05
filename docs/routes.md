@@ -45,9 +45,21 @@ routes:
     purpose: "Startseite / Landing"
     ui:
       header: true
+      footer: true
+      layout: "default"
       sidebar: true
+      sidebar_group: "main"
+      navigation: true
       breadcrumb: false
-      slideshow: home
+      slideshow:
+        key: "home"
+        image: "assets/slides/home.svg"
+        alt_key: "ui.slideshow.home.alt"
+        title_key: "ui.slideshow.home.title"
+        caption_key: "ui.slideshow.home.caption"
+        cta_key: "ui.slideshow.home.cta"
+        target_route: "#!/users/registration"
+        keyboard: true
 
   - route: "#!/index/imprint"
     controller: "index"
@@ -55,8 +67,13 @@ routes:
     purpose: "Impressum"
     ui:
       header: true
+      footer: true
+      layout: "default"
       sidebar: true
+      sidebar_group: "main"
+      navigation: true
       breadcrumb: true
+      breadcrumb_parent: "#!/index/index"
       slideshow: null
 
   - route: "#!/index/privacy"
@@ -65,8 +82,13 @@ routes:
     purpose: "Datenschutz"
     ui:
       header: true
+      footer: true
+      layout: "default"
       sidebar: true
+      sidebar_group: "main"
+      navigation: true
       breadcrumb: true
+      breadcrumb_parent: "#!/index/index"
       slideshow: null
 
   - route: "#!/users/login"
@@ -75,8 +97,13 @@ routes:
     purpose: "Benutzer-Login"
     ui:
       header: true
+      footer: true
+      layout: "auth"
       sidebar: false
+      sidebar_group: null
+      navigation: true
       breadcrumb: true
+      breadcrumb_parent: "#!/index/index"
       slideshow: null
 
   - route: "#!/users/registration"
@@ -85,8 +112,13 @@ routes:
     purpose: "Benutzer-Registrierung"
     ui:
       header: true
+      footer: true
+      layout: "auth"
       sidebar: false
+      sidebar_group: null
+      navigation: true
       breadcrumb: true
+      breadcrumb_parent: "#!/users/login"
       slideshow: null
 
   - route: "#!/users/logout"
@@ -95,9 +127,42 @@ routes:
     purpose: "Benutzer-Logout"
     ui:
       header: true
+      footer: true
+      layout: "auth"
       sidebar: false
+      sidebar_group: null
+      navigation: true
       breadcrumb: true
+      breadcrumb_parent: "#!/index/index"
       slideshow: null
+
+ui_navigation:
+  header:
+    - route: "#!/index/index"
+      label_key: "menu.home"
+    - route: "#!/index/imprint"
+      label_key: "menu.imprint"
+    - route: "#!/index/privacy"
+      label_key: "menu.privacy"
+    - route: "#!/users/login"
+      label_key: "menu.login"
+      visibility: "logged_out"
+    - route: "#!/users/registration"
+      label_key: "menu.registration"
+      visibility: "logged_out"
+    - route: "#!/users/logout"
+      label_key: "menu.logout"
+      visibility: "logged_in"
+  sidebar_groups:
+    main:
+      title_key: "ui.sidebar.title"
+      items:
+        - route: "#!/index/index"
+          label_key: "menu.home"
+        - route: "#!/index/imprint"
+          label_key: "menu.imprint"
+        - route: "#!/index/privacy"
+          label_key: "menu.privacy"
 ```
 
 ## login/registration behavior note

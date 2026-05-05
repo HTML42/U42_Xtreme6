@@ -20,8 +20,7 @@ window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 window.TEMPLATES['breadcrumb'] = `
 <nav id="page_breadcrumb" class="breadcrumb" aria-label="{{aria_label}}">
   <ol class="clean_list breadcrumb_list">
-    <li><a href="#!/index/index">{{home}}</a></li>
-    <li aria-current="page">{{current}}</li>
+    {{breadcrumb_items}}
   </ol>
 </nav>
 `.trim();
@@ -72,12 +71,7 @@ window.TEMPLATES['header'] = `
 
     <nav class="navigation_top" aria-label="Top Navigation">
       <ul class="clean_list">
-        <li><a href="#!/index/index">{{menu_home}}</a></li>
-        <li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
-        <li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
-        <li data-logout-show data-login-hide><a href="#!/users/login">{{menu_login}}</a></li>
-        <li data-logout-show data-login-hide><a href="#!/users/registration">{{menu_registration}}</a></li>
-        <li data-login-show data-logout-hide><a href="#!/users/logout">{{menu_logout}}</a></li>
+        {{navigation_top_items}}
       </ul>
     </nav>
 
@@ -86,23 +80,13 @@ window.TEMPLATES['header'] = `
 
   <nav class="navigation_mobile_top" aria-label="Mobile Top Navigation">
     <ul class="clean_list">
-      <li><a href="#!/index/index">{{menu_home}}</a></li>
-      <li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
-      <li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
-      <li data-logout-show data-login-hide><a href="#!/users/login">{{menu_login}}</a></li>
-      <li data-logout-show data-login-hide><a href="#!/users/registration">{{menu_registration}}</a></li>
-      <li data-login-show data-logout-hide><a href="#!/users/logout">{{menu_logout}}</a></li>
+      {{navigation_mobile_top_items}}
     </ul>
   </nav>
 
   <nav class="navigation_mobile_bottom" aria-label="Mobile Bottom Navigation">
     <ul class="clean_list">
-      <li><a href="#!/index/index">{{menu_home}}</a></li>
-      <li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
-      <li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
-      <li data-logout-show data-login-hide><a href="#!/users/login">{{menu_login}}</a></li>
-      <li data-logout-show data-login-hide><a href="#!/users/registration">{{menu_registration}}</a></li>
-      <li data-login-show data-logout-hide><a href="#!/users/logout">{{menu_logout}}</a></li>
+      {{navigation_mobile_bottom_items}}
     </ul>
   </nav>
 </header>
@@ -115,9 +99,7 @@ window.TEMPLATES['sidebar'] = `
 <section id="page_sidebar" aria-labelledby="page_sidebar_title">
   <h3 id="page_sidebar_title">{{sidebar_title}}</h3>
   <ul class="clean_list">
-    <li><a href="#!/index/index">{{menu_home}}</a></li>
-    <li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
-    <li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
+    {{sidebar_items}}
   </ul>
 </section>
 `.trim();
@@ -127,7 +109,8 @@ window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 
 window.TEMPLATES['slideshow'] = `
 <section id="page_slideshow" class="slideshow" aria-label="{{aria_label}}">
-  <article class="slideshow_slide">
+  <article class="slideshow_slide" tabindex="0" data-keyboard="{{keyboard}}">
+    <img class="slideshow_image" src="{{image}}" alt="{{alt}}" loading="lazy" />
     <h2>{{title}}</h2>
     <p>{{caption}}</p>
     <a href="{{target_route}}">{{cta}}</a>

@@ -1,7 +1,7 @@
 {
     "summary": {
-        "started_at": "2026-05-05T17:08:11+02:00",
-        "finished_at": "2026-05-05T17:08:14+02:00",
+        "started_at": "2026-05-05T17:22:25+02:00",
+        "finished_at": "2026-05-05T17:22:27+02:00",
         "success": true,
         "total": 20,
         "passed": 20,
@@ -16,7 +16,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 292,
+            "duration_ms": 81,
             "output": "MD-first check passed."
         },
         {
@@ -26,7 +26,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 75,
+            "duration_ms": 61,
             "output": "Secret leak check passed."
         },
         {
@@ -36,7 +36,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 61,
+            "duration_ms": 76,
             "output": "Secret usage report\n===================\nCanonical docs: docs/secrets.md\nExample secrets file: _secrets.example.json\nLocal secrets file: missing (environment-local, not required in repo)\n\nProvider\n- default: local_file\n- environment: dev\n\nServices\n- example_api (provider: local_file) - Demo external API integration via backend proxy only\n  - base_url: configured\n  - credential keys: credential_public_key, credential_secret_key\n  - required secrets: services.example_api.credentials.credential_public_key, services.example_api.credentials.credential_secret_key\n  - env mappings: EXAMPLE_credential_public_key, EXAMPLE_credential_secret_key\n  - proxy endpoints: /api/integrations/example_lookup\n  - rate limits: 60 requests per IP per 15 minutes, document per service contract\n  - failure strategy: missing_credentials, timeout, invalid_response, rate_limit\n\nAPI integration secret references\n- none declared yet; future credentialed APIs must reference docs/secrets.md and required secret paths.\n\nSecret usage validation passed. No secret values were printed."
         },
         {
@@ -57,7 +57,7 @@
             "skipped": false,
             "blocks_release": true,
             "duration_ms": 106,
-            "output": "AI generation report\n====================\nChanged files by category\n- markdown: 14\n  - api/users/users.md\n  - docs/forms.md\n  - docs/forms/examples.upload.md\n  - docs/forms/users.login.md\n  - docs/forms/users.registration.md\n  - docs/release_qa.md\n  - docs/sandbox.md\n  - docs/secrets.md\n  - docs/styles.md\n  - docs/x_api.md\n  - docs/x_framework.md\n  - docs/x_models.md\n  - docs/x_objects.md\n  - docs/x_styles.md\n- runtime: 7\n  - scripts/controllers/users.controller.js\n  - scripts/x_api.class.js\n  - styles/forms.css\n  - templates/form.login.js\n  - templates/view.users.registration.js\n  - translations/de/_default.js\n  - translations/de/common.js\n- compiler: 2\n  - compiler/report_ai_generation.php\n  - compiler/report_secret_usage.php\n- generated: 5\n  - dist/app.js\n  - dist/scripts--prod.js\n  - dist/styles.css\n  - dist/templates--prod.js\n  - dist/translations--prod.js\n- governance: 3\n  - agents.md\n  - current_tasks.md\n  - currentstate.md\n- other: 1\n  - _secrets.example.json\n\nEvidence\n- markdown/source evidence: yes\n- runtime/compiler changes: yes\n- generated artifacts changed: yes\n- task file updated: yes\n- currentstate updated: yes\n\nRuntime-only risk\n- none detected\n\nRecommended QA commands\n- php compiler/release_gate.php\n- php compiler/check_md_first.php\n- php compiler/check_secret_leaks.php\n- php compiler/report_secret_usage.php\n- php compiler/report_sandbox_coverage.php\n- php compiler/report_ai_generation.php\n- php compiler/report_api_contracts.php\n- php compiler/check_frontend_boundary.php\n- php compiler/compile_scripts.php\n- php compiler/compile_production.php\n- php compiler/smoke_database.php\n- git --no-pager diff --stat\n\nAI generation validation passed."
+            "output": "AI generation report\n====================\nChanged files by category\n- markdown: 2\n  - docs/routes.md\n  - docs/ui_primitives.md\n- runtime: 7\n  - scripts/x_framework.class.js\n  - scripts/x_template.class.js\n  - templates/breadcrumb.js\n  - templates/header.js\n  - templates/sidebar.js\n  - templates/slideshow.js\n  - translations/de/common.js\n- compiler: 1\n  - compiler/report_ui_primitives.php\n- generated: 4\n  - dist/app.js\n  - dist/scripts--prod.js\n  - dist/templates--prod.js\n  - dist/translations--prod.js\n- governance: 2\n  - current_tasks.md\n  - currentstate.md\n- other: 0\n\nEvidence\n- markdown/source evidence: yes\n- runtime/compiler changes: yes\n- generated artifacts changed: yes\n- task file updated: yes\n- currentstate updated: yes\n\nRuntime-only risk\n- none detected\n\nRecommended QA commands\n- php compiler/release_gate.php\n- php compiler/check_md_first.php\n- php compiler/check_secret_leaks.php\n- php compiler/report_secret_usage.php\n- php compiler/report_sandbox_coverage.php\n- php compiler/report_ai_generation.php\n- php compiler/report_api_contracts.php\n- php compiler/check_frontend_boundary.php\n- php compiler/compile_scripts.php\n- php compiler/compile_production.php\n- php compiler/smoke_database.php\n- git --no-pager diff --stat\n\nAI generation validation passed."
         },
         {
             "id": "workflow_traceability",
@@ -66,7 +66,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 76,
+            "duration_ms": 75,
             "output": "Workflow traceability report\n============================\n\nWorkflow: users.registration\nSource: docs\\workflows\\users.registration.md\nAPI calls:\n- `POST /api/users/registration` as documented in `api/users/users.md`.\nObject calls:\n- `XUser::registration(...)` for validation/persistence orchestration.\n- `XUsers` lookup helpers for duplicate username/email checks.\n- `XDB::insert(...)` through the configured JSON/MySQL engine.\nTraceability:\n- Route source: `docs/routes.md` route `#!/users/registration`.\n- Controller source: `scripts/controllers/users.controller.md` registration view.\n- API source: `api/users/users.md` endpoint `POST /api/users/registration`.\n- Object sources: `objects/x_user/x_user.class.md`, `objects/x_users/x_users.class.md`.\n- Model source: `models/users.md`.\n- Runtime artifacts: `scripts/controllers/users.controller.js`, `templates/view.users.registration.js`, `api/users/registration.php`."
         },
         {
@@ -76,7 +76,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 91,
+            "duration_ms": 75,
             "output": "Object generation report\n========================\n\nObject: x_user\nPair: x_user + x_users\nArtifacts:\n- objects\\x_user\\x_user.class.md: present\n- objects\\x_user\\x_user.class.php: present\n- objects\\x_user\\x_user.class.js: present\n- objects\\x_user\\x_user.test.php: present\n- objects\\x_user\\x_user.test.js: present\nCounterpart:\n- objects/x_user/x_user.class.md: present\n- objects/x_users/x_users.class.md: present\n\nObject: x_users\nPair: x_user + x_users\nArtifacts:\n- objects\\x_users\\x_users.class.md: present\n- objects\\x_users\\x_users.class.php: present\n- objects\\x_users\\x_users.class.js: present\n- objects\\x_users\\x_users.test.php: present\n- objects\\x_users\\x_users.test.js: present\nCounterpart:\n- objects/x_user/x_user.class.md: present\n- objects/x_users/x_users.class.md: present"
         },
         {
@@ -86,7 +86,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 316,
+            "duration_ms": 76,
             "output": "Model schema report\n===================\n\nTable: users\nJSON dry-run:\n- table file: _db/tables/users.json\n- meta entry: _db/meta.json tables.users.current_index\nMySQL create plan:\nCREATE TABLE IF NOT EXISTS `users` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `username` VARCHAR(64) NOT NULL, `password` VARCHAR(255) NOT NULL, `email` VARCHAR(255) NOT NULL, `validate_date` INT NULL DEFAULT NULL, `lastlogin_date` INT NULL DEFAULT NULL, `hash` CHAR(10) NOT NULL, `insert_date` INT NOT NULL, `update_date` INT NULL DEFAULT NULL, `delete_date` INT NULL DEFAULT NULL, PRIMARY KEY (`id`), UNIQUE KEY `uniq_users_username` (`username`), UNIQUE KEY `uniq_users_email` (`email`), UNIQUE KEY `uniq_users_hash` (`hash`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;\nValidation fields:\n- id: type=int, required=yes, unique=yes, index=no\n- username: type=string, required=yes, unique=yes, index=yes\n- password: type=string, required=yes, unique=no, index=no\n- email: type=string, required=yes, unique=yes, index=yes\n- validate_date: type=int|null, required=no, unique=no, index=no\n- lastlogin_date: type=int|null, required=no, unique=no, index=no\n- hash: type=string, required=yes, unique=yes, index=yes\n- insert_date: type=int, required=yes, unique=no, index=no\n- update_date: type=int|null, required=yes, unique=no, index=no\n- delete_date: type=int|null, required=yes, unique=no, index=no"
         },
         {
@@ -96,7 +96,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 60,
+            "duration_ms": 61,
             "output": "Model relationship report\n=========================\n\nTable: users\nRelations: none\n\nRelationship validation passed."
         },
         {
@@ -126,7 +126,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 76,
+            "duration_ms": 324,
             "output": "Form component report\n=====================\n\nForm: examples.upload\n- template: reference-only\n- endpoint: /api/test/upload\n- fields: 1\n\nForm: users.login\n- template: form.login\n- endpoint: /api/users/login\n- fields: 2\n\nForm: users.registration\n- template: view.users.registration\n- endpoint: /api/users/registration\n- fields: 4\n\nForm component validation passed."
         },
         {
@@ -136,7 +136,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 293,
+            "duration_ms": 106,
             "output": "Form flow audit\n===============\n\nDocumented forms: 3\n- example_upload_form -> /api/test/upload\n- login_form -> /api/users/login\n- registration_form -> /api/users/registration\n\nRuntime forms: 2\n- login_form in templates/form.login.js\n- registration_form in templates/view.users.registration.js\n\nForm flow audit passed. All runtime forms are documented and bound to FormAjax."
         },
         {
@@ -146,8 +146,8 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 61,
-            "output": "UI primitives report\n====================\n- primitive available: header\n- primitive available: sidebar\n- primitive available: footer\n- primitive available: breadcrumb\n- primitive available: slideshow\n\nUI primitive validation passed."
+            "duration_ms": 75,
+            "output": "UI primitives report\n====================\n- primitive available: header\n- primitive available: sidebar\n- primitive available: footer\n- primitive available: breadcrumb\n- primitive available: slideshow\n\nRoute UI configuration\n- #!/index/index: layout=default, sidebar=true, breadcrumb=false, slideshow=home\n- #!/index/imprint: layout=default, sidebar=true, breadcrumb=true, slideshow=none\n- #!/index/privacy: layout=default, sidebar=true, breadcrumb=true, slideshow=none\n- #!/users/login: layout=auth, sidebar=false, breadcrumb=true, slideshow=none\n- #!/users/registration: layout=auth, sidebar=false, breadcrumb=true, slideshow=none\n- #!/users/logout: layout=auth, sidebar=false, breadcrumb=true, slideshow=none\n\nRoute UI navigation\n- header: #!/index/index -> menu.home\n- header: #!/index/imprint -> menu.imprint\n- header: #!/index/privacy -> menu.privacy\n- header: #!/users/login -> menu.login\n- header: #!/users/registration -> menu.registration\n- header: #!/users/logout -> menu.logout\n- sidebar group: main\n\nUI primitive validation passed."
         },
         {
             "id": "compile_objects",
@@ -156,7 +156,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 60,
+            "duration_ms": 76,
             "output": "Compiled objects--dev.php + objects--prod.php (2 files)\nCompiled objects--dev.js + objects--prod.js (2 files)\nCompiled objects.test.php (2 files)\nCompiled objects.test.js (2 files)"
         },
         {
@@ -166,7 +166,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 265,
+            "duration_ms": 92,
             "output": "Compiled scripts--dev.js + scripts--prod.js (11 files)\nCompiled templates--dev.js + templates--prod.js (13 files)\nTranslation governance passed (1 languages, 31 required keys)\nCompiled translations--dev.js + translations--prod.js (2 files)"
         },
         {
@@ -176,7 +176,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 551,
+            "duration_ms": 73,
             "output": "Compiled styles.css (8 files)"
         },
         {
@@ -186,7 +186,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 60,
+            "duration_ms": 61,
             "output": "Compiled app.js (4 files)\nCompiled app.php (0 files)"
         },
         {
@@ -196,7 +196,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 59,
+            "duration_ms": 61,
             "output": "Secret leak check passed."
         },
         {
@@ -206,7 +206,7 @@
             "passed": true,
             "skipped": false,
             "blocks_release": true,
-            "duration_ms": 166,
+            "duration_ms": 151,
             "output": "[smoke_database] engine=json\n  ✓ registration succeeds\n  ✓ registration returns user id\n  ✓ login succeeds\n  ✓ login returns same user id\n  ✓ select finds inserted user\n  ✓ delete removes smoke user\n  ✓ select confirms smoke user deletion\n[smoke_database] passed (json)"
         }
     ]

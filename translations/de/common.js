@@ -45,6 +45,7 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'ui.sidebar.title': 'Navigation',
   'ui.breadcrumb.aria_label': 'Breadcrumb',
   'ui.slideshow.aria_label': 'Slideshow',
+  'ui.slideshow.home.alt': 'Abstrakte Xtreme6 Framework Vorschau',
   'ui.slideshow.home.title': 'Willkommen bei Xtreme6',
   'ui.slideshow.home.caption': 'Das KI-getriebene Framework mit MD-first Workflow.',
   'ui.slideshow.home.cta': 'Jetzt starten',

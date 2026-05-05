@@ -1420,7 +1420,11 @@ class XFramework {
         return;
       }
 
-      this.renderShellPart(config.targetId, config.templateName, this.translateMap(config.translationMap));
+      const dynamicParams = typeof config.params === 'function' ? config.params() : (config.params || {});
+      this.renderShellPart(config.targetId, config.templateName, {
+        ...this.translateMap(config.translationMap),
+        ...dynamicParams
+      });
     });
   }
 
@@ -1429,31 +1433,29 @@ class XFramework {
       {
         targetId: 'page_header',
         templateName: 'header',
+        params: () => ({
+          navigation_top_items: this.renderNavigationItems('header'),
+          navigation_mobile_top_items: this.renderNavigationItems('header'),
+          navigation_mobile_bottom_items: this.renderNavigationItems('header')
+        }),
         translationMap: {
           app_name: 'app.name',
-          menu_home: 'menu.home',
-          menu_profile: 'menu.profile',
-          menu_wallets: 'menu.wallets',
-          menu_deposit: 'menu.deposit',
-          menu_withdraw: 'menu.withdraw',
-          menu_plans: 'menu.plans',
-          menu_admin: 'menu.admin',
-          menu_logout: 'menu.logout',
-          menu_login: 'menu.login',
-          menu_registration: 'menu.registration',
-          menu_imprint: 'menu.imprint',
-          menu_privacy: 'menu.privacy'
         }
       },
       {
         targetId: 'page_aside',
         templateName: 'sidebar',
         when: () => !!(window.X6 && window.X6.options && window.X6.options.sidebar === true),
+        params: () => {
+          const currentConfig = this.getRouteUiConfig(this.currentRoute || this.getEmptyRoute());
+          const group = this.getSidebarGroup(currentConfig.sidebar_group);
+
+          return {
+            sidebar_items: this.renderSidebarItems(group)
+          };
+        },
         translationMap: {
-          sidebar_title: 'ui.sidebar.title',
-          menu_home: 'menu.home',
-          menu_imprint: 'menu.imprint',
-          menu_privacy: 'menu.privacy'
+          sidebar_title: 'ui.sidebar.title'
         }
       },
       {
@@ -1472,6 +1474,189 @@ class XFramework {
 
       return acc;
     }, {});
+  }
+
+  escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  buildRouteLink(route, label, attributes = '') {
+    const safeRoute = this.escapeHtml(route);
+    const safeLabel = this.escapeHtml(label);
+    const attr = attributes ? ` ${attributes}` : '';
+
+    return `<li${attr}><a href="${safeRoute}">${safeLabel}</a></li>`;
+  }
+
+  getRouteDefinitions() {
+    return {
+      'index/index': {
+        route: '#!/index/index',
+        controller: 'index',
+        view: 'index',
+        caption_key: 'captions.index.index',
+        ui: {
+          header: true,
+          footer: true,
+          layout: 'default',
+          sidebar: true,
+          sidebar_group: 'main',
+          navigation: true,
+          breadcrumb: false,
+          breadcrumb_parent: null,
+          slideshow: {
+            key: 'home',
+            image: 'assets/slides/home.svg',
+            alt_key: 'ui.slideshow.home.alt',
+            title_key: 'ui.slideshow.home.title',
+            caption_key: 'ui.slideshow.home.caption',
+            cta_key: 'ui.slideshow.home.cta',
+            target_route: '#!/users/registration',
+            keyboard: true
+          }
+        }
+      },
+      'index/imprint': {
+        route: '#!/index/imprint',
+        controller: 'index',
+        view: 'imprint',
+        caption_key: 'captions.index.imprint',
+        ui: {
+          header: true,
+          footer: true,
+          layout: 'default',
+          sidebar: true,
+          sidebar_group: 'main',
+          navigation: true,
+          breadcrumb: true,
+          breadcrumb_parent: '#!/index/index',
+          slideshow: null
+        }
+      },
+      'index/privacy': {
+        route: '#!/index/privacy',
+        controller: 'index',
+        view: 'privacy',
+        caption_key: 'captions.index.privacy',
+        ui: {
+          header: true,
+          footer: true,
+          layout: 'default',
+          sidebar: true,
+          sidebar_group: 'main',
+          navigation: true,
+          breadcrumb: true,
+          breadcrumb_parent: '#!/index/index',
+          slideshow: null
+        }
+      },
+      'users/login': {
+        route: '#!/users/login',
+        controller: 'users',
+        view: 'login',
+        caption_key: 'captions.users.login',
+        ui: {
+          header: true,
+          footer: true,
+          layout: 'auth',
+          sidebar: false,
+          sidebar_group: null,
+          navigation: true,
+          breadcrumb: true,
+          breadcrumb_parent: '#!/index/index',
+          slideshow: null
+        }
+      },
+      'users/registration': {
+        route: '#!/users/registration',
+        controller: 'users',
+        view: 'registration',
+        caption_key: 'captions.users.registration',
+        ui: {
+          header: true,
+          footer: true,
+          layout: 'auth',
+          sidebar: false,
+          sidebar_group: null,
+          navigation: true,
+          breadcrumb: true,
+          breadcrumb_parent: '#!/users/login',
+          slideshow: null
+        }
+      },
+      'users/logout': {
+        route: '#!/users/logout',
+        controller: 'users',
+        view: 'logout',
+        caption_key: 'captions.users.logout',
+        ui: {
+          header: true,
+          footer: true,
+          layout: 'auth',
+          sidebar: false,
+          sidebar_group: null,
+          navigation: true,
+          breadcrumb: true,
+          breadcrumb_parent: '#!/index/index',
+          slideshow: null
+        }
+      }
+    };
+  }
+
+  getUiNavigationConfig() {
+    return {
+      header: [
+        { route: '#!/index/index', label_key: 'menu.home' },
+        { route: '#!/index/imprint', label_key: 'menu.imprint' },
+        { route: '#!/index/privacy', label_key: 'menu.privacy' },
+        { route: '#!/users/login', label_key: 'menu.login', visibility: 'logged_out' },
+        { route: '#!/users/registration', label_key: 'menu.registration', visibility: 'logged_out' },
+        { route: '#!/users/logout', label_key: 'menu.logout', visibility: 'logged_in' }
+      ],
+      sidebar_groups: {
+        main: {
+          title_key: 'ui.sidebar.title',
+          items: [
+            { route: '#!/index/index', label_key: 'menu.home' },
+            { route: '#!/index/imprint', label_key: 'menu.imprint' },
+            { route: '#!/index/privacy', label_key: 'menu.privacy' }
+          ]
+        }
+      }
+    };
+  }
+
+  renderNavigationItems(groupName = 'header') {
+    const items = this.getUiNavigationConfig()[groupName] || [];
+
+    return items.map((item) => {
+      const attributes = item.visibility === 'logged_out'
+        ? 'data-logout-show data-login-hide'
+        : (item.visibility === 'logged_in' ? 'data-login-show data-logout-hide' : '');
+
+      return this.buildRouteLink(item.route, XTranslation.t(item.label_key), attributes);
+    }).join('');
+  }
+
+  getSidebarGroup(groupName) {
+    const groups = this.getUiNavigationConfig().sidebar_groups || {};
+    return groups[groupName] || null;
+  }
+
+  renderSidebarItems(group) {
+    if (!group || !Array.isArray(group.items)) {
+      return '';
+    }
+
+    return group.items
+      .map((item) => this.buildRouteLink(item.route, XTranslation.t(item.label_key)))
+      .join('');
   }
 
   isLoggedIn() {
@@ -1573,16 +1758,19 @@ class XFramework {
 
   getRouteUiConfig(route) {
     const key = `${route.controller}/${route.view}`;
-    const configs = {
-      'index/index': { sidebar: true, breadcrumb: false, slideshow: 'home' },
-      'index/imprint': { sidebar: true, breadcrumb: true, slideshow: null },
-      'index/privacy': { sidebar: true, breadcrumb: true, slideshow: null },
-      'users/login': { sidebar: false, breadcrumb: true, slideshow: null },
-      'users/registration': { sidebar: false, breadcrumb: true, slideshow: null },
-      'users/logout': { sidebar: false, breadcrumb: true, slideshow: null }
-    };
+    const routeDefinition = this.getRouteDefinitions()[key];
 
-    return configs[key] || { sidebar: false, breadcrumb: true, slideshow: null };
+    return routeDefinition?.ui || {
+      header: true,
+      footer: true,
+      layout: 'default',
+      sidebar: false,
+      sidebar_group: null,
+      navigation: true,
+      breadcrumb: true,
+      breadcrumb_parent: '#!/index/index',
+      slideshow: null
+    };
   }
 
   renderRouteUiPrimitives(route) {
@@ -1591,9 +1779,29 @@ class XFramework {
       window.X6.options.sidebar = config.sidebar === true;
     }
 
+    document.body.setAttribute('data-layout', String(config.layout || 'default'));
+
     this.renderConfiguredShellParts();
+    this.clearDisabledSidebar(config);
     this.renderBreadcrumb(route, config);
     this.renderSlideshow(route, config);
+  }
+
+  clearDisabledSidebar(config) {
+    if (config.sidebar === true) {
+      return;
+    }
+
+    const sidebar = document.getElementById('page_sidebar');
+    if (sidebar) {
+      sidebar.outerHTML = '<aside id="page_aside"></aside>';
+      return;
+    }
+
+    const aside = document.getElementById('page_aside');
+    if (aside) {
+      aside.innerHTML = '';
+    }
   }
 
   renderBreadcrumb(route, config) {
@@ -1609,11 +1817,28 @@ class XFramework {
     }
 
     target.removeAttribute('hidden');
+    const items = this.renderBreadcrumbItems(route, config);
     target.outerHTML = XTemplate.render('breadcrumb', {
       aria_label: XTranslation.t('ui.breadcrumb.aria_label'),
-      home: XTranslation.t('menu.home'),
-      current: XTranslation.t(`captions.${route.controller}.${route.view}`)
+      breadcrumb_items: items
     });
+  }
+
+  renderBreadcrumbItems(route, config) {
+    const routeDefinitions = this.getRouteDefinitions();
+    const currentRoute = `#!/${route.controller}/${route.view}`;
+    const parentRoute = config.breadcrumb_parent || '#!/index/index';
+    const items = [];
+
+    if (parentRoute && parentRoute !== currentRoute) {
+      const parent = Object.values(routeDefinitions).find((definition) => definition.route === parentRoute);
+      const labelKey = parent?.caption_key || 'menu.home';
+      items.push(this.buildRouteLink(parentRoute, XTranslation.t(labelKey)));
+    }
+
+    items.push(`<li aria-current="page">${this.escapeHtml(XTranslation.t(`captions.${route.controller}.${route.view}`))}</li>`);
+
+    return items.join('');
   }
 
   renderSlideshow(route, config) {
@@ -1628,13 +1853,17 @@ class XFramework {
       return;
     }
 
+    const slideshow = config.slideshow;
     target.removeAttribute('hidden');
     target.outerHTML = XTemplate.render('slideshow', {
       aria_label: XTranslation.t('ui.slideshow.aria_label'),
-      title: XTranslation.t('ui.slideshow.home.title'),
-      caption: XTranslation.t('ui.slideshow.home.caption'),
-      cta: XTranslation.t('ui.slideshow.home.cta'),
-      target_route: '#!/users/registration'
+      image: slideshow.image,
+      alt: XTranslation.t(slideshow.alt_key),
+      title: XTranslation.t(slideshow.title_key),
+      caption: XTranslation.t(slideshow.caption_key),
+      cta: XTranslation.t(slideshow.cta_key),
+      target_route: slideshow.target_route,
+      keyboard: slideshow.keyboard === true ? 'true' : 'false'
     });
   }
 

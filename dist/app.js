@@ -1219,7 +1219,11 @@ this.getShellPartConfigs().forEach((config) => {
 if (typeof config.when === 'function' && config.when() !== true) {
 return;
 }
-this.renderShellPart(config.targetId, config.templateName, this.translateMap(config.translationMap));
+const dynamicParams = typeof config.params === 'function' ? config.params() : (config.params || {});
+this.renderShellPart(config.targetId, config.templateName, {
+...this.translateMap(config.translationMap),
+...dynamicParams
+});
 });
 }
 getShellPartConfigs() {
@@ -1227,31 +1231,28 @@ return [
 {
 targetId: 'page_header',
 templateName: 'header',
+params: () => ({
+navigation_top_items: this.renderNavigationItems('header'),
+navigation_mobile_top_items: this.renderNavigationItems('header'),
+navigation_mobile_bottom_items: this.renderNavigationItems('header')
+}),
 translationMap: {
 app_name: 'app.name',
-menu_home: 'menu.home',
-menu_profile: 'menu.profile',
-menu_wallets: 'menu.wallets',
-menu_deposit: 'menu.deposit',
-menu_withdraw: 'menu.withdraw',
-menu_plans: 'menu.plans',
-menu_admin: 'menu.admin',
-menu_logout: 'menu.logout',
-menu_login: 'menu.login',
-menu_registration: 'menu.registration',
-menu_imprint: 'menu.imprint',
-menu_privacy: 'menu.privacy'
 }
 },
 {
 targetId: 'page_aside',
 templateName: 'sidebar',
 when: () => !!(window.X6 && window.X6.options && window.X6.options.sidebar === true),
+params: () => {
+const currentConfig = this.getRouteUiConfig(this.currentRoute || this.getEmptyRoute());
+const group = this.getSidebarGroup(currentConfig.sidebar_group);
+return {
+sidebar_items: this.renderSidebarItems(group)
+};
+},
 translationMap: {
-sidebar_title: 'ui.sidebar.title',
-menu_home: 'menu.home',
-menu_imprint: 'menu.imprint',
-menu_privacy: 'menu.privacy'
+sidebar_title: 'ui.sidebar.title'
 }
 },
 {
@@ -1268,6 +1269,178 @@ return Object.entries(translationMap).reduce((acc, [paramName, key]) => {
 acc[paramName] = XTranslation.t(key);
 return acc;
 }, {});
+}
+escapeHtml(value) {
+return String(value ?? '')
+.replace(/&/g, '&amp;')
+.replace(/</g, '&lt;')
+.replace(/>/g, '&gt;')
+.replace(/"/g, '&quot;')
+.replace(/'/g, '&#039;');
+}
+buildRouteLink(route, label, attributes = '') {
+const safeRoute = this.escapeHtml(route);
+const safeLabel = this.escapeHtml(label);
+const attr = attributes ? ` ${attributes}` : '';
+return `<li${attr}><a href="${safeRoute}">${safeLabel}</a></li>`;
+}
+getRouteDefinitions() {
+return {
+'index/index': {
+route: '#!/index/index',
+controller: 'index',
+view: 'index',
+caption_key: 'captions.index.index',
+ui: {
+header: true,
+footer: true,
+layout: 'default',
+sidebar: true,
+sidebar_group: 'main',
+navigation: true,
+breadcrumb: false,
+breadcrumb_parent: null,
+slideshow: {
+key: 'home',
+image: 'assets/slides/home.svg',
+alt_key: 'ui.slideshow.home.alt',
+title_key: 'ui.slideshow.home.title',
+caption_key: 'ui.slideshow.home.caption',
+cta_key: 'ui.slideshow.home.cta',
+target_route: '#!/users/registration',
+keyboard: true
+}
+}
+},
+'index/imprint': {
+route: '#!/index/imprint',
+controller: 'index',
+view: 'imprint',
+caption_key: 'captions.index.imprint',
+ui: {
+header: true,
+footer: true,
+layout: 'default',
+sidebar: true,
+sidebar_group: 'main',
+navigation: true,
+breadcrumb: true,
+breadcrumb_parent: '#!/index/index',
+slideshow: null
+}
+},
+'index/privacy': {
+route: '#!/index/privacy',
+controller: 'index',
+view: 'privacy',
+caption_key: 'captions.index.privacy',
+ui: {
+header: true,
+footer: true,
+layout: 'default',
+sidebar: true,
+sidebar_group: 'main',
+navigation: true,
+breadcrumb: true,
+breadcrumb_parent: '#!/index/index',
+slideshow: null
+}
+},
+'users/login': {
+route: '#!/users/login',
+controller: 'users',
+view: 'login',
+caption_key: 'captions.users.login',
+ui: {
+header: true,
+footer: true,
+layout: 'auth',
+sidebar: false,
+sidebar_group: null,
+navigation: true,
+breadcrumb: true,
+breadcrumb_parent: '#!/index/index',
+slideshow: null
+}
+},
+'users/registration': {
+route: '#!/users/registration',
+controller: 'users',
+view: 'registration',
+caption_key: 'captions.users.registration',
+ui: {
+header: true,
+footer: true,
+layout: 'auth',
+sidebar: false,
+sidebar_group: null,
+navigation: true,
+breadcrumb: true,
+breadcrumb_parent: '#!/users/login',
+slideshow: null
+}
+},
+'users/logout': {
+route: '#!/users/logout',
+controller: 'users',
+view: 'logout',
+caption_key: 'captions.users.logout',
+ui: {
+header: true,
+footer: true,
+layout: 'auth',
+sidebar: false,
+sidebar_group: null,
+navigation: true,
+breadcrumb: true,
+breadcrumb_parent: '#!/index/index',
+slideshow: null
+}
+}
+};
+}
+getUiNavigationConfig() {
+return {
+header: [
+{ route: '#!/index/index', label_key: 'menu.home' },
+{ route: '#!/index/imprint', label_key: 'menu.imprint' },
+{ route: '#!/index/privacy', label_key: 'menu.privacy' },
+{ route: '#!/users/login', label_key: 'menu.login', visibility: 'logged_out' },
+{ route: '#!/users/registration', label_key: 'menu.registration', visibility: 'logged_out' },
+{ route: '#!/users/logout', label_key: 'menu.logout', visibility: 'logged_in' }
+],
+sidebar_groups: {
+main: {
+title_key: 'ui.sidebar.title',
+items: [
+{ route: '#!/index/index', label_key: 'menu.home' },
+{ route: '#!/index/imprint', label_key: 'menu.imprint' },
+{ route: '#!/index/privacy', label_key: 'menu.privacy' }
+]
+}
+}
+};
+}
+renderNavigationItems(groupName = 'header') {
+const items = this.getUiNavigationConfig()[groupName] || [];
+return items.map((item) => {
+const attributes = item.visibility === 'logged_out'
+? 'data-logout-show data-login-hide'
+: (item.visibility === 'logged_in' ? 'data-login-show data-logout-hide' : '');
+return this.buildRouteLink(item.route, XTranslation.t(item.label_key), attributes);
+}).join('');
+}
+getSidebarGroup(groupName) {
+const groups = this.getUiNavigationConfig().sidebar_groups || {};
+return groups[groupName] || null;
+}
+renderSidebarItems(group) {
+if (!group || !Array.isArray(group.items)) {
+return '';
+}
+return group.items
+.map((item) => this.buildRouteLink(item.route, XTranslation.t(item.label_key)))
+.join('');
 }
 isLoggedIn() {
 if (window.ME && typeof window.ME === 'object' && typeof window.ME.login === 'boolean') {
@@ -1341,24 +1514,43 @@ controller[viewMethod](route);
 }
 getRouteUiConfig(route) {
 const key = `${route.controller}/${route.view}`;
-const configs = {
-'index/index': { sidebar: true, breadcrumb: false, slideshow: 'home' },
-'index/imprint': { sidebar: true, breadcrumb: true, slideshow: null },
-'index/privacy': { sidebar: true, breadcrumb: true, slideshow: null },
-'users/login': { sidebar: false, breadcrumb: true, slideshow: null },
-'users/registration': { sidebar: false, breadcrumb: true, slideshow: null },
-'users/logout': { sidebar: false, breadcrumb: true, slideshow: null }
+const routeDefinition = this.getRouteDefinitions()[key];
+return routeDefinition?.ui || {
+header: true,
+footer: true,
+layout: 'default',
+sidebar: false,
+sidebar_group: null,
+navigation: true,
+breadcrumb: true,
+breadcrumb_parent: '#!/index/index',
+slideshow: null
 };
-return configs[key] || { sidebar: false, breadcrumb: true, slideshow: null };
 }
 renderRouteUiPrimitives(route) {
 const config = this.getRouteUiConfig(route);
 if (window.X6 && window.X6.options) {
 window.X6.options.sidebar = config.sidebar === true;
 }
+document.body.setAttribute('data-layout', String(config.layout || 'default'));
 this.renderConfiguredShellParts();
+this.clearDisabledSidebar(config);
 this.renderBreadcrumb(route, config);
 this.renderSlideshow(route, config);
+}
+clearDisabledSidebar(config) {
+if (config.sidebar === true) {
+return;
+}
+const sidebar = document.getElementById('page_sidebar');
+if (sidebar) {
+sidebar.outerHTML = '<aside id="page_aside"></aside>';
+return;
+}
+const aside = document.getElementById('page_aside');
+if (aside) {
+aside.innerHTML = '';
+}
 }
 renderBreadcrumb(route, config) {
 const target = document.getElementById('page_breadcrumb');
@@ -1371,11 +1563,24 @@ target.setAttribute('hidden', 'hidden');
 return;
 }
 target.removeAttribute('hidden');
+const items = this.renderBreadcrumbItems(route, config);
 target.outerHTML = XTemplate.render('breadcrumb', {
 aria_label: XTranslation.t('ui.breadcrumb.aria_label'),
-home: XTranslation.t('menu.home'),
-current: XTranslation.t(`captions.${route.controller}.${route.view}`)
+breadcrumb_items: items
 });
+}
+renderBreadcrumbItems(route, config) {
+const routeDefinitions = this.getRouteDefinitions();
+const currentRoute = `#!/${route.controller}/${route.view}`;
+const parentRoute = config.breadcrumb_parent || '#!/index/index';
+const items = [];
+if (parentRoute && parentRoute !== currentRoute) {
+const parent = Object.values(routeDefinitions).find((definition) => definition.route === parentRoute);
+const labelKey = parent?.caption_key || 'menu.home';
+items.push(this.buildRouteLink(parentRoute, XTranslation.t(labelKey)));
+}
+items.push(`<li aria-current="page">${this.escapeHtml(XTranslation.t(`captions.${route.controller}.${route.view}`))}</li>`);
+return items.join('');
 }
 renderSlideshow(route, config) {
 const target = document.getElementById('page_slideshow');
@@ -1387,13 +1592,17 @@ target.innerHTML = '';
 target.setAttribute('hidden', 'hidden');
 return;
 }
+const slideshow = config.slideshow;
 target.removeAttribute('hidden');
 target.outerHTML = XTemplate.render('slideshow', {
 aria_label: XTranslation.t('ui.slideshow.aria_label'),
-title: XTranslation.t('ui.slideshow.home.title'),
-caption: XTranslation.t('ui.slideshow.home.caption'),
-cta: XTranslation.t('ui.slideshow.home.cta'),
-target_route: '#!/users/registration'
+image: slideshow.image,
+alt: XTranslation.t(slideshow.alt_key),
+title: XTranslation.t(slideshow.title_key),
+caption: XTranslation.t(slideshow.caption_key),
+cta: XTranslation.t(slideshow.cta_key),
+target_route: slideshow.target_route,
+keyboard: slideshow.keyboard === true ? 'true' : 'false'
 });
 }
 renderRouteTemplate(route) {
@@ -1735,8 +1944,7 @@ window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 window.TEMPLATES['breadcrumb'] = `
 <nav id="page_breadcrumb" class="breadcrumb" aria-label="{{aria_label}}">
 <ol class="clean_list breadcrumb_list">
-<li><a href="#!/index/index">{{home}}</a></li>
-<li aria-current="page">{{current}}</li>
+{{breadcrumb_items}}
 </ol>
 </nav>
 `.trim();
@@ -1774,34 +1982,19 @@ window.TEMPLATES['header'] = `
 <input class="navigation_mobile_toggle" id="navigation_mobile_toggle" type="checkbox" aria-label="Navigation öffnen" />
 <nav class="navigation_top" aria-label="Top Navigation">
 <ul class="clean_list">
-<li><a href="#!/index/index">{{menu_home}}</a></li>
-<li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
-<li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
-<li data-logout-show data-login-hide><a href="#!/users/login">{{menu_login}}</a></li>
-<li data-logout-show data-login-hide><a href="#!/users/registration">{{menu_registration}}</a></li>
-<li data-login-show data-logout-hide><a href="#!/users/logout">{{menu_logout}}</a></li>
+{{navigation_top_items}}
 </ul>
 </nav>
 <label class="navigation_mobile_icon" for="navigation_mobile_toggle" aria-label="Mobile Navigation">☰</label>
 </div>
 <nav class="navigation_mobile_top" aria-label="Mobile Top Navigation">
 <ul class="clean_list">
-<li><a href="#!/index/index">{{menu_home}}</a></li>
-<li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
-<li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
-<li data-logout-show data-login-hide><a href="#!/users/login">{{menu_login}}</a></li>
-<li data-logout-show data-login-hide><a href="#!/users/registration">{{menu_registration}}</a></li>
-<li data-login-show data-logout-hide><a href="#!/users/logout">{{menu_logout}}</a></li>
+{{navigation_mobile_top_items}}
 </ul>
 </nav>
 <nav class="navigation_mobile_bottom" aria-label="Mobile Bottom Navigation">
 <ul class="clean_list">
-<li><a href="#!/index/index">{{menu_home}}</a></li>
-<li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
-<li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
-<li data-logout-show data-login-hide><a href="#!/users/login">{{menu_login}}</a></li>
-<li data-logout-show data-login-hide><a href="#!/users/registration">{{menu_registration}}</a></li>
-<li data-login-show data-logout-hide><a href="#!/users/logout">{{menu_logout}}</a></li>
+{{navigation_mobile_bottom_items}}
 </ul>
 </nav>
 </header>
@@ -1811,16 +2004,15 @@ window.TEMPLATES['sidebar'] = `
 <section id="page_sidebar" aria-labelledby="page_sidebar_title">
 <h3 id="page_sidebar_title">{{sidebar_title}}</h3>
 <ul class="clean_list">
-<li><a href="#!/index/index">{{menu_home}}</a></li>
-<li><a href="#!/index/imprint">{{menu_imprint}}</a></li>
-<li><a href="#!/index/privacy">{{menu_privacy}}</a></li>
+{{sidebar_items}}
 </ul>
 </section>
 `.trim();
 window.TEMPLATES = Array.isArray(window.TEMPLATES) ? window.TEMPLATES : [];
 window.TEMPLATES['slideshow'] = `
 <section id="page_slideshow" class="slideshow" aria-label="{{aria_label}}">
-<article class="slideshow_slide">
+<article class="slideshow_slide" tabindex="0" data-keyboard="{{keyboard}}">
+<img class="slideshow_image" src="{{image}}" alt="{{alt}}" loading="lazy" />
 <h2>{{title}}</h2>
 <p>{{caption}}</p>
 <a href="{{target_route}}">{{cta}}</a>
@@ -2053,6 +2245,7 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
 'ui.sidebar.title': 'Navigation',
 'ui.breadcrumb.aria_label': 'Breadcrumb',
 'ui.slideshow.aria_label': 'Slideshow',
+'ui.slideshow.home.alt': 'Abstrakte Xtreme6 Framework Vorschau',
 'ui.slideshow.home.title': 'Willkommen bei Xtreme6',
 'ui.slideshow.home.caption': 'Das KI-getriebene Framework mit MD-first Workflow.',
 'ui.slideshow.home.cta': 'Jetzt starten',

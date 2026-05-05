@@ -32,17 +32,32 @@ Preferred route-level configuration shape inside `docs/routes.md`:
 ```yaml
 ui:
   header: true
+  footer: true
+  layout: "default"
   sidebar: false
+  sidebar_group: null
+  navigation: true
   breadcrumb: false
-  slideshow: null
+  breadcrumb_parent: "#!/index/index"
+  slideshow:
+    key: "home"
+    image: "assets/slides/home.svg"
+    alt_key: "ui.slideshow.home.alt"
+    title_key: "ui.slideshow.home.title"
+    caption_key: "ui.slideshow.home.caption"
+    cta_key: "ui.slideshow.home.cta"
+    target_route: "#!/users/registration"
+    keyboard: true
 ```
 
 Rules:
 
-- Header/footer are global defaults unless explicitly disabled by a future route-level UI config.
-- Sidebar links must point only to routes declared in `docs/routes.md`.
-- Breadcrumb items must derive from declared route captions (`captions.<controller>.<view>`).
-- Slideshow entries must define image source, translated title key, translated alt key, and optional target route.
+- Header/footer are global defaults but route-level config must state whether they are enabled.
+- `layout` controls body-level layout variants such as `default` or `auth`.
+- Header navigation and sidebar links must come from `ui_navigation` in `docs/routes.md` and point only to declared routes.
+- Sidebar routes reference a `sidebar_group`; each group must define `title_key` and i18n-backed items.
+- Breadcrumb items derive from declared route captions (`captions.<controller>.<view>`) and optional `breadcrumb_parent` route hierarchy.
+- Slideshow entries must define image source, translated title key, translated alt key, caption key, target route and keyboard support flag.
 
 ## consistency rules
 
@@ -54,6 +69,6 @@ Rules:
 
 ## prioritized gaps
 
-1. **Route-level UI config parser (P1)**: runtime currently mirrors `docs/routes.md` config in `XFramework.getRouteUiConfig(...)`; future compiler should generate this map from markdown.
-2. **Slideshow multi-slide data source (P2)**: baseline primitive exists; future work can add multiple slides/images from markdown.
-3. **Automated route-link validator (P2)**: `php compiler/report_ui_primitives.php` verifies template links against declared routes.
+1. **Generated route UI map (P2)**: runtime mirrors `docs/routes.md` in `XFramework.getRouteDefinitions()`; future compiler can generate that method directly from markdown.
+2. **Slideshow multi-slide data source (P2)**: baseline primitive supports route-level slide metadata; future work can add multiple slides/images from markdown.
+3. **Automated route-link validator (done baseline)**: `php compiler/report_ui_primitives.php` verifies template links, route UI config, navigation/sidebar groups, slideshow translation keys and declared target routes.

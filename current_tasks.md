@@ -8,8 +8,8 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 
 - **P0 (blocker für "framework final")**: keine
 - **P1 (hoch / produktreif machen)**: keine
-- **P2 (manager-/developer-experience)**: task 33, task 34, task 35
-- **abgeschlossen / baseline vorhanden**: task 1 bis task 32
+- **P2 (manager-/developer-experience)**: task 34, task 35
+- **abgeschlossen / baseline vorhanden**: task 1 bis task 33
 
 ## global definition of done (dod)
 
@@ -408,17 +408,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 33: route-level ui composition features
 
-- [ ] **subtask 33.1**: Route-level UI-Konfiguration in `docs/routes.md` finalisieren: header, footer, sidebar, breadcrumb, slideshow, layout variant.
-- [ ] **subtask 33.2**: Compiler-/QA-Check ergänzen, der UI-Konfigurationen gegen vorhandene Templates, Translation-Keys und Routen validiert.
-- [ ] **subtask 33.3**: Breadcrumb-Daten aus Route-Hierarchie, Captions und Params ableiten.
-- [ ] **subtask 33.4**: Sidebar-Gruppen und Navigation-Items aus Route-MD statt Template-Hardcoding generieren.
-- [ ] **subtask 33.5**: Slideshow-Konfiguration inklusive Bilder, Alt-Text, Caption-Key, Zielroute und Keyboard-Control definieren.
+- [x] **subtask 33.1**: Route-level UI-Konfiguration in `docs/routes.md` finalisieren: header, footer, sidebar, breadcrumb, slideshow, layout variant.
+- [x] **subtask 33.2**: Compiler-/QA-Check ergänzen, der UI-Konfigurationen gegen vorhandene Templates, Translation-Keys und Routen validiert.
+- [x] **subtask 33.3**: Breadcrumb-Daten aus Route-Hierarchie, Captions und Params ableiten.
+- [x] **subtask 33.4**: Sidebar-Gruppen und Navigation-Items aus Route-MD statt Template-Hardcoding generieren.
+- [x] **subtask 33.5**: Slideshow-Konfiguration inklusive Bilder, Alt-Text, Caption-Key, Zielroute und Keyboard-Control definieren.
 
 ### acceptance criteria (task 33)
 
-- [ ] Navigation, Breadcrumbs, Sidebar und Slideshow werden pro Route deklarativ gesteuert.
-- [ ] Alle sichtbaren UI-Texte sind i18n-pflichtig.
-- [ ] Undeklarierte Links oder fehlende UI-Translations blockieren QA.
+- [x] Navigation, Breadcrumbs, Sidebar und Slideshow werden pro Route deklarativ gesteuert.
+- [x] Alle sichtbaren UI-Texte sind i18n-pflichtig.
+- [x] Undeklarierte Links oder fehlende UI-Translations blockieren QA.
 
 ## task 34: md traceability dashboard/report
 

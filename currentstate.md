@@ -90,3 +90,13 @@
 - QA: `php compiler/report_secret_usage.php`, `php compiler/check_secret_leaks.php`, `php compiler/check_frontend_boundary.php` und `php compiler/report_sandbox_coverage.php` sind grün.
 - QA-Fund/Fix: Ein erster Runtime-Ausbau in `x/x_functions.php` wäre updateanfällig gewesen; die Erweiterung wurde in den non-`x_` Compiler-Report verlagert, sodass x-Core unverändert bleibt.
 - Manager: Task 32 ist erledigt; nächster P2-Task ist Task 33 `route-level ui composition features`.
+
+## milestone 2026-05-05: task 33 route-level ui composition features complete
+
+- Developer: `docs/routes.md` enthält route-level UI-Konfiguration für Header, Footer, Layout-Variante, Sidebar-Gruppe, Navigation, Breadcrumb-Hierarchie und Slideshow-Metadaten.
+- Developer: `docs/ui_primitives.md` beschreibt die erweiterte MD-API für route-level UI-Komposition und verweist auf `docs/routes.md` als Source-of-Truth.
+- Developer: `templates/header.js`, `templates/sidebar.js`, `templates/breadcrumb.js` und `templates/slideshow.js` nutzen dynamische Items/Params statt hartcodierter Linklisten; `XFramework.getRouteDefinitions()` und `getUiNavigationConfig()` spiegeln die Route-MD-Konfiguration in der Runtime.
+- Developer: `compiler/report_ui_primitives.php` validiert Route-UI-Konfiguration, Navigation-/Sidebar-Routen, Slideshow-Target-Routen und i18n-Keys gegen deklarierte Routen und Translations.
+- QA: `php compiler/report_ui_primitives.php`, `node --check scripts/x_framework.class.js`, `php compiler/compile_scripts.php`, `php compiler/compile_production.php`, `node --check dist/scripts--prod.js` und `node --check dist/app.js` sind grün.
+- QA-Fund/Fix: Der erste UI-Report-Parser wertete `ui_navigation`-Items fälschlich als Route-Blöcke; Fix begrenzt die Auswertung strikt auf den `routes:`-Block. Zusätzlich wurde ein Runtime-Bug gefixt, bei dem deaktivierte Sidebars nach Routenwechsel hängen bleiben konnten.
+- Manager: Task 33 ist erledigt; nächster P2-Task ist Task 34 `md traceability dashboard/report`.
