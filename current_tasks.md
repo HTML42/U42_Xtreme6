@@ -8,8 +8,8 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 
 - **P0 (blocker für "framework final")**: keine
 - **P1 (hoch / produktreif machen)**: keine
-- **P2 (manager-/developer-experience)**: task 34, task 35
-- **abgeschlossen / baseline vorhanden**: task 1 bis task 33
+- **P2 (manager-/developer-experience)**: task 35
+- **abgeschlossen / baseline vorhanden**: task 1 bis task 34
 
 ## global definition of done (dod)
 
@@ -422,17 +422,17 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 34: md traceability dashboard/report
 
-- [ ] **subtask 34.1**: Manager-Report definieren, der Features von Markdown-Quelle bis Runtime-Artefakt und QA-Check verfolgt.
-- [ ] **subtask 34.2**: Reports für Objects, Models, API, Workflows, Routes, Forms, UI-Primitives, Secrets und Sandbox zusammenführen.
-- [ ] **subtask 34.3**: Status je Feature anzeigen: specified, generated, implemented, tested, release-ready.
-- [ ] **subtask 34.4**: Offene Lücken automatisch in `current_tasks.md` oder einen Report zurückführen.
-- [ ] **subtask 34.5**: Report-Ausgabe menschenlesbar und maschinenlesbar planen.
+- [x] **subtask 34.1**: Manager-Report definieren, der Features von Markdown-Quelle bis Runtime-Artefakt und QA-Check verfolgt.
+- [x] **subtask 34.2**: Reports für Objects, Models, API, Workflows, Routes, Forms, UI-Primitives, Secrets und Sandbox zusammenführen.
+- [x] **subtask 34.3**: Status je Feature anzeigen: specified, generated, implemented, tested, release-ready.
+- [x] **subtask 34.4**: Offene Lücken automatisch in `current_tasks.md` oder einen Report zurückführen.
+- [x] **subtask 34.5**: Report-Ausgabe menschenlesbar und maschinenlesbar planen.
 
 ### acceptance criteria (task 34)
 
-- [ ] Project Manager sehen pro Feature, welche MD-Quelle, Runtime-Dateien und Checks dazugehören.
-- [ ] Runtime-only Änderungen sind sichtbar und gelten als Risiko.
-- [ ] Release-Entscheidungen basieren auf nachvollziehbaren Reports.
+- [x] Project Manager sehen pro Feature, welche MD-Quelle, Runtime-Dateien und Checks dazugehören.
+- [x] Runtime-only Änderungen sind sichtbar und gelten als Risiko.
+- [x] Release-Entscheidungen basieren auf nachvollziehbaren Reports.
 
 ## task 35: framework final qa playbooks
 

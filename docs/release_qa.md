@@ -34,6 +34,7 @@ php compiler/check_secret_leaks.php
 php compiler/report_secret_usage.php
 php compiler/report_sandbox_coverage.php
 php compiler/report_ai_generation.php
+php compiler/report_traceability_dashboard.php
 php compiler/report_workflow_traceability.php
 php compiler/report_object_generation.php
 php compiler/report_model_schema.php
@@ -83,6 +84,7 @@ The canonical AI-generation workflow and checkpoint order is `docs/md_first.md` 
 Release QA verifies that workflow through:
 
 - `php compiler/report_ai_generation.php`
+- `php compiler/report_traceability_dashboard.php`
 - `php compiler/release_gate.php`
 - `git --no-pager diff --stat`
 

@@ -100,3 +100,12 @@
 - QA: `php compiler/report_ui_primitives.php`, `node --check scripts/x_framework.class.js`, `php compiler/compile_scripts.php`, `php compiler/compile_production.php`, `node --check dist/scripts--prod.js` und `node --check dist/app.js` sind grün.
 - QA-Fund/Fix: Der erste UI-Report-Parser wertete `ui_navigation`-Items fälschlich als Route-Blöcke; Fix begrenzt die Auswertung strikt auf den `routes:`-Block. Zusätzlich wurde ein Runtime-Bug gefixt, bei dem deaktivierte Sidebars nach Routenwechsel hängen bleiben konnten.
 - Manager: Task 33 ist erledigt; nächster P2-Task ist Task 34 `md traceability dashboard/report`.
+
+## milestone 2026-05-05: task 34 md traceability dashboard/report complete
+
+- Developer: `compiler/report_traceability_dashboard.php` erstellt einen domänenübergreifenden Manager-Report für Objects, Models, API, Workflows, Routes, Forms, UI-Primitives, Secrets und Sandbox.
+- Developer: Der Report zeigt pro Feature Markdown-Quellen, Runtime-Artefakte, zugehörige QA-Kommandos und Status (`specified`, `generated`, `implemented`, `tested`, `release-ready`) und schreibt zusätzlich `dist/traceability_dashboard.json`.
+- Developer: `docs/md_first.md` und `docs/release_qa.md` dokumentieren den Traceability-Dashboard-Workflow; `compiler/release_gate.php` führt den Report als blockierenden Gate-Schritt aus.
+- QA: `php compiler/report_traceability_dashboard.php` und `php compiler/check_secret_leaks.php` sind grün; der Report zeigt 18 release-ready Features.
+- QA-Fund/Fix: Die erste Route-Auswertung zählte `ui_navigation`-Routen doppelt; Fix begrenzt die Erkennung auf den `routes:`-Block und dedupliziert Routen. Eine zu breite Secret-Leak-Ausnahme für `traceability_dashboard.json` wurde entfernt.
+- Manager: Task 34 ist erledigt; nächster P2-Task ist Task 35 `framework final qa playbooks`.

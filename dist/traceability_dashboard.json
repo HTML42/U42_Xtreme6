@@ -1,0 +1,301 @@
+{
+    "generated_at": "2026-05-05T17:29:04+02:00",
+    "summary": {
+        "total": 18,
+        "specified": 0,
+        "generated": 0,
+        "implemented": 0,
+        "tested": 0,
+        "release-ready": 18
+    },
+    "features": [
+        {
+            "domain": "objects",
+            "name": "x_user",
+            "md_sources": [
+                "objects/x_user/x_user.class.md"
+            ],
+            "runtime_artifacts": [
+                "objects/x_user/x_user.class.php",
+                "objects/x_user/x_user.class.js",
+                "objects/x_user/x_user.test.php",
+                "objects/x_user/x_user.test.js"
+            ],
+            "checks": [
+                "php compiler/check_md_first.php",
+                "php compiler/report_object_generation.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "objects",
+            "name": "x_users",
+            "md_sources": [
+                "objects/x_users/x_users.class.md"
+            ],
+            "runtime_artifacts": [
+                "objects/x_users/x_users.class.php",
+                "objects/x_users/x_users.class.js",
+                "objects/x_users/x_users.test.php",
+                "objects/x_users/x_users.test.js"
+            ],
+            "checks": [
+                "php compiler/check_md_first.php",
+                "php compiler/report_object_generation.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "models",
+            "name": "users",
+            "md_sources": [
+                "models/users.md"
+            ],
+            "runtime_artifacts": [],
+            "checks": [
+                "php compiler/report_model_schema.php",
+                "php compiler/report_model_relationships.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "api",
+            "name": "test",
+            "md_sources": [
+                "api/test/test.md"
+            ],
+            "runtime_artifacts": [
+                "api/test/bar.php",
+                "api/test/foo.php",
+                "api/test/upload.php"
+            ],
+            "checks": [
+                "php compiler/report_api_contracts.php",
+                "php compiler/check_frontend_boundary.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "api",
+            "name": "users",
+            "md_sources": [
+                "api/users/users.md"
+            ],
+            "runtime_artifacts": [
+                "api/users/index.php",
+                "api/users/login.php",
+                "api/users/registration.php"
+            ],
+            "checks": [
+                "php compiler/report_api_contracts.php",
+                "php compiler/check_frontend_boundary.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "workflows",
+            "name": "users.registration",
+            "md_sources": [
+                "docs/workflows/users.registration.md"
+            ],
+            "runtime_artifacts": [],
+            "checks": [
+                "php compiler/check_md_first.php",
+                "php compiler/report_workflow_traceability.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "routes",
+            "name": "index/index",
+            "md_sources": [
+                "docs/routes.md"
+            ],
+            "runtime_artifacts": [
+                "scripts/controllers/index.controller.md",
+                "scripts/controllers/index.controller.js",
+                "templates/view.index.index.js"
+            ],
+            "checks": [
+                "php compiler/check_md_first.php",
+                "php compiler/report_ui_primitives.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "routes",
+            "name": "index/imprint",
+            "md_sources": [
+                "docs/routes.md"
+            ],
+            "runtime_artifacts": [
+                "scripts/controllers/index.controller.md",
+                "scripts/controllers/index.controller.js",
+                "templates/view.index.imprint.js"
+            ],
+            "checks": [
+                "php compiler/check_md_first.php",
+                "php compiler/report_ui_primitives.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "routes",
+            "name": "index/privacy",
+            "md_sources": [
+                "docs/routes.md"
+            ],
+            "runtime_artifacts": [
+                "scripts/controllers/index.controller.md",
+                "scripts/controllers/index.controller.js",
+                "templates/view.index.privacy.js"
+            ],
+            "checks": [
+                "php compiler/check_md_first.php",
+                "php compiler/report_ui_primitives.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "routes",
+            "name": "users/login",
+            "md_sources": [
+                "docs/routes.md"
+            ],
+            "runtime_artifacts": [
+                "scripts/controllers/users.controller.md",
+                "scripts/controllers/users.controller.js",
+                "templates/view.users.login.js"
+            ],
+            "checks": [
+                "php compiler/check_md_first.php",
+                "php compiler/report_ui_primitives.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "routes",
+            "name": "users/registration",
+            "md_sources": [
+                "docs/routes.md"
+            ],
+            "runtime_artifacts": [
+                "scripts/controllers/users.controller.md",
+                "scripts/controllers/users.controller.js",
+                "templates/view.users.registration.js"
+            ],
+            "checks": [
+                "php compiler/check_md_first.php",
+                "php compiler/report_ui_primitives.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "routes",
+            "name": "users/logout",
+            "md_sources": [
+                "docs/routes.md"
+            ],
+            "runtime_artifacts": [
+                "scripts/controllers/users.controller.md",
+                "scripts/controllers/users.controller.js",
+                "templates/view.users.logout.js"
+            ],
+            "checks": [
+                "php compiler/check_md_first.php",
+                "php compiler/report_ui_primitives.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "forms",
+            "name": "examples.upload",
+            "md_sources": [
+                "docs/forms/examples.upload.md"
+            ],
+            "runtime_artifacts": [],
+            "checks": [
+                "php compiler/report_form_components.php",
+                "php compiler/report_form_flows.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "forms",
+            "name": "users.login",
+            "md_sources": [
+                "docs/forms/users.login.md"
+            ],
+            "runtime_artifacts": [],
+            "checks": [
+                "php compiler/report_form_components.php",
+                "php compiler/report_form_flows.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "forms",
+            "name": "users.registration",
+            "md_sources": [
+                "docs/forms/users.registration.md"
+            ],
+            "runtime_artifacts": [],
+            "checks": [
+                "php compiler/report_form_components.php",
+                "php compiler/report_form_flows.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "ui_primitives",
+            "name": "route_composition",
+            "md_sources": [
+                "docs/ui_primitives.md",
+                "docs/routes.md"
+            ],
+            "runtime_artifacts": [
+                "templates/body.js",
+                "templates/header.js",
+                "templates/sidebar.js",
+                "templates/footer.js",
+                "templates/breadcrumb.js",
+                "templates/slideshow.js"
+            ],
+            "checks": [
+                "php compiler/report_ui_primitives.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "secrets",
+            "name": "credentials_provider",
+            "md_sources": [
+                "docs/secrets.md",
+                "_secrets.example.json"
+            ],
+            "runtime_artifacts": [
+                "compiler/report_secret_usage.php"
+            ],
+            "checks": [
+                "php compiler/report_secret_usage.php",
+                "php compiler/check_secret_leaks.php"
+            ],
+            "status": "release-ready"
+        },
+        {
+            "domain": "sandbox",
+            "name": "mock_scenarios",
+            "md_sources": [
+                "docs/sandbox.md",
+                "docs/sandbox_scenarios.json"
+            ],
+            "runtime_artifacts": [
+                "scripts/x_api_mocks.js"
+            ],
+            "checks": [
+                "php compiler/report_sandbox_coverage.php"
+            ],
+            "status": "release-ready"
+        }
+    ]
+}

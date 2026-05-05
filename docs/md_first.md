@@ -82,6 +82,7 @@ Dokumentation soll nicht mehrfach ausgeschrieben werden: Wenn eine Regel bereits
   - ui primitive runtime/templates
   - release qa checks and task acceptance
   - AI generation workflow checkpoints and runtime-only risk reporting
+  - traceability dashboard from markdown source to runtime artifacts and QA checks
 
 ### workflows/processes
 
@@ -176,3 +177,14 @@ Checkpoint-Regeln:
 - nach Generatorläufen: `php compiler/report_ai_generation.php`, generierte Dateien geprüft.
 - vor Release-QA: alle notwendigen Compiler-/Report-Kommandos aus `docs/release_qa.md`.
 - vor Framework-Update: keine uncommitted Runtime-only Änderungen ohne MD-Quelle.
+
+## traceability dashboard
+
+`php compiler/report_traceability_dashboard.php` erzeugt einen Manager-Report, der Features über Domänen hinweg auflistet:
+
+- Markdown-Quelle (`md_sources`)
+- Runtime-/Compiler-/Template-Artefakte (`runtime_artifacts`)
+- zugehörige QA-Kommandos (`checks`)
+- Status (`specified`, `generated`, `implemented`, `tested`, `release-ready`)
+
+Der Report schreibt zusätzlich `dist/traceability_dashboard.json`. Diese Datei ist ein generiertes QA-Artefakt und darf erst nach erfolgreicher QA als Evidence genutzt werden.

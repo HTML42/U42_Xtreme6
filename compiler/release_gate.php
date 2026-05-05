@@ -18,6 +18,7 @@ $checks = [
     ['id' => 'secret_usage', 'command' => 'php compiler/report_secret_usage.php', 'blocks' => true],
     ['id' => 'sandbox_coverage', 'command' => 'php compiler/report_sandbox_coverage.php', 'blocks' => true],
     ['id' => 'ai_generation', 'command' => 'php compiler/report_ai_generation.php', 'blocks' => true],
+    ['id' => 'traceability_dashboard', 'command' => 'php compiler/report_traceability_dashboard.php', 'blocks' => true],
     ['id' => 'workflow_traceability', 'command' => 'php compiler/report_workflow_traceability.php', 'blocks' => true],
     ['id' => 'object_generation', 'command' => 'php compiler/report_object_generation.php', 'blocks' => true],
     ['id' => 'model_schema', 'command' => 'php compiler/report_model_schema.php', 'blocks' => true],

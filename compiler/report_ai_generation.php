@@ -102,6 +102,7 @@ function ignoredGeneratedReports(): array
 {
     return [
         'dist/release_gate_report.json',
+        'dist/traceability_dashboard.json',
     ];
 }
 
