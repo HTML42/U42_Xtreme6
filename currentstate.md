@@ -144,3 +144,11 @@
 - QA: Alle vorhandenen Playbooks (`new domain feature flow`, `credentialed external api feature`, `ui feature flow`, `form/upload feature flow`) wurden gegen plain Git-/Pager-Kommandos geprüft; erlaubte Treffer sind nur Verbotsformulierungen oder `git --no-pager ...` Beispiele.
 - QA-Fund/Fix: Der Audit war in den Einzelplaybooks zwar praktisch erfüllt, aber nicht als gemeinsame Baseline dokumentiert; die Baseline wurde ergänzt, damit Task 35.5 reproduzierbar prüfbar bleibt.
 - Manager: Task 35.5 und damit Task 35 sind erledigt; alle Framework-Final-QA-Playbooks starten bei Markdown, enden mit Release-QA und enthalten keine interaktiven Terminal-/Pager-Kommandos.
+
+## milestone 2026-05-05: global i18n seo dod complete
+
+- Developer: `docs/x_framework.md` dokumentiert jetzt den vollständigen i18n-Runtime-Vertrag: `?lang=xx`-Direkteinstieg, localStorage-Fallback, `XLanguage.setCurrentLanguage(...)`, `x6:language`-Event, `<html lang>`, `<meta name="language">` und `hreflang`/`x-default`-Alternate-Ausgabe.
+- Developer: `scripts/x_framework.class.js` hört jetzt auf `x6:language` und rendert Shell-UI-Primitives sowie die aktuelle Route ohne Full-Reload neu, damit Header, Sidebar, Breadcrumb, Slideshow und View-Texte den aktiven Sprachstand übernehmen.
+- QA: `node --check scripts/x_framework.class.js`, `php compiler/compile_scripts.php`, `php compiler/compile_production.php`, `node --check dist/scripts--prod.js` und `node --check dist/app.js` sind grün; die Translation-Governance validiert 1 konfigurierte Sprache und 31 Pflicht-Keys.
+- QA-Fund/Fix: Der erste QA-Lauf zeigte fehlende Manager-Evidence im AI-Generation-Report; `current_tasks.md` und `currentstate.md` wurden aktualisiert, sodass die globale i18n/SEO-DoD nachvollziehbar abgeschlossen ist.
+- Manager: Die globale Definition-of-Done für i18n, Sprachwechsel, Direkteinstieg und SEO-Head/Alternate ist erledigt; `current_tasks.md` enthält keine offenen Checkboxen mehr.

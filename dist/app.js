@@ -1159,7 +1159,9 @@ this.defaultView = options.defaultView || 'index';
 this.currentRoute = this.getEmptyRoute();
 this.router = null;
 this.handleRoute = this.handleRoute.bind(this);
+this.handleLanguageChange = this.handleLanguageChange.bind(this);
 window.addEventListener('x6:route', this.handleRoute);
+window.addEventListener('x6:language', this.handleLanguageChange);
 this.renderBaseLayout();
 }
 attachRouter(router) {
@@ -1167,12 +1169,18 @@ this.router = router;
 }
 destroy() {
 window.removeEventListener('x6:route', this.handleRoute);
+window.removeEventListener('x6:language', this.handleLanguageChange);
 }
 handleRoute(event) {
 if (!event || !event.detail) {
 return;
 }
 this.renderRoute(event.detail);
+}
+handleLanguageChange() {
+const route = this.currentRoute || this.getEmptyRoute();
+this.renderConfiguredShellParts();
+this.renderRoute(route);
 }
 getEmptyRoute() {
 return {

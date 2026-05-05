@@ -18,7 +18,7 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 - [x] Alle Form-Flows laufen per AJAX, inkl. Datei-Upload, Inline-Error + Error-Summary.
 - [x] Secrets sind nicht im Frontend-Bundle/Repo-Leak enthalten.
 - [x] Sandbox/Mock-Modus ermöglicht End-to-End-Demos ohne Live-Backend.
-- [ ] i18n unterstützt Sprachwechsel, Direkteinstieg und SEO-Head/alternate sauber.
+- [x] i18n unterstützt Sprachwechsel, Direkteinstieg und SEO-Head/alternate sauber.
 
 ## task 1: datenbankabstraktion stabilisieren
 

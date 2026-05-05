@@ -226,6 +226,7 @@ i18n runtime behavior:
 - `config.json` can define `Language`, `FallbackLanguage`, and `AvailableLanguages`.
 - runtime language priority is URL `?lang=xx` > localStorage (`x6.language`) > config language.
 - `XLanguage.setCurrentLanguage(...)` updates `<html lang>`, persists the choice, and emits `x6:language`.
+- `XFramework` listens to `x6:language`, re-renders shell UI primitives and the current route without a full page reload, so header, sidebar, breadcrumb, slideshow and view text reflect the active language.
 - dev/prod execute files output `<meta name="language">` and `link rel="alternate" hreflang="..."` for all configured languages plus `x-default`.
 
 ## template naming convention (views + partials)

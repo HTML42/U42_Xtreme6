@@ -1345,7 +1345,9 @@ class XFramework {
     this.router = null;
 
     this.handleRoute = this.handleRoute.bind(this);
+    this.handleLanguageChange = this.handleLanguageChange.bind(this);
     window.addEventListener('x6:route', this.handleRoute);
+    window.addEventListener('x6:language', this.handleLanguageChange);
 
     this.renderBaseLayout();
   }
@@ -1356,6 +1358,7 @@ class XFramework {
 
   destroy() {
     window.removeEventListener('x6:route', this.handleRoute);
+    window.removeEventListener('x6:language', this.handleLanguageChange);
   }
 
   handleRoute(event) {
@@ -1364,6 +1367,13 @@ class XFramework {
     }
 
     this.renderRoute(event.detail);
+  }
+
+  handleLanguageChange() {
+    const route = this.currentRoute || this.getEmptyRoute();
+
+    this.renderConfiguredShellParts();
+    this.renderRoute(route);
   }
 
   getEmptyRoute() {
