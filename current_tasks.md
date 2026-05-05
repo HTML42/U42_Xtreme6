@@ -439,7 +439,7 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 - [x] **subtask 35.1**: Playbook für neuen Domain-Feature-Flow erstellen: Object-Pair, Model, API, Workflow, Route, Form, Translation, QA.
 - [x] **subtask 35.2**: Playbook für credentialed external API feature erstellen: Secrets, Backend-Proxy, FE-XApi, Sandbox, Leak-Check.
 - [x] **subtask 35.3**: Playbook für UI-Feature erstellen: Route-UI-Konfiguration, Navigation/Breadcrumb/Sidebar/Slideshow, i18n/a11y.
-- [ ] **subtask 35.4**: Playbook für Form/Upload-Feature erstellen: Form-MD, API-Contract, Upload-Regeln, Error-Mapping, Sandbox-Mocks.
+- [x] **subtask 35.4**: Playbook für Form/Upload-Feature erstellen: Form-MD, API-Contract, Upload-Regeln, Error-Mapping, Sandbox-Mocks.
 - [ ] **subtask 35.5**: Alle Playbooks auf non-interactive QA-Kommandos und `--no-pager` Git-Nutzung prüfen.
 
 ### acceptance criteria (task 35)

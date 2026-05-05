@@ -130,3 +130,10 @@
 - QA: `php compiler/check_md_first.php`, `php compiler/report_ui_primitives.php`, `php compiler/check_frontend_boundary.php`, `php compiler/report_ai_generation.php`, `php compiler/compile_scripts.php`, `php compiler/compile_production.php` und `php compiler/release_gate.php` sind grün; das Release-Gate lief mit 21/21 bestandenen Checks.
 - QA-Fund/Fix: Das Playbook wurde direkt mit expliziten `--no-pager` Diff-Regeln und gezielten UI-/Boundary-/Compile-Checks formuliert; keine weiteren Bugs offen.
 - Manager: Task 35.3 ist erledigt; nächster offener P2-Task ist Task 35.4 `Form/Upload-Feature playbook`.
+
+## milestone 2026-05-05: task 35.4 form/upload feature playbook complete
+
+- Developer: `docs/release_qa.md` enthält jetzt das Playbook `form/upload feature flow` für FormAjax- und Upload-Features mit Scope-Entscheidung, `docs/forms/<form>.md`, API-Contract, Upload-Regeln, Error-Mapping, Sandbox-Mocks, Translations und Runtime-Ableitung über zentrale `XApi`-Form-Primitives.
+- QA: `php compiler/check_md_first.php`, `php compiler/report_form_components.php`, `php compiler/report_form_flows.php`, `php compiler/report_api_contracts.php`, `php compiler/report_sandbox_coverage.php`, `php compiler/check_frontend_boundary.php`, `php compiler/report_ai_generation.php`, `php compiler/compile_scripts.php`, `php compiler/compile_production.php` und `php compiler/release_gate.php` sind grün; das Release-Gate lief mit 21/21 bestandenen Checks.
+- QA-Fund/Fix: Die erste QA zeigte fehlende Task-/State-Evidence im AI-Generation-Report; `current_tasks.md` und `currentstate.md` wurden mit Manager-Evidence aktualisiert.
+- Manager: Task 35.4 ist erledigt; nächster offener P2-Task ist Task 35.5 `Playbooks auf non-interactive QA-Kommandos und --no-pager Git-Nutzung prüfen`.

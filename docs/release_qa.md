@@ -210,6 +210,49 @@ Use this playbook when adding or changing route-level UI behavior such as naviga
    - Accept the task only when routes are declared, UI config validates, links target declared routes, translations exist, a11y expectations are documented or implemented and the release gate is green.
    - Update `current_tasks.md` and `currentstate.md` with the changed UI primitive or route composition, QA evidence and remaining UI/a11y risks.
 
+### form/upload feature flow
+
+Use this playbook when adding or changing submitted forms, FormAjax behavior, upload fields, upload validation, upload progress or form-specific sandbox mocks.
+
+1. **Scope and existing-form decision**
+   - Read `agents.md`, `docs/forms.md`, `docs/x_api.md`, `docs/sandbox.md`, `docs/md_first.md` and this release QA checklist before editing runtime templates or controllers.
+   - Check whether the feature extends an existing form under `docs/forms/*.md` before creating a new form Markdown file.
+   - If the form belongs to a new domain feature, follow the `new domain feature flow` first so Object-Pair, Model, API, Workflow markdown, Route and Translations are already specified.
+2. **Markdown source-of-truth**
+   - Form source: create or update `docs/forms/<form>.md` with `role`, `api contract`, `fields`, `rendering`, `validation`, `error handling`, `translations` and `accessibility`.
+   - API contract: create or update the matching `api/<dimension>/<dimension>.md` endpoint with method, request body or multipart fields, success response, field/global error responses, auth requirements, validation rules and testability.
+   - Upload fields: declare `component: upload`, submitted `name`, `accept`, `multiple`, `max size`, `max files`, progress behavior and backend-authoritative validation.
+   - Error mapping: document backend field-error keys exactly as submitted field names; global errors use only reserved keys such as `form`, `request`, `credentials`, `method`, `mock` or `_global`.
+   - Sandbox source: update `docs/sandbox_scenarios.json` or the routed sandbox documentation so success, validation-error, timeout and upload-error scenarios use the same standard API payload as live endpoints.
+   - Translations: add or verify label, help, status, upload-progress and validation/error keys for every configured language before changing templates.
+3. **Runtime and generated artifacts**
+   - Implement templates with lowercase filenames and central form primitives: `.x_form_field[data-field]`, `.x_form_input_error[data-error-for]`, `.x_form_error_summary_slot` and `.x_form_upload_progress` when uploads are present.
+   - Frontend controllers must submit only through `XApi.submitForm(formElement, options)` and may not implement custom field-error DOM rendering.
+   - Use `XApi.setFormState(...)`, `XApi.renderFormErrors(...)`, `XApi.clearFormErrors(...)` and `XApi.renderUploadProgress(...)` through the central helper behavior instead of feature-local duplicates.
+   - API endpoints must return the standard `x_api_payload(...)` / `x_api_output(...)` shape and key validation errors by submitted field name.
+   - Sandbox mocks must simulate the documented Xtreme6 endpoint, including realistic uploaded file metadata for upload success and field-specific upload errors for failure.
+4. **Developer self-check**
+   - Verify deterministic lowercase field IDs, exact `name`/error-key matching, required ARIA metadata, summary placement before submit and password-like field clearing on failure.
+   - Verify upload prevalidation covers type, size and file count while keeping backend validation authoritative.
+   - Review diffs with `git --no-pager diff --stat` and targeted `git --no-pager diff -- <path>` only.
+5. **Non-interactive QA**
+   - Run targeted checks before the release gate:
+     - `php compiler/check_md_first.php`
+     - `php compiler/report_form_components.php`
+     - `php compiler/report_form_flows.php`
+     - `php compiler/report_api_contracts.php`
+     - `php compiler/report_sandbox_coverage.php`
+     - `php compiler/check_frontend_boundary.php`
+     - `php compiler/report_ai_generation.php`
+     - `php compiler/compile_scripts.php`
+     - `php compiler/compile_production.php`
+     - `php compiler/release_gate.php`
+   - For upload runtime changes, also run available syntax checks such as `node --check scripts/x_api.class.js`, `node --check dist/scripts--prod.js` and `node --check dist/app.js` after compilation.
+   - Use only non-interactive Git review commands; never use plain `git diff`, `git log` or `git show`.
+6. **Manager acceptance**
+   - Accept the task only when Form-MD, API contract, upload rules, error mapping, translations and sandbox mocks are traceable and all targeted checks plus the release gate pass.
+   - Update `current_tasks.md` and `currentstate.md` with the form/upload feature, QA evidence, QA findings/fixes and any remaining environment-only skips.
+
 ## manager acceptance
 
 A task can be marked done only after:
