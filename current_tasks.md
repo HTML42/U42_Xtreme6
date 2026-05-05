@@ -7,15 +7,15 @@ Finalisierung des KI-driven Frameworks mit **MD-first Source-of-Truth**, klarer 
 ## release-priorität (manager view)
 
 - **P0 (blocker für "framework final")**: keine
-- **P1 (hoch / produktreif machen)**: task 30, task 31, task 32
+- **P1 (hoch / produktreif machen)**: keine
 - **P2 (manager-/developer-experience)**: task 33, task 34, task 35
-- **abgeschlossen / baseline vorhanden**: task 1 bis task 29
+- **abgeschlossen / baseline vorhanden**: task 1 bis task 32
 
 ## global definition of done (dod)
 
 - [x] Jede Runtime-Funktionalität ist auf eine MD-Spezifikation zurückführbar.
 - [x] FE/BE-Verträge sind via API dokumentiert, testbar und versionierbar.
-- [ ] Alle Form-Flows laufen per AJAX, inkl. Datei-Upload, Inline-Error + Error-Summary.
+- [x] Alle Form-Flows laufen per AJAX, inkl. Datei-Upload, Inline-Error + Error-Summary.
 - [x] Secrets sind nicht im Frontend-Bundle/Repo-Leak enthalten.
 - [x] Sandbox/Mock-Modus ermöglicht End-to-End-Demos ohne Live-Backend.
 - [ ] i18n unterstützt Sprachwechsel, Direkteinstieg und SEO-Head/alternate sauber.
@@ -355,7 +355,7 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 - [x] **subtask 29.1**: `compiler/release_gate.php` als Sammelcheck spezifizieren.
 - [x] **subtask 29.2**: MD-first, API-contract, translation-governance, secret-scan, form-audit, route-link-audit zusammenführen.
 - [x] **subtask 29.3**: JSON-Smoke und MySQL-Smoke/Skip in Release-Gate integrieren.
-- [x] **subtask 29.4**: Exit-Codes und maschinenlesbaren Report definieren.
+- [x] **subtask 29.4**: Exit-Codes und maschinenlesbaren Report definieren (inkl. sanitisiertem `dist/release_gate_report.json` als erwartetes Gate-Artefakt).
 - [x] **subtask 29.5**: `current_tasks.md` globale DoD nur bei grünem Release-Gate vollständig abhaken.
 
 ### acceptance criteria (task 29)
@@ -366,45 +366,45 @@ Die folgenden Tasks beschreiben die nächsten Features für das neue Xtreme6 Fra
 
 ## task 30: ai documentation routing cleanup
 
-- [ ] **subtask 30.1**: `agents.md` Routing-Tabelle so erweitern, dass Forms/FormAjax/Uploads, FE-BE-Boundary, UI-Primitives, Secrets, Sandbox und Release-QA eindeutig auf kanonische Docs zeigen.
-- [ ] **subtask 30.2**: Doppelte AI-Prozessbeschreibungen in Detaildocs reduzieren und stattdessen auf `agents.md`, `docs/md_first.md` und die jeweilige Fachdoc verlinken.
-- [ ] **subtask 30.3**: Non-interactive Terminal-Regel verbindlich in `agents.md` und `docs/release_qa.md` halten: niemals Befehle starten, die auf `q`/Pager warten; Git immer mit `git --no-pager ...`.
-- [ ] **subtask 30.4**: Dokumentations-Checkpoint für Tasks definieren: erst `agents.md`, dann die gerouteten Fachdocs, dann die konkrete MD-Source-of-Truth ändern.
-- [ ] **subtask 30.5**: Prüfen, ob neue AI-Dokumentationsdateien nötig sind; wenn nicht, bestehende Docs verknüpfen statt neue Prozessdocs anzulegen.
+- [x] **subtask 30.1**: `agents.md` Routing-Tabelle so erweitern, dass Forms/FormAjax/Uploads, FE-BE-Boundary, UI-Primitives, Secrets, Sandbox und Release-QA eindeutig auf kanonische Docs zeigen.
+- [x] **subtask 30.2**: Doppelte AI-Prozessbeschreibungen in Detaildocs reduzieren und stattdessen auf `agents.md`, `docs/md_first.md` und die jeweilige Fachdoc verlinken.
+- [x] **subtask 30.3**: Non-interactive Terminal-Regel verbindlich in `agents.md` und `docs/release_qa.md` halten: niemals Befehle starten, die auf `q`/Pager warten; Git immer mit `git --no-pager ...`.
+- [x] **subtask 30.4**: Dokumentations-Checkpoint für Tasks definieren: erst `agents.md`, dann die gerouteten Fachdocs, dann die konkrete MD-Source-of-Truth ändern.
+- [x] **subtask 30.5**: Prüfen, ob neue AI-Dokumentationsdateien nötig sind; wenn nicht, bestehende Docs verknüpfen statt neue Prozessdocs anzulegen.
 
 ### acceptance criteria (task 30)
 
-- [ ] Eine KI kann aus `agents.md` eindeutig ableiten, welche Fachdocs vor welchem Task gelesen werden müssen.
-- [ ] Es gibt keine widersprüchlichen AI-Workflow-Regeln in mehreren Dateien.
-- [ ] Non-interactive/`--no-pager` ist als harte Arbeitsregel dokumentiert.
+- [x] Eine KI kann aus `agents.md` eindeutig ableiten, welche Fachdocs vor welchem Task gelesen werden müssen.
+- [x] Es gibt keine widersprüchlichen AI-Workflow-Regeln in mehreren Dateien.
+- [x] Non-interactive/`--no-pager` ist als harte Arbeitsregel dokumentiert.
 
 ## task 31: formajax ux runtime primitives
 
-- [ ] **subtask 31.1**: Frameworkseitigen Error-Renderer definieren/implementieren: Feldfehler direkt am Input, Summary über Submit-Button, Fokus auf ersten Fehler.
-- [ ] **subtask 31.2**: Vorgefertigte Formelemente als zentrale Runtime-/Template-Primitives dokumentieren: Input, Select, Textarea, Checkbox, Radio, Upload, Hidden, Date.
-- [ ] **subtask 31.3**: Einheitliche Field-Naming-Konvention für API-Errors festlegen, damit Backend-Validierungen automatisch den richtigen Inputs zugeordnet werden.
-- [ ] **subtask 31.4**: Form-State-Komponenten ergänzen: loading, success, error, disabled, retry, upload-progress.
-- [ ] **subtask 31.5**: Accessibility-Verhalten standardisieren: `aria-invalid`, `aria-describedby`, Live-Region für Summary, Tastaturfokus.
+- [x] **subtask 31.1**: Frameworkseitigen Error-Renderer definieren/implementieren: Feldfehler direkt am Input, Summary über Submit-Button, Fokus auf ersten Fehler.
+- [x] **subtask 31.2**: Vorgefertigte Formelemente als zentrale Runtime-/Template-Primitives dokumentieren: Input, Select, Textarea, Checkbox, Radio, Upload, Hidden, Date.
+- [x] **subtask 31.3**: Einheitliche Field-Naming-Konvention für API-Errors festlegen, damit Backend-Validierungen automatisch den richtigen Inputs zugeordnet werden.
+- [x] **subtask 31.4**: Form-State-Komponenten ergänzen: loading, success, error, disabled, retry, upload-progress.
+- [x] **subtask 31.5**: Accessibility-Verhalten standardisieren: `aria-invalid`, `aria-describedby`, Live-Region für Summary, Tastaturfokus.
 
 ### acceptance criteria (task 31)
 
-- [ ] Feature-Controller müssen keine eigene Error-DOM-Logik mehr schreiben.
-- [ ] Backend-Validation-Errors erscheinen automatisch am passenden Formelement und in der Summary.
-- [ ] Upload-, Login- und Registration-Forms nutzen denselben FormAjax-UX-Standard.
+- [x] Feature-Controller müssen keine eigene Error-DOM-Logik mehr schreiben.
+- [x] Backend-Validation-Errors erscheinen automatisch am passenden Formelement und in der Summary.
+- [x] Upload-, Login- und Registration-Forms nutzen denselben FormAjax-UX-Standard.
 
 ## task 32: external api integration blueprint
 
-- [ ] **subtask 32.1**: MD-Schema für externe API-Integrationen definieren: Service-Name, Zweck, Backend-Proxy-Endpoint, benötigte Secrets, Rate-Limits, Fehlerfälle.
-- [ ] **subtask 32.2**: Backend-only Proxy-Pattern dokumentieren: FE ruft Xtreme6-API auf, Xtreme6-Backend ruft externe API mit Secrets auf.
-- [ ] **subtask 32.3**: Secret-Abhängigkeiten ohne Werte reporten: welcher API-Endpoint benötigt welchen Secret-Key-Namen.
-- [ ] **subtask 32.4**: Sandbox-Mocks für externe APIs aus derselben Integrations-MD ableiten.
-- [ ] **subtask 32.5**: Failure-Strategie festlegen: fehlende Credentials, externe Timeouts, ungültige Responses, Rate-Limit.
+- [x] **subtask 32.1**: MD-Schema für externe API-Integrationen definieren: Service-Name, Zweck, Backend-Proxy-Endpoint, benötigte Secrets, Rate-Limits, Fehlerfälle.
+- [x] **subtask 32.2**: Backend-only Proxy-Pattern dokumentieren: FE ruft Xtreme6-API auf, Xtreme6-Backend ruft externe API mit Secrets auf.
+- [x] **subtask 32.3**: Secret-Abhängigkeiten ohne Werte reporten: welcher API-Endpoint benötigt welchen Secret-Key-Namen.
+- [x] **subtask 32.4**: Sandbox-Mocks für externe APIs aus derselben Integrations-MD ableiten.
+- [x] **subtask 32.5**: Failure-Strategie festlegen: fehlende Credentials, externe Timeouts, ungültige Responses, Rate-Limit.
 
 ### acceptance criteria (task 32)
 
-- [ ] Externe API-Anbindungen sind MD-first, sicher und FE/BE-getrennt beschrieben.
-- [ ] Secrets verlassen nie das Backend und erscheinen nie im Frontend-Bundle.
-- [ ] Jede externe Integration hat Live- und Sandbox-Pfade.
+- [x] Externe API-Anbindungen sind MD-first, sicher und FE/BE-getrennt beschrieben.
+- [x] Secrets verlassen nie das Backend und erscheinen nie im Frontend-Bundle.
+- [x] Jede externe Integration hat Live- und Sandbox-Pfade.
 
 ## task 33: route-level ui composition features
 

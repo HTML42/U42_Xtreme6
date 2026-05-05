@@ -10,6 +10,8 @@ This document defines the **framework-level style system** for xtreme6.
 
 ## ai-driven styling concept
 
+General AI checkpoint rules live in `agents.md` and `docs/md_first.md`; this section only describes style-specific source mapping.
+
 xtreme6 style handling is intentionally **AI-driven** and split into two layers:
 
 1. `docs/styles.md` contains project style instructions (config + element descriptions)

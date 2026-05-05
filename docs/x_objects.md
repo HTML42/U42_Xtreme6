@@ -62,12 +62,7 @@ Generated PHP, JavaScript, and test files should not be treated as the primary b
 
 Object generation is specified MD-first and checked before release.
 
-Canonical flow:
-
-1. update `objects/<object>/<object>.class.md`
-2. run `php compiler/check_md_first.php`
-3. review `php compiler/report_object_generation.php`
-4. run `php compiler/compile_objects.php`
+Canonical object flow: follow `agents.md` and `docs/md_first.md`, then update `objects/<object>/<object>.class.md`, review `php compiler/report_object_generation.php`, and run object compilation through the release QA flow.
 
 Every object MD must expose a machine-readable-ish `## generator schema` section with these keys:
 

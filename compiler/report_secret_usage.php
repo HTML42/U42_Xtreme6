@@ -47,6 +47,10 @@ if ($report['services'] === []) {
         echo '  - credential keys: ' . implodeOrNone($serviceReport['credential_keys']) . "\n";
         echo '  - required secrets: ' . implodeOrNone(array_values($serviceReport['required_secrets'])) . "\n";
         echo '  - env mappings: ' . implodeOrNone(array_values($serviceReport['env_mappings'])) . "\n";
+        $serviceConfig = is_array($example['services'][$service] ?? null) ? $example['services'][$service] : [];
+        echo '  - proxy endpoints: ' . implodeOrNone(collectServiceList($serviceConfig, 'proxy_endpoints')) . "\n";
+        echo '  - rate limits: ' . implodeOrNone(collectServiceMapValues($serviceConfig, 'rate_limits')) . "\n";
+        echo '  - failure strategy: ' . implodeOrNone(collectServiceMapKeys($serviceConfig, 'failure_strategy')) . "\n";
     }
 }
 
@@ -123,6 +127,12 @@ function validateSecretSchema(?array $secrets, array &$errors, string $label, bo
             $errors[] = $label . ': services.' . $serviceName . ' missing required_secrets object';
         }
 
+        foreach (['proxy_endpoints', 'rate_limits', 'failure_strategy'] as $blueprintKey) {
+            if (isset($serviceConfig[$blueprintKey]) && !is_array($serviceConfig[$blueprintKey])) {
+                $errors[] = $label . ': services.' . $serviceName . '.' . $blueprintKey . ' must be an array/object';
+            }
+        }
+
         if ($example && is_array($serviceConfig['credentials'] ?? null)) {
             foreach ($serviceConfig['credentials'] as $credentialKey => $credentialValue) {
                 if (!is_string($credentialValue) || !isPlaceholderValue($credentialValue)) {
@@ -170,6 +180,24 @@ function implodeOrNone(array $values): string
 {
     $values = array_values(array_filter(array_map('strval', $values), static fn($value) => $value !== ''));
     return $values === [] ? 'none' : implode(', ', $values);
+}
+
+function collectServiceList(array $serviceReport, string $key): array
+{
+    $values = $serviceReport[$key] ?? [];
+    return is_array($values) ? array_values(array_map('strval', $values)) : [];
+}
+
+function collectServiceMapValues(array $serviceReport, string $key): array
+{
+    $values = $serviceReport[$key] ?? [];
+    return is_array($values) ? array_values(array_map('strval', $values)) : [];
+}
+
+function collectServiceMapKeys(array $serviceReport, string $key): array
+{
+    $values = $serviceReport[$key] ?? [];
+    return is_array($values) ? array_keys($values) : [];
 }
 
 function relativePath(string $root, string $path): string

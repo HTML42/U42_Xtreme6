@@ -63,3 +63,27 @@ Use this block when defining a new component/element for AI-driven CSS generatio
 - Accessibility notes: minimum contrast 4.5:1, visible keyboard focus ring
 - Output CSS file: styles/promo-card.css
 ```
+
+## framework form ajax ux primitives
+
+### element: x-form-field
+- Purpose: central wrapper for generated/guided form controls, labels, help text, inline validation errors, and state-specific styling.
+- Layout: vertical block with label, control, optional help, and an inline error slot.
+- Spacing: use `--x-distance-normal` for field gaps and half-distance for inner status/error spacing.
+- Colors: field errors use a high-contrast danger color; valid neutral state uses existing main color tokens.
+- Typography: labels and errors use `--x-font-size-normal` and remain readable at default zoom.
+- States: `[aria-invalid="true"]` gets a visible border/focus affordance; disabled/loading states reduce interaction without hiding labels/errors.
+- Responsive behavior: fields are full-width by default and keep error text close to the affected input.
+- Accessibility notes: error summaries must be visible, focusable, assertive live regions; inline errors are connected via `aria-describedby`.
+- Output CSS file: styles/forms.css
+
+### element: x-form-upload-progress
+- Purpose: display FormAjax upload progress consistently for upload fields.
+- Layout: progress text/bar lives near the form status and before submit controls.
+- Spacing: use half of `--x-distance-normal` around the progress region.
+- Colors: progress indicator uses `--x-color-secondary-normal`; background remains neutral.
+- Typography: progress text uses `--x-font-size-normal`.
+- States: hidden while idle/success without active upload, visible for `upload-progress` and completed upload summaries.
+- Responsive behavior: progress bar is width-fluid.
+- Accessibility notes: progress region uses `role="status"`, `aria-live="polite"`, and `aria-valuenow` where applicable.
+- Output CSS file: styles/forms.css

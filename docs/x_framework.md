@@ -15,22 +15,17 @@ u42 xtreme6 is a **markdown-driven framework**.
 
 The framework starts with markdown definitions. Those files define behavior and constraints. PHP classes, JavaScript classes, controllers, templates, and tests are derived from markdown source files.
 
-Core idea:
+Core idea: write or change behavior in markdown, derive runtime/tests, then aggregate generated outputs under `dist/`.
 
-1. write or change behavior in markdown
-2. generate runtime code and tests from that definition
-3. aggregate generated sources into build outputs under `dist/`
-
-MD-first governance, source mapping, and build-gate expectations are documented in `docs/md_first.md`.
+MD-first governance, source mapping, AI checkpoints, and build-gate expectations are documented in `docs/md_first.md`.
 
 ## markdown is the source-of-truth
 
 The framework is designed so that humans no longer maintain business logic directly in runtime files.
 
 - no example files as feature specification source.
-- no manual programming in object runtime classes as primary workflow.
-- no manual programming in controller/template runtime files as primary workflow.
-- markdown files are the authoritative specification for generation.
+- no manual programming in runtime files as primary workflow.
+- markdown files are the authoritative specification for generation; see `docs/md_first.md` for detailed source mapping.
 
 Runtime files can still exist in the repository, but they are treated as generated artifacts.
 

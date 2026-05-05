@@ -112,12 +112,9 @@ JSON- und MySQL-Engine müssen dieselben Modellregeln respektieren.
 
 ## AI-Workflow
 
-Wenn eine neue Tabelle benötigt wird:
+Für den allgemeinen AI-/Developer-Checkpoint gilt `agents.md` → `docs/md_first.md`.
 
-1. Neue Modell-Datei in `models/` erstellen (z. B. `models/users.md`).
-2. Felder inklusive Typ/Regeln dokumentieren.
-3. Besondere Feldregeln (z. B. Länge, Zeichensatz, uniqueness) eindeutig festhalten.
-4. Erst danach DB-Engine/Code-Implementierung erweitern.
+Model-spezifisch: Wenn eine neue Tabelle benötigt wird, zuerst `models/<table>.md` mit Feldern, Typen, Defaults, Constraints, Relationen und Validierung erweitern; erst danach DB-Engine/Code/Reports ableiten.
 
 ## Engine-Bootstrap aus Models
 

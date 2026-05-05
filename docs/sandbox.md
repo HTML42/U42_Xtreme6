@@ -107,6 +107,38 @@ XApi.registerMock('test/upload', async ({ body }) => {
 
 Validation-Error-Mocks müssen Field-Errors mit dem Upload-Feldnamen liefern, z. B. `{ attachment: 'file type not allowed' }`.
 
+## external api proxy mocks
+
+Sandbox-Mocks für credentialed external APIs simulieren immer den **Xtreme6 Backend-Proxy-Endpunkt**, nicht die fremde Upstream-URL.
+
+Rules:
+
+- Source-of-truth ist die externe Integrationsbeschreibung nach `docs/x_api.md` plus die wertfreie Service-Struktur in `docs/secrets.md`.
+- Endpoint-Keys verwenden den Xtreme6-Pfad, z. B. `POST integrations/example_lookup`.
+- Payloads nutzen den Standard-API-Contract (`success`, `status`, `response`, `errors`).
+- Mocks dürfen keine echten Service-Namen enthalten, wenn diese vertraulich sind; öffentliche Demo-Namen wie `example_api` sind erlaubt.
+- Mocks dürfen niemals Secret-Werte, Authorization-Header oder upstream debug dumps enthalten.
+- Failure-Szenarien müssen mindestens missing credentials/config error, timeout, invalid upstream response und rate limit abbilden, sobald der Live-Proxy implementiert wird.
+
+Example proxy mock payload:
+
+```json
+{
+  "POST integrations/example_lookup": {
+    "delay": 200,
+    "payload": {
+      "success": true,
+      "status": 200,
+      "response": {
+        "provider": "example_api",
+        "result": "sandbox external lookup"
+      },
+      "errors": {}
+    }
+  }
+}
+```
+
 ## standard scenarios
 
 - success response
@@ -114,6 +146,9 @@ Validation-Error-Mocks müssen Field-Errors mit dem Upload-Feldnamen liefern, z.
 - auth error (`401`)
 - rate limit (`429`)
 - missing mock (`404`)
+- external config error (`503`)
+- external upstream error (`502`)
+- external timeout (`504`)
 - upload validation error (`422` with field errors)
 - artificial delay via `options.delay`
 

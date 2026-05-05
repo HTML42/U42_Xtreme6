@@ -58,6 +58,10 @@ Object.assign(window.TRANSLATIONS_BY_LANG.de, {
   'forms.labels.registration': 'Registrieren',
   'forms.labels.attachment': 'Datei',
   'forms.labels.upload': 'Hochladen',
+  'forms.states.retry': 'Erneut versuchen',
+  'forms.states.upload_progress': 'Upload läuft...',
+  'forms.states.upload_done': 'Upload abgeschlossen.',
+  'forms.errors.summary_title': 'Bitte prüfe die markierten Felder.',
 
   'captions.index.imprint': 'Impressum',
   'captions.index.privacy': 'Datenschutz',

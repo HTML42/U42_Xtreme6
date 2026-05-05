@@ -66,6 +66,10 @@ Registration form for `users/registration` route.
 - form id: `registration_form`
 - submit label: `forms.labels.registration`
 - status region: `.x_form_status` with `aria-live="polite"`
+- fields use `.x_form_field` wrappers with `data-field` matching the submitted field name.
+- inline error slots use `.x_form_input_error[data-error-for]` and start hidden/empty.
+- summary slot `.x_form_error_summary_slot` is rendered directly before the submit button.
+- retry control uses `.x_form_retry` and is shown only in `form[data-state="retry"]` when a controller opts in.
 - generated/runtime template: `templates/view.users.registration.js`
 
 ## validation
@@ -80,6 +84,8 @@ Registration form for `users/registration` route.
 
 - Inline errors are rendered next to each field.
 - Global summary is rendered directly before submit.
+- Backend errors must be keyed as `username`, `email`, `password`, `password2`, or a reserved global key such as `form`.
+- Duplicate validation errors focus the affected `username` or `email` field automatically.
 - Password fields are cleared after failed submit.
 
 ## translations
@@ -92,9 +98,15 @@ Registration form for `users/registration` route.
 - `forms.callbacks.loading`
 - `forms.callbacks.registration_success`
 - `forms.callbacks.registration_fail`
+- `forms.states.retry`
+- `forms.states.upload_progress`
+- `forms.errors.summary_title`
 
 ## accessibility
 
 - Labels use `for` attributes matching deterministic field IDs.
 - Errors use `aria-invalid` and `aria-describedby`.
+- Existing help/status references must be preserved when `aria-describedby` receives an error id.
+- Summary uses `role="alert"`, `aria-live="assertive"`, and receives focus when no field-level target exists.
+- First invalid field receives keyboard focus when field-level errors exist.
 - Status messages use polite live region.

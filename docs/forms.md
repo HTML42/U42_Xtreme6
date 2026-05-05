@@ -67,15 +67,43 @@ Optional keys:
 
 - Each field renders label, input/control, optional help text, and an inline error slot.
 - Field IDs must be deterministic and lowercase: `<form>_<field>`.
-- Submit buttons must be preceded by the global error summary container when errors exist.
-- Form state must support `idle`, `loading`, `success`, `error`, and `disabled`.
+- Form controls use the central field wrapper primitive `.x_form_field` with `data-field="<submitted field name>"`.
+- Inline error slots are explicit containers with `.x_form_input_error` and `data-error-for="<submitted field name>"`.
+- Submit buttons must be preceded by the global error summary slot `.x_form_error_summary_slot`; `XApi.renderFormErrors(...)` creates `.x_form_error_summary` there when errors exist.
+- Form state must support `idle`, `loading`, `success`, `error`, `disabled`, `retry`, and `upload-progress` via `XApi.setFormState(...)` and `form[data-state="..."]`.
+
+## runtime ux primitives
+
+`scripts/x_api.class.js` owns the reusable FormAjax UX primitives. Feature controllers must call `XApi.submitForm(...)` and may update success/fail status text, but must not implement field-error DOM logic themselves.
+
+Required runtime helpers:
+
+- `XApi.clearFormErrors(formElement)`: removes summary/inline error content and restores ARIA metadata.
+- `XApi.renderFormErrors(formElement, errors, options)`: renders field errors, summary, live-region announcement, and focuses the first invalid field or the summary.
+- `XApi.setFormState(formElement, state)`: normalizes and applies form states (`idle`, `loading`, `success`, `error`, `disabled`, `retry`, `upload-progress`).
+- `XApi.renderUploadProgress(formElement, progress)`: updates `.x_form_upload_progress` with `loaded`, `total`, `percent`, `done`, and file metadata.
+
+Supported form component primitives are:
+
+- `input`
+- `select`
+- `textarea`
+- `checkbox`
+- `radio`
+- `upload`
+- `hidden`
+- `date`
 
 ## error handling rules
 
 - Backend field errors must use submitted field names as keys.
-- `XApi.renderFormErrors(...)` renders field errors directly after the matching input.
-- `XApi.renderFormErrors(...)` also renders a summary before the submit button.
+- Field-error keys must match the submitted `name` attribute exactly, including bracket/dot notation for structured fields (for example `profile.email`, `items[0][name]`).
+- Non-field/global errors use reserved keys: `form`, `request`, `credentials`, `method`, `mock`, or `_global`; these appear in the summary and are not forced onto a field.
+- `XApi.renderFormErrors(...)` renders field errors into `[data-error-for="<field name>"]` when present, otherwise directly after the matching control.
+- `XApi.renderFormErrors(...)` also renders a summary before the submit button and focuses the first invalid input; if no field matches, it focuses the summary.
 - On failure, password-like fields are cleared while non-sensitive values remain.
+- Error summaries use `role="alert"`, `aria-live="assertive"`, and `tabindex="-1"`.
+- Invalid controls receive `aria-invalid="true"`; `aria-describedby` is merged with the inline error id without deleting existing help-text references.
 
 ## upload rules
 
@@ -84,6 +112,7 @@ Optional keys:
 - File size and count are declared with `max size` and `max files`.
 - Client-side checks in `XApi.submitForm(...)` are only prevalidation; backend validation remains authoritative.
 - Upload progress is reported through `onUploadProgress` callbacks with `loaded`, `total`, `percent`, and file metadata.
+- `XApi.submitForm(...)` also mirrors upload progress to `.x_form_upload_progress` and sets form state `upload-progress` while files are uploading.
 - Upload API responses must use the standard API payload and field errors keyed by upload field name.
 
 ## translation derivation

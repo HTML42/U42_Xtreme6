@@ -66,7 +66,8 @@ class UsersController {
       label_password: this.t('forms.labels.password', 'Passwort'),
       label_password2: this.t('forms.labels.password2', 'Passwort erneut'),
       action_login: this.t('forms.labels.login', 'Anmelden'),
-      action_registration: this.t('menu.registration', 'Registrierung')
+      action_registration: this.t('menu.registration', 'Registrierung'),
+      action_retry: this.t('forms.states.retry', 'Erneut versuchen')
     };
   }
 

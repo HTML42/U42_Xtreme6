@@ -86,11 +86,23 @@ function gitChangedFiles(string $root): array
             $parts = explode(' -> ', $path);
             $path = end($parts);
         }
-        $files[] = str_replace('\\', '/', $path);
+        $normalizedPath = str_replace('\\', '/', $path);
+        if (in_array($normalizedPath, ignoredGeneratedReports(), true)) {
+            continue;
+        }
+
+        $files[] = $normalizedPath;
     }
 
     sort($files, SORT_STRING);
     return array_values(array_unique($files));
+}
+
+function ignoredGeneratedReports(): array
+{
+    return [
+        'dist/release_gate_report.json',
+    ];
 }
 
 function classifyFiles(array $files): array

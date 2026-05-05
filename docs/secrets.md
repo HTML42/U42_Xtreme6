@@ -32,6 +32,9 @@ Provider contract:
 - `services.<service>.credentials`: lokale Secret-Werte oder Platzhalter im Example.
 - `services.<service>.env`: Mapping von Credential-Pfad zu Environment-Variable.
 - `services.<service>.required_secrets`: maschinenlesbare Liste benötigter Secret-Pfade ohne Werte.
+- `services.<service>.proxy_endpoints`: dokumentierte Xtreme6-Backend-Proxy-Endpunkte, die diesen Service serverseitig verwenden.
+- `services.<service>.rate_limits`: wertfreie lokale/upstream Rate-Limit-Notizen für QA und Manager-Review.
+- `services.<service>.failure_strategy`: erwartete Fehlerklassen ohne Secret-Werte oder Upstream-Debugdaten.
 
 Serverseitige Helper:
 
@@ -70,6 +73,19 @@ Unterstützte Provider:
         "api_key": "services.example_api.credentials.api_key",
         "api_secret": "services.example_api.credentials.api_secret"
       },
+      "proxy_endpoints": [
+        "/api/integrations/example_lookup"
+      ],
+      "rate_limits": {
+        "local_proxy": "60 requests per IP per 15 minutes",
+        "upstream": "document per service contract"
+      },
+      "failure_strategy": {
+        "missing_credentials": "503 config error via standard API payload",
+        "timeout": "504 timeout via standard API payload",
+        "invalid_response": "502 upstream error via standard API payload",
+        "rate_limit": "429 rate_limit via standard API payload"
+      },
       "rotation": {
         "dev": "local developer-owned value",
         "stage": "stage secret store or environment variable",
@@ -95,6 +111,16 @@ Unterstützte Provider:
 - `dev`: `local_file` is allowed for fast local setup.
 - `stage`/`prod`: prefer `env` or future `vault`; `_secrets.json` may exist only as environment-local deploy artifact and is never committed.
 - Rotation changes the environment-local value/provider only; markdown, API contracts and frontend code must not change for rotation.
+
+## external api integration references
+
+Credentialed external APIs must follow the backend-only proxy blueprint in `docs/x_api.md`.
+
+- Each service in `_secrets.example.json` documents its purpose, placeholder credentials, required secret paths and proxy endpoint names without values.
+- API Markdown for the concrete proxy endpoint documents request/response/failures and references only required secret **paths**, never values.
+- `compiler/report_secret_usage.php` is the manager-readable dependency report and must print only provider names, credential key names, proxy endpoints and required secret paths.
+- Sandbox definitions in `docs/sandbox.md` and `docs/sandbox_scenarios.json` simulate the proxy endpoint without real credentials.
+- Missing credentials are runtime configuration failures and must return controlled API payloads instead of warnings, stack traces or raw upstream errors.
 
 ## leak prevention
 

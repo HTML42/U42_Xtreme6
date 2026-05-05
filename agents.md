@@ -16,7 +16,8 @@
 2. identify the task type.
 3. read the matching task documentation from **task documentation routing** before editing files.
 4. update the markdown source-of-truth before changing runtime/generated artifacts.
-5. run only non-interactive terminal commands; never start commands that wait for `q` or open a pager.
+5. for cross-domain or AI-generated work, follow the checkpoint flow in `docs/md_first.md` and QA commands in `docs/release_qa.md`.
+6. run only non-interactive terminal commands; never start commands that wait for `q` or open a pager.
 
 ### non-interactive terminal rule
 
@@ -44,8 +45,9 @@ Use this map to avoid scattered or duplicated AI documentation. Keep detailed ru
 | styles/ui css | `docs/styles.md` | `docs/x_styles.md` |
 | ui primitives/navigation/sidebar/breadcrumb | `docs/ui_primitives.md` | `docs/routes.md`, translations |
 | secrets/security config | `docs/secrets.md` | `docs/security_auth.md`, `compiler/check_secret_leaks.php` |
-| sandbox/mock/api demos | `docs/sandbox.md` | `scripts/x_api.class.js`, API markdown |
-| release/checkpoint/qa | `docs/release_qa.md` | `current_tasks.md`, `currentstate.md` |
+| sandbox/mock/api demos | `docs/sandbox.md` | `docs/sandbox_scenarios.json`, `scripts/x_api.class.js`, API markdown |
+| ai generation/checkpoints | `docs/md_first.md` | `docs/release_qa.md`, `compiler/report_ai_generation.php`, `current_tasks.md`, `currentstate.md` |
+| release/checkpoint/qa | `docs/release_qa.md` | `docs/md_first.md`, `compiler/release_gate.php`, `current_tasks.md`, `currentstate.md` |
 
 Documentation rule: do not create new AI-process documentation unless no canonical target exists. Prefer concise links and checklists over duplicated explanations.
 

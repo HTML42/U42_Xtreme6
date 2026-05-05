@@ -178,6 +178,9 @@ All responses still use HTTP status `200` and the standard payload shape from `d
 - `registration.email`: required, valid email, unique.
 - `registration.password`: required.
 - `registration.password2`: must match `password`.
+- Field-error keys returned by validation must match submitted form field names exactly: `username`, `email`, `password`, `password2`.
+- Cross-field or global errors use reserved non-field keys (`credentials`, `form`, `request`) so `XApi.renderFormErrors(...)` can show them in the summary without attaching them to the wrong input.
+- Feature controllers must not map validation errors manually; FormAjax UX primitives render inline field errors, summary, focus, and ARIA state from this key contract.
 
 ## testability
 

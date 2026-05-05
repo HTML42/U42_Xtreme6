@@ -78,16 +78,15 @@ Database smoke behavior:
 
 ## ai generation checkpoints
 
-AI-generated changes must be reproducible in this order:
+The canonical AI-generation workflow and checkpoint order is `docs/md_first.md` → `## ai generation workflow`.
 
-1. Markdown source changed or explicitly confirmed.
-2. Runtime/compiler changes derived from that source.
-3. Generated `dist/*` artifacts rebuilt.
-4. QA reports executed non-interactively.
-5. `current_tasks.md` and `currentstate.md` updated only after QA.
-6. Manager review uses `php compiler/report_ai_generation.php` and `git --no-pager diff --stat`.
+Release QA verifies that workflow through:
 
-Runtime-only changes are acceptable only when the report shows an accompanying markdown/task/currentstate update or when the file is explicitly generated from a changed source.
+- `php compiler/report_ai_generation.php`
+- `php compiler/release_gate.php`
+- `git --no-pager diff --stat`
+
+Runtime-only changes are acceptable only when the report shows accompanying markdown/task/currentstate evidence or when the file is explicitly generated from a changed source.
 
 ## manager acceptance
 

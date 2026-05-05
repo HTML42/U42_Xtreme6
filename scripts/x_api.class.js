@@ -230,8 +230,18 @@ class XApi {
       ? (rules.allowedTypes || rules.allowed_types).map((type) => String(type).toLowerCase())
       : [];
 
-    if (maxFiles > 0 && files.length > maxFiles) {
-      errors.upload = `too many files (max ${maxFiles})`;
+    if (maxFiles > 0) {
+      const filesByField = files.reduce((groups, item) => {
+        groups[item.field] = groups[item.field] || [];
+        groups[item.field].push(item.file);
+        return groups;
+      }, {});
+
+      Object.entries(filesByField).forEach(([field, fieldFiles]) => {
+        if (fieldFiles.length > maxFiles) {
+          errors[field] = XApi.flattenErrorMessages(errors[field]).concat(`too many files (max ${maxFiles})`);
+        }
+      });
     }
 
     files.forEach(({ field, file }) => {
@@ -245,7 +255,7 @@ class XApi {
       }
 
       if (fieldErrors.length > 0) {
-        errors[field] = fieldErrors;
+        errors[field] = XApi.flattenErrorMessages(errors[field]).concat(fieldErrors);
       }
     });
 
@@ -262,13 +272,34 @@ class XApi {
     const normalized = XApi.normalizeErrors(errors);
 
     if (Array.isArray(normalized)) {
-      return normalized.map((message) => String(message || '').trim()).filter(Boolean);
+      return XApi.flattenErrorMessages(normalized);
     }
 
-    return Object.values(normalized)
-      .flat()
-      .map((message) => String(message || '').trim())
-      .filter(Boolean);
+    return XApi.flattenErrorMessages(Object.values(normalized));
+  }
+
+  static flattenErrorMessages(value) {
+    if (Array.isArray(value)) {
+      return value.flatMap((item) => XApi.flattenErrorMessages(item));
+    }
+
+    if (value && typeof value === 'object') {
+      return Object.values(value).flatMap((item) => XApi.flattenErrorMessages(item));
+    }
+
+    const message = String(value || '').trim();
+    return message === '' ? [] : [message];
+  }
+
+  static t(key, fallback = '') {
+    if (window.XTranslation && typeof window.XTranslation.t === 'function') {
+      const translated = window.XTranslation.t(key);
+      if (translated && translated !== key) {
+        return translated;
+      }
+    }
+
+    return fallback || key;
   }
 
   static cssEscape(value) {
@@ -279,15 +310,131 @@ class XApi {
     return String(value || '').replace(/[^a-zA-Z0-9_-]/g, '\\$&');
   }
 
+  static getGlobalErrorKeys() {
+    return ['_global', 'form', 'request', 'credentials', 'method', 'mock', 'path'];
+  }
+
+  static getFieldByName(formElement, fieldName) {
+    if (!formElement || !fieldName || typeof formElement.querySelector !== 'function') {
+      return null;
+    }
+
+    return formElement.querySelector(`[name="${XApi.cssEscape(fieldName)}"]`);
+  }
+
+  static getFieldErrorSlot(formElement, fieldName, field = null) {
+    if (!formElement || !fieldName || typeof formElement.querySelector !== 'function') {
+      return null;
+    }
+
+    const existingSlot = formElement.querySelector(`[data-error-for="${XApi.cssEscape(fieldName)}"]`);
+    if (existingSlot) {
+      return existingSlot;
+    }
+
+    const targetField = field || XApi.getFieldByName(formElement, fieldName);
+    if (!targetField || typeof targetField.insertAdjacentElement !== 'function') {
+      return null;
+    }
+
+    const generatedSlot = document.createElement('div');
+    generatedSlot.className = 'x_form_input_error';
+    generatedSlot.setAttribute('data-error-for', fieldName);
+    generatedSlot.setAttribute('data-generated', 'true');
+    targetField.insertAdjacentElement('afterend', generatedSlot);
+
+    return generatedSlot;
+  }
+
+  static getSummarySlot(formElement) {
+    if (!formElement || typeof formElement.querySelector !== 'function') {
+      return null;
+    }
+
+    const existingSlot = formElement.querySelector('.x_form_error_summary_slot');
+    if (existingSlot) {
+      return existingSlot;
+    }
+
+    const generatedSlot = document.createElement('div');
+    generatedSlot.className = 'x_form_error_summary_slot';
+    generatedSlot.setAttribute('data-generated', 'true');
+
+    const submit = formElement.querySelector('[type="submit"]');
+    if (submit && submit.parentNode) {
+      submit.parentNode.insertBefore(generatedSlot, submit);
+    } else {
+      formElement.appendChild(generatedSlot);
+    }
+
+    return generatedSlot;
+  }
+
+  static mergeDescribedBy(field, errorId) {
+    if (!field || !errorId || typeof field.setAttribute !== 'function') {
+      return;
+    }
+
+    const tokens = String(field.getAttribute('aria-describedby') || '')
+      .split(/\s+/)
+      .map((token) => token.trim())
+      .filter(Boolean);
+
+    if (!tokens.includes(errorId)) {
+      tokens.push(errorId);
+    }
+
+    field.setAttribute('aria-describedby', tokens.join(' '));
+  }
+
+  static removeDescribedByTokens(field, removeIds = []) {
+    if (!field || removeIds.length < 1 || typeof field.getAttribute !== 'function') {
+      return;
+    }
+
+    const removeSet = new Set(removeIds);
+    const tokens = String(field.getAttribute('aria-describedby') || '')
+      .split(/\s+/)
+      .map((token) => token.trim())
+      .filter((token) => token && !removeSet.has(token));
+
+    if (tokens.length > 0) {
+      field.setAttribute('aria-describedby', tokens.join(' '));
+    } else {
+      field.removeAttribute('aria-describedby');
+    }
+  }
+
   static clearFormErrors(formElement) {
     if (!formElement || typeof formElement.querySelectorAll !== 'function') {
       return;
     }
 
-    formElement.querySelectorAll('.x_form_error_summary, .x_form_input_error').forEach((node) => node.remove());
+    const errorIds = Array.from(formElement.querySelectorAll('.x_form_input_error[id]'))
+      .map((node) => node.id)
+      .filter(Boolean);
+
+    formElement.querySelectorAll('.x_form_error_summary').forEach((node) => node.remove());
+    formElement.querySelectorAll('.x_form_error_summary_slot[data-generated="true"]').forEach((node) => node.remove());
+
+    formElement.querySelectorAll('.x_form_input_error').forEach((node) => {
+      if (node.getAttribute('data-generated') === 'true') {
+        node.remove();
+        return;
+      }
+
+      node.textContent = '';
+      node.hidden = true;
+      node.removeAttribute('role');
+    });
+
     formElement.querySelectorAll('[aria-invalid="true"]').forEach((field) => {
       field.removeAttribute('aria-invalid');
-      field.removeAttribute('aria-describedby');
+      XApi.removeDescribedByTokens(field, errorIds);
+    });
+
+    formElement.querySelectorAll('.x_form_field.has-error').forEach((fieldWrapper) => {
+      fieldWrapper.classList.remove('has-error');
     });
   }
 
@@ -299,13 +446,29 @@ class XApi {
     const normalizedState = String(state || 'idle').toLowerCase();
     formElement.setAttribute('data-state', normalizedState);
 
-    const disabled = normalizedState === 'loading' || normalizedState === 'disabled';
+    const disabled = normalizedState === 'loading' || normalizedState === 'disabled' || normalizedState === 'upload-progress';
+    formElement.setAttribute('aria-busy', disabled ? 'true' : 'false');
     formElement.querySelectorAll('input, textarea, select, button').forEach((field) => {
-      field.disabled = disabled;
+      if (disabled) {
+        if (!Object.prototype.hasOwnProperty.call(field.dataset, 'x6WasDisabled')) {
+          field.dataset.x6WasDisabled = field.disabled ? 'true' : 'false';
+        }
+        field.disabled = true;
+        return;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(field.dataset, 'x6WasDisabled')) {
+        field.disabled = field.dataset.x6WasDisabled === 'true';
+        delete field.dataset.x6WasDisabled;
+      }
+    });
+
+    formElement.querySelectorAll('.x_form_retry').forEach((retryControl) => {
+      retryControl.hidden = normalizedState !== 'retry';
     });
   }
 
-  static renderFormErrors(formElement, errors = {}) {
+  static renderFormErrors(formElement, errors = {}, options = {}) {
     if (!formElement || typeof formElement.querySelector !== 'function') {
       return;
     }
@@ -318,9 +481,17 @@ class XApi {
       return;
     }
 
+    const summarySlot = XApi.getSummarySlot(formElement);
     const summary = document.createElement('div');
     summary.className = 'x_form_error_summary';
     summary.setAttribute('role', 'alert');
+    summary.setAttribute('aria-live', 'assertive');
+    summary.setAttribute('tabindex', '-1');
+
+    const title = document.createElement('strong');
+    title.className = 'x_form_error_summary_title';
+    title.textContent = XApi.t('forms.errors.summary_title', 'Bitte prüfe die markierten Felder.');
+    summary.appendChild(title);
 
     const list = document.createElement('ul');
     messages.forEach((message) => {
@@ -330,36 +501,110 @@ class XApi {
     });
     summary.appendChild(list);
 
-    const submit = formElement.querySelector('[type="submit"]');
-    if (submit && submit.parentNode) {
-      submit.parentNode.insertBefore(summary, submit);
+    if (summarySlot) {
+      summarySlot.appendChild(summary);
     } else {
       formElement.appendChild(summary);
     }
 
+    let firstInvalidField = null;
     if (!Array.isArray(normalized) && normalized && typeof normalized === 'object') {
       Object.entries(normalized).forEach(([fieldName, fieldErrors]) => {
         const field = formElement.querySelector(`[name="${XApi.cssEscape(fieldName)}"]`);
-        if (!field) {
+        const isGlobalError = XApi.getGlobalErrorKeys().includes(String(fieldName));
+        if (!field || isGlobalError) {
           return;
         }
 
-        const errorText = Array.isArray(fieldErrors) ? fieldErrors.join(' ') : String(fieldErrors || '');
+        const errorText = XApi.flattenErrorMessages(fieldErrors).join(' ');
         if (errorText.trim() === '') {
           return;
         }
 
-        const errorId = `${formElement.id || 'x_form'}_${fieldName}_error`;
-        const errorNode = document.createElement('div');
+        const errorNode = XApi.getFieldErrorSlot(formElement, fieldName, field);
+        if (!errorNode) {
+          return;
+        }
+
+        const errorId = errorNode.id || `${formElement.id || 'x_form'}_${String(fieldName).replace(/[^a-zA-Z0-9_-]/g, '_')}_error`;
         errorNode.id = errorId;
-        errorNode.className = 'x_form_input_error';
+        errorNode.classList.add('x_form_input_error');
+        errorNode.hidden = false;
+        errorNode.setAttribute('role', 'alert');
         errorNode.textContent = errorText;
 
         field.setAttribute('aria-invalid', 'true');
-        field.setAttribute('aria-describedby', errorId);
-        field.insertAdjacentElement('afterend', errorNode);
+        XApi.mergeDescribedBy(field, errorId);
+
+        const wrapper = field.closest ? field.closest('.x_form_field') : null;
+        if (wrapper) {
+          wrapper.classList.add('has-error');
+        }
+
+        if (!firstInvalidField) {
+          firstInvalidField = field;
+        }
       });
     }
+
+    if (options.focus !== false) {
+      const focusTarget = firstInvalidField || summary;
+      if (focusTarget && typeof focusTarget.focus === 'function') {
+        focusTarget.focus({ preventScroll: false });
+      }
+    }
+  }
+
+  static renderUploadProgress(formElement, progress = {}) {
+    if (!formElement || typeof formElement.querySelector !== 'function') {
+      return;
+    }
+
+    let progressNode = formElement.querySelector('.x_form_upload_progress');
+    if (!progressNode) {
+      progressNode = document.createElement('div');
+      progressNode.className = 'x_form_upload_progress';
+      progressNode.setAttribute('role', 'status');
+      progressNode.setAttribute('aria-live', 'polite');
+
+      const summarySlot = XApi.getSummarySlot(formElement);
+      if (summarySlot && summarySlot.parentNode) {
+        summarySlot.parentNode.insertBefore(progressNode, summarySlot);
+      } else {
+        formElement.appendChild(progressNode);
+      }
+    }
+
+    const percent = Math.max(0, Math.min(100, Number(progress.percent || 0)));
+    const loaded = Number(progress.loaded || 0);
+    const total = Number(progress.total || 0);
+    const label = progress.done === true
+      ? XApi.t('forms.states.upload_done', 'Upload abgeschlossen.')
+      : XApi.t('forms.states.upload_progress', 'Upload läuft...');
+
+    progressNode.hidden = false;
+    progressNode.textContent = '';
+
+    const text = document.createElement('span');
+    text.className = 'x_form_upload_progress_text';
+    text.textContent = total > 0
+      ? `${label} ${percent}% (${loaded}/${total} Bytes)`
+      : `${label} ${percent}%`;
+
+    const bar = document.createElement('div');
+    bar.className = 'x_form_upload_progress_bar';
+    bar.setAttribute('role', 'progressbar');
+    bar.setAttribute('aria-valuemin', '0');
+    bar.setAttribute('aria-valuemax', '100');
+    bar.setAttribute('aria-valuenow', String(percent));
+
+    const fill = document.createElement('span');
+    fill.className = 'x_form_upload_progress_fill';
+    fill.style.width = `${percent}%`;
+    bar.appendChild(fill);
+
+    progressNode.appendChild(text);
+    progressNode.appendChild(bar);
   }
 
   static async request(path, options = {}) {
@@ -449,12 +694,11 @@ class XApi {
     }
 
     XApi.clearFormErrors(formElement);
-    XApi.setFormState(formElement, 'loading');
-
     const method = String(options.method || formElement.method || 'POST').toUpperCase();
     const formData = new FormData(formElement);
     const uploadFiles = XApi.getUploadFiles(formData);
     const hasFiles = uploadFiles.length > 0;
+    XApi.setFormState(formElement, hasFiles ? 'upload-progress' : 'loading');
 
     if (hasFiles) {
       const uploadErrors = XApi.validateUploadFiles(uploadFiles, options.upload || {});
@@ -469,7 +713,7 @@ class XApi {
         });
       }
 
-      XApi.notifyUploadProgress(options.onUploadProgress, {
+      const initialProgress = {
         loaded: 0,
         total: uploadFiles.reduce((sum, item) => sum + item.file.size, 0),
         percent: 0,
@@ -479,7 +723,9 @@ class XApi {
           size: item.file.size,
           type: item.file.type
         }))
-      });
+      };
+      XApi.renderUploadProgress(formElement, initialProgress);
+      XApi.notifyUploadProgress(options.onUploadProgress, initialProgress);
     }
 
     const useMultipart = options.multipart === true || hasFiles;
@@ -494,12 +740,14 @@ class XApi {
 
     XApi.setFormState(formElement, result.success ? 'success' : 'error');
     if (hasFiles) {
-      XApi.notifyUploadProgress(options.onUploadProgress, {
+      const doneProgress = {
         loaded: uploadFiles.reduce((sum, item) => sum + item.file.size, 0),
         total: uploadFiles.reduce((sum, item) => sum + item.file.size, 0),
         percent: 100,
         done: true
-      });
+      };
+      XApi.renderUploadProgress(formElement, doneProgress);
+      XApi.notifyUploadProgress(options.onUploadProgress, doneProgress);
     }
 
     if (!result.success) {
