@@ -7,6 +7,3 @@
 _db.json
 _secrets.json
 _config.json
-
-# accidental shell redirect target from mixed Windows/Git-Bash environments
-/nul
