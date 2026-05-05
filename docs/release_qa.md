@@ -175,6 +175,41 @@ Use this playbook when a feature needs a private external API key, token or cred
    - Accept the task only when secret usage is value-free, the frontend/backend boundary is clean, sandbox coverage exists, leak checks pass and the release gate is green.
    - Update `current_tasks.md` and `currentstate.md` with the proxy endpoint, secret dependencies, QA evidence and any environment-only skips.
 
+### ui feature flow
+
+Use this playbook when adding or changing route-level UI behavior such as navigation, breadcrumbs, sidebar groups, slideshow content, layout variants or reusable UI primitive templates.
+
+1. **Scope and primitive decision**
+   - Read `agents.md`, `docs/routes.md`, `docs/ui_primitives.md`, `docs/md_first.md` and this release QA checklist before editing runtime templates or controllers.
+   - Prefer existing primitives (`header`, `sidebar`, `breadcrumb`, `slideshow`, `footer`, layout shell) before adding a new primitive.
+   - If a new primitive is required, document it in `docs/ui_primitives.md` first with runtime artifact, route/data source, i18n keys, accessibility behavior and responsive expectations.
+2. **Route-level Markdown source**
+   - Declare every affected route in `docs/routes.md` before controller/template changes.
+   - Configure route UI explicitly with `header`, `footer`, `layout`, `sidebar`, `sidebar_group`, `navigation`, `breadcrumb`, optional `breadcrumb_parent` and optional `slideshow` metadata.
+   - Keep header and sidebar navigation in the `ui_navigation` section and point links only to declared hash routes.
+   - Slideshow definitions must include image source, translated alt/title/caption/cta keys, declared target route and keyboard support flag.
+3. **Translations, accessibility and SEO**
+   - Add or verify all visible labels in every configured language: menu labels, sidebar titles, route captions, breadcrumb labels, slideshow alt/title/caption/cta keys and footer text.
+   - Ensure landmarks and controls have appropriate `aria-label`, `aria-current`, keyboard behavior, focus states and mobile/desktop responsive behavior.
+   - Map route-relevant labels and titles to caption/meta governance where SEO output depends on route text.
+4. **Runtime and generated artifacts**
+   - Update controller markdown (`scripts/controllers/<controller>.controller.md`) before controller runtime when route behavior changes.
+   - Implement templates with lowercase filenames and native hash links (`href="#!/controller/view"`), never `data-href` or undeclared routes.
+   - Keep runtime route/UI maps derived from `docs/routes.md`; avoid hardcoded duplicate navigation lists in templates when route configuration already owns the data.
+5. **Non-interactive QA**
+   - Run targeted checks before the release gate:
+     - `php compiler/check_md_first.php`
+     - `php compiler/report_ui_primitives.php`
+     - `php compiler/check_frontend_boundary.php`
+     - `php compiler/report_ai_generation.php`
+     - `php compiler/compile_scripts.php`
+     - `php compiler/compile_production.php`
+     - `php compiler/release_gate.php`
+   - Review diffs with `git --no-pager diff --stat` and targeted `git --no-pager diff -- <path>` only.
+6. **Manager acceptance**
+   - Accept the task only when routes are declared, UI config validates, links target declared routes, translations exist, a11y expectations are documented or implemented and the release gate is green.
+   - Update `current_tasks.md` and `currentstate.md` with the changed UI primitive or route composition, QA evidence and remaining UI/a11y risks.
+
 ## manager acceptance
 
 A task can be marked done only after:
